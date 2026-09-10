@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精読ノート アーカイブ</title>
+<style>
+  :root{
+    --paper:#f7f6f2;--card:#fffdf9;--ink:#1c1b19;--sub:#6f6b63;--hair:#e4e1d8;
+    --shu:#b23b2e;--ai:#2c3e66;--midori:#2e7d5b;--par:#c9760c;
+    --done-bg:#d9efe4;--done-tx:#1f6b4e;--todo-bg:#ebe9e3;--todo-tx:#6f6d66;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.6;}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 90px;}
+  .ttl{font-family:Georgia,serif;font-size:20px;color:var(--ai);font-weight:700;}
+  .ttl small{display:block;font-weight:400;font-size:12px;color:var(--sub);margin-top:3px;}
+
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 20px;align-items:center;}
+  .controls button{font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--hair);background:var(--card);color:var(--sub);border-radius:999px;padding:6px 15px;transition:.15s;}
+  .controls button:hover{border-color:var(--ai);color:var(--ai);}
+  .controls button.active{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .controls input{flex:1;min-width:180px;font-family:inherit;font-size:13px;border:1px solid var(--hair);background:var(--card);border-radius:999px;padding:6px 15px;color:var(--ink);}
+  .controls input:focus{outline:none;border-color:var(--ai);}
+
+  .noclass{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:24px;text-align:center;color:var(--sub);font-size:13.5px;}
+  .noclass button{margin:0 6px;font-family:inherit;font-size:13px;cursor:pointer;border:1px solid var(--ai);background:var(--ai);color:#fff;border-radius:999px;padding:7px 18px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+  .cardlink{text-decoration:none;color:inherit;display:block;}
+  .cardbox{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:16px 18px;transition:.15s;height:100%;}
+  .cardlink:hover .cardbox.done{border-color:var(--ai);box-shadow:0 3px 10px rgba(0,0,0,.06);}
+  .cardbox.todo{opacity:.5;}
+  .chead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px;}
+  .cuniv{font-weight:700;font-size:15.5px;color:var(--ink);}
+  .cstatus{font-size:11.5px;padding:2px 10px;border-radius:999px;white-space:nowrap;}
+  .cstatus.done{background:var(--done-bg);color:var(--done-tx);}
+  .cstatus.todo{background:var(--todo-bg);color:var(--todo-tx);}
+  .ctitle{font-size:13px;color:var(--sub);margin:0 0 10px;}
+  .ctags{display:flex;flex-wrap:wrap;gap:6px;}
+  .ctag{font-size:11.5px;padding:2px 9px;border-radius:999px;background:var(--paper);border:1px solid var(--hair);color:var(--sub);}
+
+  .empty{text-align:center;color:var(--sub);font-size:13px;padding:40px 0;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:46px;border-top:1px solid var(--hair);padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ttl"><span id="pageTitle">精読ノート アーカイブ</span><small id="pageSub"></small></div>
+
+  <div id="noclass" class="noclass" style="display:none;">
+    クラスが指定されていません。埋め込みURLの末尾に <code>?class=a</code> または <code>?class=c</code> を付けてください。<br><br>
+    <button data-go="a">Aクラス（国公立文系）として表示</button>
+    <button data-go="c">Cクラス（国公立理系）として表示</button>
+  </div>
+
+  <div id="mainArea" style="display:none;">
+    <div class="controls">
+      <button data-filter="all" class="active">すべて</button>
+      <button data-filter="国公立">国公立</button>
+      <button data-filter="私立">私立</button>
+      <input type="text" id="q" placeholder="大学名・タグで検索">
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none;">該当する精読ノートが見つかりません。</div>
+  </div>
+
+  <footer>精読ノート アーカイブ ― DATAを追記して更新してください</footer>
+</div>
+
+<script>
+/* ===== ここに教材を追記していく =====
+   1件 = {
+     univ:"大学名 年度", kind:"国公立"|"私立",
+     title:"文章タイトル・要旨",              // 未実施クラスには表示されない
+     tags:["文法タグ",...],                   // 未実施クラスには表示されない
+     status:{ a:"done"|"todo", c:"done"|"todo" },  // クラスごとの実施状況
+     url:"個票HTMLへの相対パス"
+   }
+   新しい精読ノートができたら配列の末尾に1件追加するだけでよい。
+   あるクラスでstatusが"todo"の場合、そのクラス向け表示では
+   大学名も含め一切出さず、「準備中」バッジのみのカードにする（ネタバレ防止）。
+   検索中（検索欄に文字が入っている間）は準備中カード自体を一覧から隠す。
+=================================================== */
+const DATA = [
+  {
+    univ: "北海道大学 2022",
+    kind: "国公立",
+    title: "The Danger of a Single Story ― 物語の単一化の危険性",
+    tags: ["形式主語", "not A but B", "同格"],
+    status: { a: "done", c: "todo" },
+    url: "notes/hokkaido2022.html"
+  }
+  /* ▼ 次の精読ノートができたらここに追加 ▼
+  ,{
+    univ: "○○大学 20XX",
+    kind: "国公立",
+    title: "",
+    tags: [],
+    status: { a: "todo", c: "todo" },
+    url: "notes/xxxx.html"
+  }
+  */
+];
+
+const CLASS_LABEL = { a: "Aクラス（国公立文系）", c: "Cクラス（国公立理系）" };
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function getClass(){
+  const p = new URLSearchParams(location.search).get("class");
+  return (p==="a"||p==="c") ? p : null;
+}
+
+const cls = getClass();
+const grid = document.getElementById("grid");
+const emptyEl = document.getElementById("empty");
+let activeFilter = "all";
+let query = "";
+
+if(!cls){
+  document.getElementById("noclass").style.display = "block";
+  document.querySelectorAll("#noclass button[data-go]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const u = new URL(location.href);
+      u.searchParams.set("class", b.dataset.go);
+      location.href = u.toString();
+    });
+  });
+}else{
+  document.getElementById("mainArea").style.display = "block";
+  document.getElementById("pageSub").textContent = CLASS_LABEL[cls] + " ― 過去問精読ノート一覧";
+  render();
+}
+
+function render(){
+  const q = query.trim().toLowerCase();
+  const items = DATA.filter(d=>{
+    const isDone = d.status[cls]==="done";
+    if(!isDone){
+      // 準備中カードは大学名・分類も出さないため、絞り込み・検索の対象にはしない。
+      // 検索中は一覧からも隠す（検索文字列で存在を探り当てられないようにする）。
+      return q === "";
+    }
+    if(activeFilter!=="all" && d.kind!==activeFilter) return false;
+    if(q){
+      const hay = (d.univ+" "+d.title+" "+d.tags.join(" ")).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  grid.innerHTML = "";
+  emptyEl.style.display = items.length ? "none" : "block";
+  items.forEach(d=>{
+    const isDone = d.status[cls]==="done";
+    let inner;
+    if(isDone){
+      const tagsHtml = d.tags.map(t=>`<span class="ctag">${esc(t)}</span>`).join("");
+      inner = `<div class="cardbox done">
+          <div class="chead"><span class="cuniv">${esc(d.univ)}</span><span class="cstatus done">実施済</span></div>
+          <p class="ctitle">${esc(d.title)}</p>
+          <div class="ctags">${tagsHtml}</div>
+        </div>`;
+    }else{
+      // 未実施：大学名・分類を含め一切出さず、準備中バッジのみ表示
+      inner = `<div class="cardbox todo">
+          <div class="chead"><span class="cstatus todo">準備中</span></div>
+        </div>`;
+    }
+    if(isDone && d.url){
+      const a = document.createElement("a");
+      a.className = "cardlink"; a.href = d.url; a.innerHTML = inner;
+      grid.appendChild(a);
+    }else{
+      const div = document.createElement("div");
+      div.className = "cardlink"; div.innerHTML = inner;
+      grid.appendChild(div);
+    }
+  });
+}
+
+document.querySelectorAll(".controls button[data-filter]").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".controls button[data-filter]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    activeFilter = b.dataset.filter;
+    render();
+  });
+});
+const qInput = document.getElementById("q");
+if(qInput) qInput.addEventListener("input",e=>{query=e.target.value;render();});
+</script>
+</body>
+</html>
