@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精読ノート</title>
+<style>
+  :root{
+    --paper:#f7f6f2;--card:#fffdf9;--ink:#1c1b19;--sub:#6f6b63;--hair:#e4e1d8;
+    --shu:#b23b2e;--ai:#2c3e66;--midori:#2e7d5b;
+    --s-bg:#dfe9f6;--s-tx:#234e84;
+    --v-bg:#f6ddd6;--v-tx:#9a3320;
+    --o-bg:#d9efe4;--o-tx:#1f6b4e;
+    --c-bg:#e6e0f4;--c-tx:#4f3f8a;
+    --m-bg:#ebe9e3;--m-tx:#6f6d66;
+    --par:#c9760c;--hl:#ffe94d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.6;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 90px;}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(247,246,242,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--hair);}
+  .topbar .inner{max-width:880px;margin:0 auto;padding:10px 18px;}
+  .ttl{font-family:Georgia,serif;font-size:15px;color:var(--ai);font-weight:700;}
+  .ttl small{display:block;font-weight:400;font-size:11px;color:var(--sub);}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+  .controls button{font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--hair);background:var(--card);color:var(--sub);border-radius:999px;padding:5px 13px;transition:.15s;}
+  .controls button:hover{border-color:var(--ai);color:var(--ai);}
+  .controls button.active{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .controls .sep{width:1px;height:18px;background:var(--hair);margin:0 2px;}
+
+  .lead{margin:20px 0 4px;font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .lead b{color:var(--shu);}
+
+  .index{margin:14px 0 6px;background:#fbfaf6;border:1px solid var(--hair);border-radius:9px;padding:11px 14px;}
+  .index .ih{font-size:12px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .index .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .index .chips button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 11px;}
+  .index .chips button:hover{border-color:var(--shu);color:var(--shu);}
+
+  .legend{display:none;flex-wrap:wrap;gap:7px;margin:12px 0 4px;align-items:center;}
+  body.struct-on .legend{display:flex;}
+  .dm-legend{display:none!important;}
+  body.dm-on .dm-legend{display:flex!important;}
+  .legend span{font-size:12px;padding:2px 9px;border-radius:5px;}
+  .legend .ls{background:var(--s-bg);color:var(--s-tx);}.legend .lv{background:var(--v-bg);color:var(--v-tx);}
+  .legend .lo{background:var(--o-bg);color:var(--o-tx);}.legend .lc{background:var(--c-bg);color:var(--c-tx);}
+  .legend .lm{background:var(--m-bg);color:var(--m-tx);}
+  .legend .lp{background:none;color:var(--par);border-bottom:3px solid var(--par);border-radius:0;padding:2px 2px 1px;}
+  .legend .ld{background:none;color:#2c3e66;border-bottom:1.5px dotted #2c3e66;border-radius:0;padding:2px 2px 1px;}
+
+  .phead{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ai);padding-bottom:8px;margin:30px 0 4px;}
+  .phead:first-of-type{margin-top:18px;}
+  .pnum{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--ai);}
+  .prole{font-size:13px;color:var(--ai);font-weight:700;}
+
+  .sents{border-left:2px solid #ece9e0;padding-left:16px;margin-left:6px;}
+  .sent{padding:13px 0;border-bottom:1px solid #f0ede5;cursor:pointer;transition:background .5s;}
+  .sent:last-child{border-bottom:none;}
+  .sent.flash{background:#fff6d8;}
+  .badge{display:none;font-family:Georgia,serif;font-size:11px;font-weight:700;color:#fff;background:var(--ai);border-radius:5px;padding:1px 7px;margin-right:8px;vertical-align:2px;}
+  .sent.imp .badge{display:inline-block;}
+
+  .en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:2.2;}
+  .tok{position:relative;display:inline;}
+  .w{padding:1px 0;border-radius:3px;}
+  .w.tap{border-bottom:1px dotted #b48a3a;cursor:pointer;}
+  .w.tap:hover{color:#000;}
+  /* 黄ハイライト：構造OFF時のみ。構造ONでは色塗りを優先 */
+  .w.hl{background:var(--hl);}
+  body.struct-on .en .hl{background:transparent;}
+  body.struct-on .en .s{background:var(--s-bg);}
+  body.struct-on .en .v{background:var(--v-bg);}
+  body.struct-on .en .o{background:var(--o-bg);}
+  body.struct-on .en .c{background:var(--c-bg);}
+  body.struct-on .en .m{background:var(--m-bg);}
+  body.struct-on .en .corr{color:var(--par);font-weight:bold;}
+  body.skel-on .en .m{opacity:.32;}
+
+  .rlab,.pnum2{display:none;}
+  .tok.hastip{display:inline-block;}
+  body.struct-on .rlab,body.struct-on .pnum2{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;vertical-align:0.55em;line-height:0;margin-right:3px;white-space:nowrap;}
+  .rlab.s{color:var(--s-tx);}.rlab.v{color:var(--v-tx);}.rlab.o{color:var(--o-tx);}.rlab.c{color:var(--c-tx);}.rlab.m{color:var(--m-tx);}
+  .pnum2{color:var(--par);}
+  body.struct-on .en .pp .w{border-bottom:3px solid var(--par);border-radius:0;padding-bottom:0;}
+
+  /* ディスコースマーカー（因果・対比・譲歩・列挙・例示） */
+  .dmlab{display:none;}
+  body.dm-on .dmlab{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;color:#2c3e66;vertical-align:0.55em;line-height:0;margin-right:2px;white-space:nowrap;}
+  body.dm-on .en .dmword{border-bottom:1.5px dotted #2c3e66;padding-bottom:1px;}
+
+  /* 空所 */
+  .gap{display:inline-block;min-width:54px;text-align:center;border-bottom:2px solid var(--ai);color:var(--ai);font-weight:700;cursor:pointer;padding:0 6px;font-family:"Yu Gothic",sans-serif;font-size:14px;vertical-align:1px;}
+  .gap.filled{border-bottom-color:var(--midori);color:var(--midori);}
+  .gapwrap{position:relative;display:inline-block;}
+  .gapans{display:none;position:absolute;top:100%;left:0;margin-top:6px;width:max-content;max-width:300px;background:#fff;border:1px solid var(--hair);border-left:3px solid var(--midori);border-radius:0 6px 6px 0;padding:7px 11px;font-family:"Yu Gothic",sans-serif;font-size:12px;color:#34322d;line-height:1.6;z-index:15;box-shadow:0 3px 12px rgba(0,0,0,.1);}
+  .gapwrap.open .gapans{display:block;}
+  .gapans b{color:var(--midori);}
+
+  .tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#2b2b28;color:#fff;font-size:11.5px;line-height:1.5;padding:7px 10px;border-radius:7px;width:max-content;max-width:210px;z-index:20;margin-bottom:7px;text-align:left;font-family:"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+  .tip b{color:#ffe085;}.tip .pos{color:#bdbdb8;font-size:10.5px;}
+  .tok.active .tip{display:block;}
+
+  .jp,.pt{display:none;}
+  body.show-jp .jp,.sent.open .jp{display:block;}
+  body.show-pt .pt,.sent.open .pt{display:block;}
+  .jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:14.5px;color:#2a2a28;background:#f3f8f4;border-left:3px solid var(--midori);padding:7px 11px;margin-top:9px;border-radius:0 4px 4px 0;}
+  .pt{font-size:13px;color:#34322d;background:#f4f6fa;border-left:3px solid var(--ai);padding:7px 11px;margin-top:7px;border-radius:0 4px 4px 0;}
+  .pt::before{content:"ポイント ";font-weight:700;color:var(--ai);}
+
+  /* 段落フッタ：語句・要旨 */
+  .pfoot{margin:12px 0 4px;display:flex;gap:7px;}
+  .pfoot button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .pfoot button:hover{border-color:var(--ai);color:var(--ai);}
+  .pfoot button.on{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .panel{display:none;margin:6px 0 0;border:1px solid var(--hair);border-radius:8px;padding:11px 14px;background:#fcfbf7;font-size:13px;line-height:1.75;}
+  .panel.open{display:block;}
+  .panel.vocab table{width:100%;border-collapse:collapse;}
+  .panel.vocab td{padding:3px 6px;vertical-align:top;border-bottom:1px solid #f0ede5;}
+  .panel.vocab .lv{white-space:nowrap;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 6px;}
+  .panel.vocab .lv.基礎{background:#e9f3ec;color:#2e7d5b;}
+  .panel.vocab .lv.標準{background:#eaf0f8;color:#2c3e66;}
+  .panel.vocab .lv.難関{background:#f7e7e4;color:#b23b2e;}
+  .panel.vocab .lv.最重要{background:#fdf0d5;color:#c9760c;}
+  .panel.vocab .wd{font-family:Georgia,serif;font-weight:700;}
+  .panel.vocab .ps{color:var(--sub);font-size:11px;}
+  .panel.summary{color:#34322d;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:46px;border-top:1px solid var(--hair);padding-top:16px;}
+
+  /* ===== 設問モーダル ===== */
+  .qmodal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:100;padding:28px 14px;overflow-y:auto;}
+  .qmodal-backdrop.open{display:block;}
+  .qmodal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:28px 28px 36px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .qmodal-close{position:absolute;top:16px;right:18px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
+  .qmodal-close:hover{border-color:var(--shu);color:var(--shu);}
+  .qmodal-head{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .qmodal-qnum{font-family:Georgia,serif;font-size:23px;font-weight:700;color:var(--ai);margin-right:12px;}
+  .qmodal-preview{font-size:13px;color:var(--sub);}
+  .qmodal-question{background:#fff8ea;border:1px solid #ecd9a0;border-left:4px solid #c9760c;border-radius:0 8px 8px 0;padding:11px 15px;font-size:13px;line-height:1.75;color:#5c4a1f;margin-bottom:18px;}
+  .qmodal-section{margin:20px 0;}
+  .qmodal-sectitle{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;letter-spacing:.02em;}
+  .qmodal-para{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:2.1;color:#6b685f;}
+  .qmodal-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;box-shadow:0 0 0 1px #f0dfa0;}
+  .qmodal-diagram{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:2.9;background:#fbfaf6;border:1px solid var(--hair);border-radius:10px;padding:20px 22px;}
+  .qmodal-diagram .db-s{color:var(--s-tx);}
+  .qmodal-diagram .db-o{color:var(--o-tx);}
+  .qmodal-diagram .db-c{color:var(--c-tx);}
+  .qmodal-diagram .db-m{color:var(--m-tx);font-style:italic;}
+  .qmodal-diagram .db-v{color:var(--v-tx);font-weight:700;text-decoration:underline;text-underline-offset:4px;}
+  .qmodal-diagram .db-corr{color:var(--par);font-weight:700;}
+  .qmodal-diagram .db-sub{font-size:10.5px;vertical-align:sub;font-family:"Yu Gothic",sans-serif;font-weight:700;color:var(--sub);margin:0 3px 0 1px;}
+  .qmodal-diagram .db-par{border-bottom:3px solid var(--par);padding-bottom:1px;}
+  .qmodal-diagram .qdiagram-line{margin:5px 0;}
+  .qmodal-diagram-legend{font-size:11px;color:var(--sub);margin-top:12px;border-top:1px dashed var(--hair);padding-top:9px;line-height:1.8;}
+  .qmodal-reason{font-size:13.5px;line-height:1.8;background:#f4f6fa;border-left:3px solid var(--ai);padding:11px 15px;border-radius:0 8px 8px 0;}
+
+  /* 選択肢検証カード */
+  .choice-grid{display:flex;flex-direction:column;gap:9px;}
+  .choice-card{border:1px solid var(--hair);border-left:5px solid var(--hair);border-radius:0 10px 10px 0;padding:11px 14px;background:#fff;}
+  .choice-card.ok{border-left-color:var(--midori);background:#f6faf7;}
+  .choice-card.ng{border-left-color:var(--shu);background:#fdf6f5;}
+  .choice-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .choice-label{font-family:Georgia,serif;font-weight:700;color:var(--ink);}
+  .choice-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;}
+  .choice-card.ok .choice-badge{background:#e3f3e9;color:var(--midori);}
+  .choice-card.ng .choice-badge{background:#fbe6e3;color:var(--shu);}
+  .choice-text{font-family:Georgia,serif;font-size:14px;line-height:1.65;margin:6px 0 0;}
+  .choice-text .cerr{color:var(--shu);font-weight:700;text-decoration:underline;text-decoration-style:wavy;text-decoration-color:var(--shu);text-underline-offset:3px;border-radius:2px;animation:cflash 1.4s ease-in-out 1;}
+  @keyframes cflash{0%{background:#ffcfc7;}55%{background:#ffe4df;}100%{background:transparent;}}
+  .choice-quote{font-size:11.5px;color:#6b6a63;margin-top:6px;padding-left:9px;border-left:2px dashed var(--hair);}
+  .choice-quote .qwavy{text-decoration:underline;text-decoration-style:wavy;text-underline-offset:3px;}
+  .choice-card.ng .choice-quote .qwavy{text-decoration-color:var(--shu);color:#8a2e22;}
+  .choice-card.ok .choice-quote .qwavy{text-decoration-color:var(--midori);color:#1f5f45;}
+  .choice-para-tag{font-size:10px;color:var(--sub);margin-left:3px;}
+  .choice-note{font-size:12px;color:#54524a;margin-top:5px;line-height:1.6;}
+
+  /* ===== ①概要ダッシュボード ===== */
+  .dash-open-btn{background:var(--shu)!important;border-color:var(--shu)!important;color:#fff!important;font-weight:700;}
+  .dash-open-btn:hover{opacity:.9;}
+  .dash-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:110;padding:26px 14px;overflow-y:auto;}
+  .dash-backdrop.open{display:block;}
+  .dash-modal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:26px 26px 34px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .dash-head{margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .dash-title{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--ai);}
+  .dash-sub{font-size:12.5px;color:var(--sub);margin-top:6px;line-height:1.7;}
+
+  .dash-qcard{border:1px solid var(--hair);border-radius:10px;padding:14px 16px;margin-bottom:12px;background:#fff;}
+  .dash-qhead{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;}
+  .dash-qlabel{font-family:Georgia,serif;font-weight:700;color:var(--shu);font-size:15px;}
+  .dash-qtext{font-size:13px;color:#3a3833;line-height:1.7;margin-bottom:9px;}
+  .dash-badge{display:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:auto;}
+  .dash-badge.show{display:inline-block;}
+  .dash-badge.ok{background:#e3f3e9;color:var(--midori);}
+  .dash-badge.ng{background:#fbe6e3;color:var(--shu);}
+  .dash-badge.pending{background:#f0eee6;color:var(--sub);}
+
+  .dash-opts{display:flex;flex-direction:column;gap:6px;}
+  .dash-opt-label{display:flex;gap:8px;align-items:baseline;font-size:13px;line-height:1.6;cursor:pointer;padding:5px 8px;border-radius:6px;}
+  .dash-opt-label:hover{background:#f6f4ee;}
+  .dash-opt-label input{margin-top:3px;flex-shrink:0;}
+  .dash-blank-title{font-size:12px;font-weight:700;color:var(--ai);margin:8px 0 4px;}
+  .dash-text-input{width:160px;font-family:inherit;font-size:13.5px;padding:6px 10px;border:1px solid var(--hair);border-radius:6px;}
+  .dash-textarea{width:100%;min-height:52px;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:6px;resize:vertical;box-sizing:border-box;}
+  .dash-free-note{font-size:11.5px;color:var(--sub);margin-top:4px;}
+
+  .dash-hint-toggle{margin-top:10px;font-family:inherit;font-size:12px;cursor:pointer;color:#8a6d1f;background:#fffaf0;border:1px solid #ecd9a0;border-radius:999px;padding:5px 13px;}
+  .dash-hint-toggle:hover{border-color:#c9760c;}
+  .dash-hint-body{display:none;margin-top:10px;padding:11px 14px;background:#fbfaf6;border:1px solid var(--hair);border-radius:8px;}
+  .dash-hint-body.show{display:block;}
+  .dash-hint-role{font-size:11.5px;font-weight:700;color:var(--ai);margin-bottom:6px;}
+  .dash-hint-para{font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.95;color:#54524a;}
+  .dash-hint-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;}
+  .dash-hint-jump{display:block;margin-top:9px;font-family:inherit;font-size:11.5px;cursor:pointer;color:var(--ai);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 12px;}
+  .dash-hint-jump:hover{border-color:var(--ai);}
+  .dash-hint-qline{font-size:12.5px;line-height:1.8;padding:3px 0;color:#54524a;}
+  .dash-hint-qline b{color:var(--ai);}
+
+  .dash-reveal{display:none;margin-top:12px;padding:12px 14px;background:#f9f8f4;border:1px solid var(--hair);border-radius:8px;}
+  .dash-reveal.show{display:block;}
+  .dash-reveal-ans{font-size:13px;line-height:1.8;margin-bottom:10px;}
+  .dash-reveal-ans b{color:var(--ai);}
+  .dash-elem-label{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;cursor:pointer;}
+  .dash-elem-label input{margin-top:2px;flex-shrink:0;}
+  .dash-achieve{font-size:12.5px;font-weight:700;color:var(--ai);margin-top:8px;}
+  .dash-coherent{margin-top:8px;padding-top:8px;border-top:1px dashed var(--hair);}
+
+  .dash-mc-item{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;}
+
+  .dash-gradebar{display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:16px;border-top:2px solid var(--ai);flex-wrap:wrap;}
+  .dash-grade-btn{font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+  .dash-grade-btn:hover{opacity:.9;}
+  .dash-score-summary{font-size:13px;color:#3a3833;line-height:1.8;}
+  .dash-score-summary b{color:var(--shu);font-family:Georgia,serif;}
+
+  .dash-review{margin-top:20px;}
+  .dash-review-title{font-size:13px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .dash-review-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--hair);border-radius:8px;margin-bottom:7px;background:#fff;flex-wrap:wrap;}
+  .dash-review-row .dash-badge{margin-left:0;}
+  .dash-review-qtext{flex:1;min-width:180px;font-size:12.5px;color:#54524a;}
+  .dash-review-btn{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .dash-review-btn:hover{border-color:var(--ai);color:var(--ai);}
+
+  @media (max-width:640px){
+    .dash-modal{padding:20px 14px 26px;}
+  }
+
+  @media (max-width:640px){
+    .qmodal{padding:20px 14px 26px;}
+    .qmodal-diagram{font-size:16px;line-height:2.5;padding:14px 12px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  @media print{
+    .topbar{position:static;} .controls,.pfoot{display:none;}
+    body.show-jp .jp,.pt{display:block;} .panel{display:block;}
+    .qmodal-backdrop{display:none!important;}
+    .dash-backdrop{display:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <div class="ttl"><span id="docTitle">精読ノート ― The Danger of a Single Story</span> <small id="docSub">北海道大学 2022年度 大問1（出典：Chimamanda Ngozi Adichie, TED Talk）</small></div>
+  <div class="controls">
+    <button id="dashOpenBtn" type="button" class="dash-open-btn">① 設問チェック</button>
+    <span class="sep"></span>
+    <button data-cls="show-jp">和訳</button>
+    <button data-cls="show-pt">ポイント</button>
+    <span class="sep"></span>
+    <button data-cls="struct-on">構造</button>
+    <button data-cls="skel-on">骨格</button>
+    <button data-cls="dm-on">ディスコースマーカー</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="lead">
+    英文をまず素読 → <b>文をタップ</b>で和訳・ポイント。<b>点線の語</b>はタップで語義（受験レベルのみ）。<b>構造</b>で重要文の語が S/V/O/C/M に色分けされ、対句・並列は橙の太下線＋番号。<b>骨格</b>でMを薄く落として核を浮かせます。<b>ディスコースマーカー</b>で因果・対比・譲歩・列挙などの論理関係を表示します。<b>空所</b>はクリックで答え。各段落末に語句・要旨。
+  </div>
+
+  <div class="index">
+    <div class="ih">本文で復習する文法（タップで該当文へジャンプ）</div>
+    <div class="chips" id="gidx"></div>
+  </div>
+
+  <div class="index" id="qmapWrap">
+    <div class="ih">設問との対応（タップで設問ビューを表示）</div>
+    <div class="chips" id="qidx"></div>
+  </div>
+
+  <div class="legend">
+    <span class="ls">S 主語</span><span class="lv">V 動詞</span><span class="lo">O 目的語</span><span class="lc">C 補語</span><span class="lm">M 修飾語</span>
+    <span class="lp">対句・並列（番号で対応）</span>
+  </div>
+  <div class="legend dm-legend" id="dmLegend">
+    <span class="ld">因果＝因/果　対比＝対A/対B　譲歩＝譲/主　列挙＝列①②③　例示＝般/例</span>
+  </div>
+
+  <div id="paras"></div>
+  <footer>精読ノート ― 構造表示対応版</footer>
+</div>
+
+<div class="qmodal-backdrop" id="qmodalBackdrop">
+  <div class="qmodal">
+    <button class="qmodal-close" id="qmodalClose">✕ 閉じる</button>
+    <div class="qmodal-head">
+      <span class="qmodal-qnum" id="qmodalQnum"></span>
+      <span class="qmodal-preview" id="qmodalParaRole"></span>
+    </div>
+    <div class="qmodal-question" id="qmodalQuestion"></div>
+
+    <div class="qmodal-section" id="qmodalParaSection">
+      <div class="qmodal-sectitle">段落全文（該当文をハイライト）</div>
+      <div class="qmodal-para" id="qmodalPara"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalDiagramSection">
+      <div class="qmodal-sectitle">構文解釈図</div>
+      <div class="qmodal-diagram" id="qmodalDiagram"></div>
+      <div class="qmodal-diagram-legend">[ ]<b>=名詞句（S・O共通）</b>　下線<b>=V動詞</b>　⟨ ⟩<b>=C補語</b>　( )<b>=M修飾語</b>　橙の下線・番号<b>=対句・並列の対応</b></div>
+    </div>
+    <div class="qmodal-section" id="qmodalChoiceSection">
+      <div class="qmodal-sectitle">選択肢の検証</div>
+      <div id="qmodalChoices"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalReasonSection">
+      <div class="qmodal-sectitle">解答の根拠</div>
+      <div class="qmodal-reason" id="qmodalReason"></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-backdrop" id="dashBackdrop">
+  <div class="dash-modal">
+    <button class="qmodal-close" id="dashClose">✕ 閉じる</button>
+    <div class="dash-head">
+      <div class="dash-title">① 設問チェック</div>
+      <div class="dash-sub">各設問に答えてから「採点する」を押してください。わからないときは「ヒントを見る」で該当段落を確認できます。</div>
+    </div>
+    <div id="dashQCards"></div>
+    <div class="dash-gradebar">
+      <button id="dashGradeBtn" type="button" class="dash-grade-btn">採点する</button>
+      <div class="dash-score-summary" id="dashScoreSummary"></div>
+    </div>
+    <div id="dashReview"></div>
+  </div>
+</div>
+
+<script>
+/* ===== 教材データ ===== */
+const DATA = [
+{
+  id:"p1", role:"導入：単一の物語の弊害", 
+  summary:"TED Talksでのアディーチェの講演「シングルストーリーの危険性」を紹介し、単一の物語が誤解を生み、真実の一部しか伝えないという危険性を提示する。",
+  vocab:[
+    {word:"a single story",pos:"キーワード",ja:"【訳語の幅】単一の物語／一つの物語／一面的な物語。原義は『その対象について知っている物語がひとつしかないこと』という数量的な限定であり、「単一」が持つ均質・非混合のニュアンス（単一民族、単一通貨など）とは少しずれる。本文全体を通じたキーワードのため、本教材では和訳・模範解答とも東進の公式解答に準拠し「単一の物語」で統一している。答案を書く際はこの訳語に合わせるのが安全。",level:"最重要"},
+    {word:"household",pos:"名詞",ja:"家庭、世帯",level:"標準"},
+    {word:"extend from A to B",pos:"熟語",ja:"AからBにまで及ぶ",level:"標準"},
+    {word:"narrative",pos:"名詞",ja:"物語、語り",level:"標準"},
+    {word:"adverse",pos:"形容詞",ja:"逆の、不利な",level:"難関"},
+    {word:"narrow-minded",pos:"形容詞",ja:"偏狭な",level:"標準"},
+    {word:"misconception",pos:"名詞",ja:"誤解",level:"難関"},
+    {word:"portion",pos:"名詞",ja:"部分",level:"標準"},
+    {word:"come to light",pos:"熟語",ja:"明るみに出る",level:"標準"}
+  ],
+  sents:[
+    { id:"p1s1", imp:false, pattern:"",
+      parts:[{t:"One of the most interesting lectures on TED Talks that I have seen so far was from Chimamanda Ngozi Adichie's \"The Danger of a Single Story\".",role:null}],
+      jp:"これまで見た中で最も興味深いTED Talksの講演の一つは、チママンダ・ンゴズィ・アディーチェの『シングルストーリーの危険性』だった。" },
+    { id:"p1s2", imp:false, pattern:"",
+      parts:[
+        {t:"Adichie is a Nigerian writer, born and brought up in a regular, middle-class",role:null},
+        {t:"household.",role:null,tap:{w:"household",pos:"名詞",ja:"家庭、世帯"}}
+      ],
+      jp:"アディーチェは、ごく普通の中流家庭に生まれ育ったナイジェリア人作家である。" },
+    { id:"p1s3", imp:false, pattern:"",
+      parts:[
+        {t:"She moved to the United States for her college and",role:null},
+        {t:"graduate",role:null,tap:{w:"graduate",pos:"形容詞",ja:"大学院の"}},
+        {t:"degrees.",role:null}
+      ],
+      jp:"彼女は大学・大学院の学位を取るためにアメリカに渡った。" },
+    { id:"p1s4", imp:false, pattern:"",
+      parts:[
+        {t:"Her writings",role:null},
+        {t:"extend from",role:null,tap:{w:"extend from A to B",pos:"熟語",ja:"AからBにまで及ぶ・多岐にわたる"}},
+        {t:"novels to short stories to fact-based",role:null},
+        {t:"narratives.",role:null,tap:{w:"narrative",pos:"名詞",ja:"物語、語り"}}
+      ],
+      jp:"彼女の作品は、小説から短編小説、事実に基づいた物語まで多岐にわたる。" },
+    { id:"p1s5", imp:false, pattern:"",
+      parts:[
+        {t:"In her talk, she discusses the",role:null},
+        {t:"adverse",role:null,tap:{w:"adverse",pos:"形容詞",ja:"逆の、不利な"}},
+        {t:"consequences of a \"",role:null},
+        {t:"single story",role:null,tap:{w:"a single story",pos:"重要語句",ja:"訳語に幅あり：単一の物語／一つの物語／一面的な物語。原義は『その対象について知っている物語がひとつしかないこと』という数量的な限定。本教材では東進準拠で「単一の物語」に統一。"}},
+        {t:"\" or having",role:null},
+        {t:"narrow-minded",role:null,tap:{w:"narrow-minded",pos:"形容詞",ja:"偏狭な、視野の狭い"}},
+        {t:"ideas.",role:null}
+      ],
+      jp:"彼女は講演の中で、『単一の物語』すなわち偏狭な考えを持つことがもたらす悪影響について論じている。" },
+    { id:"p1s6", imp:false, pattern:"",
+      parts:[
+        {t:"She reasons that a single story often produces",role:null},
+        {t:"misconceptions",role:null,tap:{w:"misconception",pos:"名詞",ja:"誤解"}},
+        {t:"about a particular group of people or culture.",role:null}
+      ],
+      jp:"彼女は、単一の物語がしばしば特定の集団や文化についての誤解を生むと論じている。" },
+    { id:"p1s7", imp:false, pattern:"",
+      parts:[
+        {t:"She",role:null},
+        {t:"also",role:null,dm:"列挙"},
+        {t:"adds that a single story only shows a",role:null},
+        {t:"portion",role:null,tap:{w:"portion",pos:"名詞",ja:"部分"}},
+        {t:"of the whole truth.",role:null}
+      ],
+      jp:"彼女はさらに、単一の物語は真実全体のほんの一部しか示さないと付け加えている。" },
+    { id:"p1s8", imp:true, pattern:"SVO", tags:["q1","this-it"],
+      parts:[
+        {t:"This",role:"s",lab:"S",dmSpan:"果"},
+        {t:"presents",role:"v",lab:"V"},
+        {t:"a danger",role:"o",lab:"O"},
+        {t:"since",role:"m",lab:"M",dm:"因果"},
+        {t:"it prevents",role:"m",dmSpan:"因"},
+        {t:"the complete truth",role:"m"},
+        {t:"from coming to light.",role:"m",tap:{w:"come to light",pos:"熟語",ja:"明るみに出る"}}
+      ],
+      jp:"これは危険をはらんでいる。なぜなら、それ（単一の物語）が真実全体が明るみに出ることを妨げるからだ。",
+      pt:"This＝直前文の内容（単一の物語は真実の一部しか示さないこと）を新しい主張の主語として受ける語。it＝同じ文中でその同一内容を軽く引き継ぐ人称代名詞。This→itは『強い指示→軽い受け』という自然な語法で、指す対象は同じ。訳：単一の物語によって、真実全体が明るみに出ることが妨げられる。",
+      tags2:["設問1根拠","This→itの受け替え（同一対象）","prevent A from -ing"] }
+  ]
+},
+{
+  id:"p2", role:"具体例①：子供時代の読書経験",
+  summary:"アディーチェは幼少期、自分と異なる登場人物ばかりの英米の児童書を読み、自分自身の物語からも自分の文化が抜け落ちていたと振り返る。これが彼女にとっての『単一の物語』だった。",
+  vocab:[
+    {word:"relate",pos:"動詞",ja:"（体験などを）語る",level:"標準"},
+    {word:"circumstance",pos:"名詞",ja:"状況",level:"標準"},
+    {word:"complexion",pos:"名詞",ja:"肌の色、顔色",level:"難関"},
+    {word:"consume",pos:"動詞",ja:"消費する、食べる",level:"標準"},
+    {word:"be represented in",pos:"熟語",ja:"（作品などに）描かれる",level:"標準"},
+    {word:"embody",pos:"動詞",ja:"具体化する、体現する",level:"難関"},
+    {word:"consumption",pos:"名詞",ja:"摂取、消費",level:"標準"}
+  ],
+  sents:[
+    { id:"p2s1", imp:false, pattern:"",
+      parts:[{t:"According to Adichie, we are easily influenced by single stories, especially during our younger years.",role:null}],
+      jp:"アディーチェによれば、私たちは特に幼い頃、単一の物語に容易に影響される。" },
+    { id:"p2s2", imp:false, pattern:"",
+      parts:[
+        {t:"She",role:null,tap:{w:"relate",pos:"動詞",ja:"（体験などを）語る"}},
+        {t:"relates that when she was little, she read a lot of British and American children's books.",role:null}
+      ],
+      jp:"彼女が語るところによると、幼い頃、イギリスやアメリカの児童書をたくさん読んだという。" },
+    { id:"p2s3", imp:false, pattern:"",
+      parts:[
+        {t:"The stories and",role:null},
+        {t:"circumstances",role:null,tap:{w:"circumstance",pos:"名詞",ja:"状況"}},
+        {t:"were very unfamiliar to her.",role:null}
+      ],
+      jp:"その物語や状況は彼女にとってとても馴染みのないものだった。" },
+    { id:"p2s4", imp:true, pattern:"SVO", tags:["dm-contrast"],
+      parts:[
+        {t:"The characters",role:"s",lab:"S",dmSpan:"対A"},
+        {t:"had",role:"v",lab:"V"},
+        {t:"fair",role:"o",lab:"O"},
+        {t:"complexion,",role:"o",tap:{w:"complexion",pos:"名詞",ja:"肌の色、顔色"}},
+        {t:"while",role:null,dm:"対比"},
+        {t:"she",role:"s",lab:"S",dmSpan:"対B"},
+        {t:"had",role:"v",lab:"V"},
+        {t:"black skin.",role:"o",lab:"O"}
+      ],
+      jp:"登場人物たちは色白の肌をしていたが、彼女は黒い肌をしていた。",
+      pt:"while＝対比のディスコースマーカー。登場人物（対A）と彼女自身（対B）の肌の色を対比し、児童書の世界と自分自身のギャップを示す一文。",
+      tags2:["while による対比","S/V/Oの並置対比"] },
+    { id:"p2s5", imp:false, pattern:"",
+      parts:[
+        {t:"They ate apples, while mangoes were mostly",role:null},
+        {t:"consumed",role:null,tap:{w:"consume",pos:"動詞",ja:"消費する、食べる"}},
+        {t:"in Nigeria.",role:null}
+      ],
+      jp:"彼らはリンゴを食べていたが、ナイジェリアでは主にマンゴーが食べられていた。",
+      pt:"【設問6】選択肢(A)は本文と逆。りんご＝異国(英米)の文化、マンゴー＝ナイジェリアの文化。" },
+    { id:"p2s6", imp:false, pattern:"",
+      parts:[{t:"At the age of seven, she started to draw and write her own stories.",role:null}],
+      jp:"7歳のとき、彼女は自分自身の物語を描いたり書いたりし始めた。" },
+    { id:"p2s7", imp:true, pattern:"SVC", tags:["omit-rel2"],
+      parts:[
+        {t:"The characters",role:"s",lab:"S"},
+        {t:"she created",role:"s"},
+        {t:"were",role:"v",lab:"V"},
+        {t:"exactly the same as those in the books",role:"c",lab:"C"},
+        {t:"she had read.",role:"c"}
+      ],
+      jp:"彼女が創り出した登場人物は、それまで読んだ本の登場人物とまったく同じだった。",
+      pt:"The characters (that/which) she created、the books (that/which) she had read＝目的格関係代名詞が2箇所とも省略。exactly the same as＝『～とまったく同じ』。",
+      tags2:["関係代名詞の省略×2","exactly the same as"] },
+    { id:"p2s8", imp:true, pattern:"SVC", tags:["form-it","q2"],
+      parts:[
+        {t:"During that time,",role:"m",lab:"M"},
+        {t:"she",role:"s",lab:"S"},
+        {t:"felt",role:"v",lab:"V"},
+        {t:"that",role:null},
+        {t:"it",role:"s",lab:"仮S"},
+        {t:"was",role:"v",lab:"V"},
+        {t:"quite normal",role:"c",lab:"C"},
+        {t:"that she was not represented in literature.",role:"s",lab:"真S",tap:{w:"be represented in",pos:"熟語",ja:"（作品などの中に）描かれる、登場する"}}
+      ],
+      jp:"その当時、彼女は、自分が文学の中に描かれていないことをごく普通のことだと感じていた。",
+      pt:"it(仮S)…that she was not represented in literature(真S)の形式主語構文（feltの目的語節内）。be represented in literature＝文学の中に描かれている。",
+      tags2:["設問2根拠","形式主語 it（felt の目的語節内）","be represented in"] },
+    { id:"p2s9", imp:false, pattern:"",
+      parts:[{t:"She thought that the only characters that existed were those characters from the books she had read.",role:null}],
+      jp:"彼女は、存在する唯一の登場人物は、自分が読んだ本の中の登場人物だけだと思っていた。" },
+    { id:"p2s10", imp:true, pattern:"SVC",
+      parts:[
+        {t:"That",role:"s",lab:"S"},
+        {t:"was",role:"v",lab:"V"},
+        {t:"her single story of books.",role:"c",lab:"C"}
+      ],
+      jp:"それが彼女の『本についての単一の物語』だった。",
+      pt:"That＝前文の内容（彼女が創った登場人物が読んだ本の登場人物と全く同じだったこと）を指す指示代名詞。" },
+    { id:"p2s11", imp:true, pattern:"SVO",
+      parts:[
+        {t:"And",role:null,dm:"列挙"},
+        {t:"none of these stories",role:"s",lab:"S"},
+        {t:"embodied",role:"v",lab:"V",tap:{w:"embody",pos:"動詞",ja:"具体化する、体現する"}},
+        {t:"her culture and experiences.",role:"o",lab:"O"}
+      ],
+      jp:"そして、これらの物語のどれも彼女の文化や経験を体現してはいなかった。",
+      pt:"none of these stories＝『これらの物語のどれも～ない』という否定のS。Andは前文からの列挙。" },
+    { id:"p2s12", imp:false, pattern:"",
+      parts:[
+        {t:"Later on, she realized that her drawings and stories were, largely, influenced by her",role:null},
+        {t:"consumption",role:null,tap:{w:"consumption",pos:"名詞",ja:"摂取、消費"}},
+        {t:"of Western literature.",role:null}
+      ],
+      jp:"後になって、彼女は自分の絵や物語が主に西洋文学の摂取に影響されていたことに気づいた。" }
+  ]
+},
+{
+  id:"p3", role:"具体例②：Fideの紹介",
+  summary:"アディーチェは、一家のお手伝いだったフィデの例を挙げ、子供が単一の物語の影響を受けやすいことを示す。母親は彼を気の毒に思うよう教え込んだ。",
+  vocab:[
+    {word:"predisposed",pos:"形容詞",ja:"～しがちな、～の傾向がある",level:"難関"},
+    {word:"illustrate",pos:"動詞",ja:"例示する、説明する",level:"標準"},
+    {word:"instill",pos:"動詞",ja:"（考えなどを）教え込む",level:"難関"}
+  ],
+  sents:[
+    { id:"p3s1", imp:false, pattern:"",
+      parts:[
+        {t:"In her TED talk, she shares another example to",role:null},
+        {t:"illustrate",role:null,tap:{w:"illustrate",pos:"動詞",ja:"例示する、説明する"}},
+        {t:"how children are more",role:null},
+        {t:"predisposed",role:null,tap:{w:"predisposed",pos:"形容詞",ja:"～しがちな、～の傾向がある"}},
+        {t:"to the problems of single stories.",role:null}
+      ],
+      jp:"TED講演の中で、彼女は、子供がいかに単一の物語の問題に陥りやすいかを示すもう一つの例を紹介している。" },
+    { id:"p3s2", imp:false, pattern:"",
+      parts:[{t:"She talks about their family's helper, Fide, who came from a very poor family.",role:null}],
+      jp:"彼女は、とても貧しい家庭出身の、一家のお手伝いさんフィデについて語っている。" },
+    { id:"p3s3", imp:false, pattern:"",
+      parts:[
+        {t:"Adichie's mother",role:null,tap:{w:"instill",pos:"動詞",ja:"（考えなどを）教え込む"}},
+        {t:"instilled in her young mind that she should feel sorry for him and his family.",role:null}
+      ],
+      jp:"アディーチェの母親は、彼と彼の家族を気の毒に思うべきだという考えを、幼い彼女の心に植え付けた。" }
+  ]
+},
+{
+  id:"p4", role:"具体例②続：フィデをめぐる思い込みと転換",
+  summary:"アディーチェは幼さと母の影響からフィデを『貧しく不幸な人』と決めつけていたが、村を訪れて彼の兄の才能を見て考えを改める。貧しさは彼の物語の一部に過ぎなかった。",
+  vocab:[
+    {word:"jump to conclusions",pos:"熟語",ja:"早合点する",level:"標準"},
+    {word:"illiterate",pos:"形容詞",ja:"読み書きができない",level:"難関"},
+    {word:"ill-fated",pos:"形容詞",ja:"不運な",level:"難関"},
+    {word:"deprived",pos:"形容詞",ja:"貧困な、恵まれない",level:"難関"},
+    {word:"ignorant",pos:"形容詞",ja:"無知な",level:"標準"},
+    {word:"perseverance",pos:"名詞",ja:"忍耐力、根気",level:"難関"},
+    {word:"triumph",pos:"名詞",ja:"勝利、成功",level:"標準"},
+    {word:"anything else but",pos:"熟語",ja:"～以外の何ものでもない",level:"難関"}
+  ],
+  sents:[
+    { id:"p4s1", imp:true, pattern:"SVC", tags:["form-it","all-that"],
+      parts:[
+        {t:"All",role:"s",lab:"S",dmSpan:"因"},
+        {t:"I had heard about them",role:"s"},
+        {t:"was",role:"v",lab:"V"},
+        {t:"how poor they were,",role:"c",lab:"C"},
+        {t:"so that",role:"m",lab:"M",dm:"因果"},
+        {t:"it",role:"s",lab:"仮S",dmSpan:"果"},
+        {t:"had become",role:"v",lab:"V"},
+        {t:"impossible",role:"c",lab:"C"},
+        {t:"for me",role:"m",lab:"M"},
+        {t:"to see them as anything else but poor.",role:"s",lab:"真S",tap:{w:"anything else but",pos:"熟語",ja:"～以外の何ものでもない"}}
+      ],
+      jp:"彼らについて私が聞いていたことのすべては、彼らがいかに貧しいかということだったので、私には彼らを貧しいこと以外の何ものとしても見ることができなくなっていた。",
+      pt:"All (that) I had heard about them＝名詞節S（that省略）。so that～＝結果節。it(仮S)…for me to see them as anything else but poor(真S)の形式主語構文が入れ子。",
+      tags2:["名詞節主語(All that省略)","so that（結果）","形式主語 it","anything else but"] },
+    { id:"p4s2", imp:false, pattern:"",
+      parts:[
+        {t:"Because of her young age and influence from her mother,",role:null,dm:"因果",dmSpan:"因"},
+        {t:"Adichie",role:null,dmSpan:"果"},
+        {t:"jumped to conclusions",role:null,tap:{w:"jump to conclusions",pos:"熟語",ja:"早合点する、結論に飛びつく"}},
+        {t:"that Fide was",role:null},
+        {t:"illiterate",role:null,tap:{w:"illiterate",pos:"形容詞",ja:"読み書きができない"}},
+        {t:"and",role:null},
+        {t:"ill-fated",role:null,tap:{w:"ill-fated",pos:"形容詞",ja:"不運な、悲運の"}},
+        {t:"forever.",role:null}
+      ],
+      jp:"幼かったことと母親からの影響のせいで、アディーチェはフィデが読み書きができず、生涯不運なままだろうと決めつけた。",
+      pt:"【設問6】選択肢(C)は本文と逆。jumped to conclusions＝早合点。rightly（正しく）ではない。" },
+    { id:"p4s3", imp:false, pattern:"",
+      parts:[
+        {t:"Her view,",role:null},
+        {t:"however,",role:null,dm:"対比"},
+        {t:"changed when she visited Fide's village.",role:null}
+      ],
+      jp:"しかし、フィデの村を訪れたとき、彼女の見方は変わった。" },
+    { id:"p4s4", imp:false, pattern:"",
+      parts:[{t:"There, she saw attractively decorated baskets his brother had made.",role:null}],
+      jp:"そこで彼女は、彼の兄が作った、魅力的に装飾されたかごを見た。" },
+    { id:"p4s5", imp:false, pattern:"",
+      parts:[
+        {t:"She then understood that being",role:null},
+        {t:"deprived",role:null,tap:{w:"deprived",pos:"形容詞",ja:"貧困な、恵まれない"}},
+        {t:"does not mean being",role:null},
+        {t:"ignorant,",role:null,tap:{w:"ignorant",pos:"形容詞",ja:"無知な"}},
+        {t:"useless, and with no chance to succeed.",role:null}
+      ],
+      jp:"そして彼女は、貧しい境遇にあることは、無知であること、役立たずであること、成功のチャンスがないこととは違うのだと理解した。" },
+    { id:"p4s6", imp:false, pattern:"",
+      parts:[
+        {t:"Hard work,",role:null},
+        {t:"perseverance,",role:null,tap:{w:"perseverance",pos:"名詞",ja:"忍耐力、根気"}},
+        {t:"and creativity are keys to",role:null},
+        {t:"triumph",role:null,tap:{w:"triumph",pos:"名詞",ja:"勝利、成功"}},
+        {t:"in life.",role:null}
+      ],
+      jp:"勤勉さ、忍耐力、そして創造性が人生で成功するための鍵である。" },
+    { id:"p4s7", imp:true, pattern:"SVC", tags:["q3"],
+      parts:[
+        {t:"Fide's",role:"s",lab:"S"},
+        {t:"( ア )",role:"s"},
+        {t:"was",role:"v",lab:"V"},
+        {t:"just one piece of his story.",role:"c",lab:"C"}
+      ],
+      jp:"フィデの（　ア　）は、彼の物語のほんの一部にすぎなかった。",
+      pt:"空所ア＝poverty。直前の引用「Their poverty was my single story of them.」中の語と対応。",
+      tags2:["設問3の空所"] },
+    { id:"p4s8", imp:false, pattern:"",
+      parts:[{t:"There were other stories of Fide and his family that needed to be told and recognized.",role:null}],
+      jp:"フィデとその家族には、語られ、認識される必要のある他の物語があった。" }
+  ]
+},
+{
+  id:"p5", role:"具体例③：ルームメイトのエピソード",
+  summary:"アディーチェは大学のルームメイトに一方的に決めつけられた経験を語る。こうした逸話から、単一の物語は差別や攻撃の根本原因となる固定観念を生むと結論づける。",
+  vocab:[
+    {word:"noteworthy",pos:"形容詞",ja:"注目すべき",level:"難関"},
+    {word:"stereotype",pos:"動詞",ja:"型にはめて決めつける",level:"標準"},
+    {word:"inexperienced",pos:"形容詞",ja:"経験不足な",level:"標準"},
+    {word:"tribal",pos:"形容詞",ja:"部族の",level:"標準"},
+    {word:"assumption",pos:"名詞",ja:"思い込み、仮定",level:"標準"},
+    {word:"notion",pos:"名詞",ja:"考え、概念",level:"標準"},
+    {word:"characterize",pos:"動詞",ja:"特徴づける",level:"標準"},
+    {word:"root cause",pos:"熟語",ja:"根本的原因",level:"標準"},
+    {word:"aggression",pos:"名詞",ja:"攻撃性",level:"難関"}
+  ],
+  sents:[
+    { id:"p5s1", imp:false, pattern:"",
+      parts:[
+        {t:"Another",role:null,tap:{w:"noteworthy",pos:"形容詞",ja:"注目すべき"}},
+        {t:"noteworthy story that Adichie talked about in her lecture was her American roommate in college.",role:null}
+      ],
+      jp:"アディーチェが講演で語ったもう一つの注目すべき話は、大学時代のアメリカ人ルームメイトについてだった。" },
+    { id:"p5s2", imp:true, pattern:"SVO", tags:["parallel"],
+      parts:[
+        {t:"She",role:"s",lab:"S"},
+        {t:"discloses",role:"v",lab:"V"},
+        {t:"that her roommate had",role:"o",lab:"O"},
+        {t:"stereotyped",role:"o",tap:{w:"stereotype",pos:"動詞",ja:"型にはめて決めつける"}},
+        {t:"her",role:"o"},
+        {t:"— presumed",role:"o"},
+        {t:"that she could not speak English well,",role:"o",pp:1,ptail:"①"},
+        {t:"that she was",role:"o",pp:2,ptail:"②"},
+        {t:"inexperienced",role:"o",pp:2,tap:{w:"inexperienced",pos:"形容詞",ja:"経験不足な、不慣れな"}},
+        {t:"on how to use a stove,",role:"o",pp:2},
+        {t:"and",role:"corr"},
+        {t:"that she was unfamiliar with American pop music.",role:"o",pp:3,ptail:"③"}
+      ],
+      jp:"彼女は、ルームメイトが彼女を決めつけていたことを明かしている――彼女が英語をうまく話せない、コンロの使い方に不慣れである、アメリカのポップ音楽に疎いと決めてかかっていたのだ。",
+      pt:"presumed that A, that B, and that Cの3項並列（①②③）。stereotype＝決めつける。",
+      tags2:["設問6関連（①②③への反証と対応）","that節の3項並列"] },
+    { id:"p5s3", imp:false, pattern:"",
+      parts:[
+        {t:"Her roommate supposed that Adichie would only know and listen to African",role:null},
+        {t:"tribal",role:null,tap:{w:"tribal",pos:"形容詞",ja:"部族の"}},
+        {t:"music.",role:null}
+      ],
+      jp:"彼女のルームメイトは、アディーチェがアフリカの部族音楽しか知らず聴かないだろうと思い込んでいた。" },
+    { id:"p5s4", imp:false, pattern:"",
+      parts:[
+        {t:"Needless to say, these were all wrong",role:null},
+        {t:"assumptions",role:null,tap:{w:"assumption",pos:"名詞",ja:"思い込み、仮定"}},
+        {t:"about her.",role:null}
+      ],
+      jp:"言うまでもなく、これらはすべて彼女についての誤った思い込みだった。" },
+    { id:"p5s5", imp:false, pattern:"",
+      parts:[{t:"Adichie speaks English fluently because it is the official language of Nigeria.",role:null}],
+      jp:"アディーチェは英語を流暢に話す。なぜなら英語はナイジェリアの公用語だからだ。" },
+    { id:"p5s6", imp:false, pattern:"",
+      parts:[{t:"She definitely knows how to use the stove since she comes from a middle-class family.",role:null}],
+      jp:"彼女は中流家庭の出身なので、当然コンロの使い方を知っている。" },
+    { id:"p5s7", imp:false, pattern:"",
+      parts:[
+        {t:"Indeed,",role:null},
+        {t:"tribal music is part of the Nigerian culture",role:null,dmSpan:"対A"},
+        {t:"but",role:null,dm:"対比"},
+        {t:"there are also",role:null,dmSpan:"対B"},
+        {t:"blues, pop, and other types of music in Nigeria.",role:null}
+      ],
+      jp:"確かに部族音楽はナイジェリア文化の一部だが、ナイジェリアにはブルースやポップなど他の種類の音楽もある。",
+      pt:"【設問6】選択肢(D)と一致（true）。" },
+    { id:"p5s8", imp:true, pattern:"SVO", tags:["dm-concession"],
+      parts:[
+        {t:"While",role:null,dm:"譲歩"},
+        {t:"one or two of these",role:"s",lab:"S",dmSpan:"譲"},
+        {t:"notions",role:"s",tap:{w:"notion",pos:"名詞",ja:"考え、概念"}},
+        {t:"are",role:"v",lab:"V"},
+        {t:"true to some,",role:"c",lab:"C"},
+        {t:"they",role:"s",lab:"S",dmSpan:"主"},
+        {t:"certainly do not",role:"v",lab:"V"},
+        {t:"characterize",role:"v",tap:{w:"characterize",pos:"動詞",ja:"特徴づける"}},
+        {t:"the people as a whole.",role:"o",lab:"O"}
+      ],
+      jp:"これらの考えのうち一つか二つはある程度当てはまるとしても、それらが人々全体を特徴づけるものでは決してない。",
+      pt:"While＝譲歩のディスコースマーカー。While節（譲）でいったん一部当てはまることを認めた上で、主節（主）で『全体は特徴づけない』という本当の主張を述べる、譲歩→主張の典型構造。",
+      tags2:["譲歩→主張の構造","While S be C, S V O"] },
+    { id:"p5s9", imp:true, pattern:"SVO", tags:["gerund-subj"],
+      parts:[
+        {t:"In these anecdotes",role:"m",lab:"M"},
+        {t:"Adichie narrated,",role:"m"},
+        {t:"we",role:"s",lab:"S"},
+        {t:"can deduce",role:"v",lab:"V"},
+        {t:"that",role:null},
+        {t:"having a single story",role:"s"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"harmful.",role:"c",lab:"C"}
+      ],
+      jp:"アディーチェが語ったこれらの逸話から、私たちは、単一の物語を持つことは有害であると推測できる。",
+      pt:"関係詞省略のM前置＋動名詞主語（having a single story）。",
+      tags2:["関係詞省略のM前置","動名詞主語"] },
+    { id:"p5s10", imp:true, pattern:"SVO", tags:["q4"],
+      parts:[
+        {t:"It",role:"s",lab:"S"},
+        {t:"creates",role:"v",lab:"V"},
+        {t:"a set of stereotypes",role:"o",lab:"O"},
+        {t:"which is one of the",role:"m",lab:"M"},
+        {t:"root causes",role:"m",tap:{w:"root cause",pos:"熟語",ja:"根本的原因"}},
+        {t:"for discrimination or",role:"m"},
+        {t:"aggression",role:"m",tap:{w:"aggression",pos:"名詞",ja:"攻撃性"}},
+        {t:"towards a group of people or culture.",role:"m"}
+      ],
+      jp:"それ（単一の物語を持つこと）は、人々や文化の集団に対する差別や攻撃の根本的原因の一つである固定観念を作り出す。",
+      pt:"It＝having a single story。訳：単一の物語は、差別や攻撃の根本原因の1つである固定観念を作り出す。",
+      tags2:["設問4根拠","関係代名詞 which"] }
+  ]
+},
+{
+  id:"p6", role:"COVID-19との接続と引用による結論",
+  summary:"筆者はアディーチェの講演をCOVID-19禍でのアジア人差別に重ね合わせる。単一の物語は人々の尊厳を奪い、対等な人間性の認識を妨げ、相違点を強調してしまうとアディーチェは述べる。",
+  vocab:[
+    {word:"spiteful",pos:"形容詞",ja:"悪意のある",level:"難関"},
+    {word:"carrier",pos:"名詞",ja:"保菌者、運び手",level:"標準"},
+    {word:"generalize",pos:"動詞",ja:"一般化する",level:"標準"},
+    {word:"erroneous",pos:"形容詞",ja:"誤った",level:"難関"},
+    {word:"prejudice",pos:"名詞",ja:"偏見",level:"標準"},
+    {word:"dignity",pos:"名詞",ja:"尊厳",level:"標準"}
+  ],
+  sents:[
+    { id:"p6s1", imp:false, pattern:"",
+      parts:[
+        {t:"Adichie's speech reminds me of the recent tsunami of",role:null},
+        {t:"spiteful",role:null,tap:{w:"spiteful",pos:"形容詞",ja:"悪意のある"}},
+        {t:"attacks directed to Asians because of the COVID-19 pandemic.",role:null}
+      ],
+      jp:"アディーチェの講演は、COVID-19の流行によりアジア人に向けられた最近の悪意ある攻撃の津波を私に想起させる。" },
+    { id:"p6s2", imp:false, pattern:"",
+      parts:[{t:"People are quick to judge.",role:null}],
+      jp:"人々はすぐに判断を下す。" },
+    { id:"p6s3", imp:false, pattern:"",
+      parts:[
+        {t:"If you are Asian, you are a",role:null},
+        {t:"carrier",role:null,tap:{w:"carrier",pos:"名詞",ja:"保菌者、運び手"}},
+        {t:"of the coronavirus.",role:null}
+      ],
+      jp:"もしあなたがアジア人なら、あなたはコロナウイルスの保菌者だとみなされる。" },
+    { id:"p6s4", imp:false, pattern:"",
+      parts:[
+        {t:"This single story has caused people to",role:null},
+        {t:"generalize",role:null,tap:{w:"generalize",pos:"動詞",ja:"一般化する"}},
+        {t:"and make",role:null},
+        {t:"erroneous",role:null,tap:{w:"erroneous",pos:"形容詞",ja:"誤った"}},
+        {t:"assumptions about Asians.",role:null}
+      ],
+      jp:"この単一の物語は、人々にアジア人について一般化させ、誤った思い込みをさせる原因となった。" },
+    { id:"p6s5", imp:false, pattern:"",
+      parts:[
+        {t:"Sadly, this has resulted in hate crimes,",role:null},
+        {t:"prejudice,",role:null,tap:{w:"prejudice",pos:"名詞",ja:"偏見"}},
+        {t:"and fear against foreigners in many parts of the world.",role:null}
+      ],
+      jp:"悲しいことに、これは世界各地で、外国人に対するヘイトクライムや偏見、恐怖という結果を招いた。" },
+    { id:"p6s6", imp:true, pattern:"", tags:["colon-reveal","rather-than","q5"],
+      parts:[
+        {t:"As Adichie expresses clearly,",role:"m",lab:"M"},
+        {t:"“The consequence of the single story",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"this:",role:"c",lab:"C"},
+        {t:"It",role:"s",lab:"S"},
+        {t:"robs",role:"v",lab:"V"},
+        {t:"people",role:"o",lab:"O"},
+        {t:"of",role:"m",lab:"M"},
+        {t:"dignity.",role:"m",tap:{w:"dignity",pos:"名詞",ja:"尊厳"}},
+        {t:"It",role:"s",lab:"S"},
+        {t:"makes",role:"v",lab:"V"},
+        {t:"our recognition of our equal humanity",role:"o",lab:"O"},
+        {t:"difficult.",role:"c",lab:"C"},
+        {t:"It",role:"s",lab:"S"},
+        {t:"emphasizes",role:"v",lab:"V"},
+        {t:"( イ )",role:"o",pp:1,ptail:"①"},
+        {t:"rather than",role:"corr"},
+        {t:"( ウ )”.",role:"o",pp:2,ptail:"②"}
+      ],
+      jp:"アディーチェは次のように明確に述べている。「単一の物語がもたらす結果はこうだ。それは人々から尊厳を奪う。それは私たちが対等な人間性を認め合うことを難しくする。それは、私たちがどう似ているかよりも、どう違うかを強調するのだ」と。",
+      pt:"コロンで結果を3文列挙。makes...difficult＝第5文型。rather than＝BよりむしろA。イ＝(A)different、ウ＝(B)similar。",
+      tags2:["設問5の空所","コロンによる種明かし","rather than の対比","SVOC (make O C)"] }
+  ]
+},
+{
+  id:"p7", role:"結論：複数の物語の重要性",
+  summary:"結論として、アディーチェの講演は、複数の物語を持つことで深い洞察を得て誤った判断を避けることの重要性を説く。事実と憶測を区別し偏見を自覚することで、単一の物語の危険を防ぎ『楽園』を取り戻せると述べる。",
+  vocab:[
+    {word:"profound",pos:"形容詞",ja:"深い、深遠な",level:"標準"},
+    {word:"insight",pos:"名詞",ja:"洞察",level:"標準"},
+    {word:"misleading",pos:"形容詞",ja:"誤解を招く",level:"標準"},
+    {word:"distinguish A from B",pos:"熟語",ja:"AとBを区別する",level:"標準"},
+    {word:"bias",pos:"名詞",ja:"偏見",level:"標準"},
+    {word:"paradise",pos:"名詞",ja:"楽園",level:"基礎"}
+  ],
+  sents:[
+    { id:"p7s1", imp:true, pattern:"SVC", tags:["rel-what"],
+      parts:[
+        {t:"What Adichie's talk suggests",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"the importance of multiple stories",role:"c",lab:"C"},
+        {t:"so that we can acquire a",role:"m",lab:"M"},
+        {t:"profound",role:"m",tap:{w:"profound",pos:"形容詞",ja:"深い、深遠な"}},
+        {t:"insight about the subject matter.",role:"m",tap:{w:"insight",pos:"名詞",ja:"洞察"}}
+      ],
+      jp:"アディーチェの講演が示唆しているのは、その主題について深い洞察を得られるように、複数の物語を持つことの重要性である。",
+      pt:"What Adichie's talk suggests＝関係代名詞whatの名詞節がS。so that～＝目的のM。",
+      tags2:["結論部の主題文","関係代名詞 what"] },
+    { id:"p7s2", imp:false, pattern:"",
+      parts:[
+        {t:"In this way, we avoid wrong judgment and",role:null},
+        {t:"misleading",role:null,tap:{w:"misleading",pos:"形容詞",ja:"誤解を招く、紛らわしい"}},
+        {t:"information about groups of people or culture.",role:null}
+      ],
+      jp:"このようにして、私たちは人々の集団や文化についての誤った判断や誤解を招く情報を避けることができる。" },
+    { id:"p7s3", imp:true, pattern:"", tags:["there-is"],
+      parts:[
+        {t:"There",role:"m",lab:"M"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"also",role:null,dm:"列挙"},
+        {t:"a need for us to",role:"s",lab:"S"},
+        {t:"distinguish",role:"s",pp:1,ptail:"①",tap:{w:"distinguish A from B",pos:"熟語",ja:"AとBを区別する"}},
+        {t:"facts from assumptions",role:"s",pp:1},
+        {t:"and",role:"corr"},
+        {t:"acknowledge our",role:"s",pp:2,ptail:"②"},
+        {t:"biases",role:"s",pp:2,tap:{w:"bias",pos:"名詞",ja:"偏見"}},
+        {t:"each time we listen to, narrate, or read a story.",role:"m",lab:"M"}
+      ],
+      jp:"また、物語を聞いたり、語ったり、読んだりするたびに、事実と憶測を区別し、自分の偏見を認識する必要もある。",
+      pt:"There is a need for us to do＝存在構文（Thereは形式上の主語、a needが意味上の主語）。to distinguish...（①）と（to）acknowledge...（②）がforの意味上の主語usに対する並列不定詞。",
+      tags2:["There is 構文","to不定詞の並列①②"] },
+    { id:"p7s4", imp:true, pattern:"SVO", tags:["parallel"],
+      parts:[
+        {t:"By doing so,",role:"m",lab:"M"},
+        {t:"we",role:"s",lab:"S"},
+        {t:"will be able to prevent",role:"v",lab:"V"},
+        {t:"the dangers of a single story",role:"o",lab:"O"},
+        {t:"and",role:"corr"},
+        {t:"in the words of Adichie,",role:"m",lab:"M"},
+        {t:"“regain a kind of paradise”",role:"v",lab:"V"},
+        {t:"— where we",role:"m",lab:"M"},
+        {t:"appreciate",role:"v",pp:1,ptail:"①"},
+        {t:"understand",role:"v",pp:2,ptail:"②"},
+        {t:"and",role:"corr"},
+        {t:"respect",role:"v",pp:3,ptail:"③"},
+        {t:"people with their whole truths and complete realities.",role:"o",lab:"O"}
+      ],
+      jp:"そうすることによって、私たちは単一の物語がもたらす危険を防ぎ、アディーチェの言葉を借りれば『ある種の楽園』を取り戻せるだろう――そこでは、私たちは人々をその全き真実と完全な現実とともに、正しく評価し、理解し、尊重するのである。",
+      pt:"prevent／regainの動詞並列。where節内でappreciate/understand/respectが3項並列（①②③）。",
+      tags2:["動詞の並列 (prevent / regain)","関係副詞 where","動詞3項並列"] }
+  ]
+}
+];
+
+/* ===== 文法索引ラベル ===== */
+const TAGLABEL={
+  "double-rel":"関係詞の二重限定","colon-reveal":"コロンによる種明かし",
+  "turn-into":"turn A into B","parallel-v":"動詞の並列","qualify-for":"自動詞+前置詞",
+  "theme":"主題文","passive":"受動態","apposition":"同格",
+  "rel-that":"関係詞 that","from-to":"from A to B","parallel":"並列","metaphor":"比喩",
+  "account-for":"account for","may-have-pp":"may have p.p.","ev-A":"設問A根拠","ev-E":"設問E根拠",
+  "even-as":"even as","last-time":"the last time + 節","insert-pp":"挿入句(分詞)","agreement":"主述の一致","but-turn":"逆接 But",
+  "gerund-subj":"動名詞主語","ditrans":"第4文型 give O1O2","to-parallel":"to不定詞の並列","chain-rel":"連鎖関係詞",
+  "form-it":"形式主語 it","rel-what":"関係代名詞 what","colon":"コロンによる具体化","bunshi":"分詞構文","heiretsu":"並列 A and B","yet":"逆接 Yet","notbut":"not A but B","bid":"a bid to do",
+  "q1":"設問1の根拠","q2":"設問2の根拠","q3":"設問3の空所根拠","q4":"設問4の根拠","q5":"設問5の空所根拠",
+  "all-that":"名詞節主語 All (that)の省略","rather-than":"rather than の対比","this-it":"This→itの受け替え（指示語）",
+  "dm-contrast":"while による対比","omit-rel2":"関係代名詞の省略×2","dm-concession":"譲歩→主張の構造","there-is":"There is 構文"
+};
+const RLAB={s:"S",v:"V",o:"O",c:"C",m:"M"};
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function leadSpace(s){return /^[,.;:'!?\u2019\u201d.]/.test(s);}
+
+/* ハイライト/空所マーカーを含むテキストを内部HTMLに整形（語そのものはescの上で） */
+function renderText(t){
+  // ==..== → ハイライトspan / {{gapN}} → 空所プレースホルダ（描画は別途）
+  // ここでは == のみ処理（{{}} は part 単位で別扱い）
+  let out=""; let i=0;
+  const re=/==([^=]+)==/g; let last=0,m;
+  while((m=re.exec(t))){
+    if(m.index>last) out+=esc(t.slice(last,m.index));
+    out+=`<span class="hlmark">${esc(m[1])}</span>`;
+    last=re.lastIndex;
+  }
+  out+=esc(t.slice(last));
+  return out;
+}
+
+function renderParts(parts,sid){
+  let html=""; let first=true; let prevRole="\u0000";
+  parts.forEach((p,idx)=>{
+    // 空所part
+    const gapM=/\{\{gap(\d+)\}\}/.exec(p.t);
+    if(gapM){
+      const before=p.t.slice(0,gapM.index);
+      const after=p.t.slice(gapM.index+gapM[0].length);
+      let seg="";
+      if(before.trim()){seg+=(!first&&!leadSpace(before)?" ":"")+`<span class="tok"><span class="w ${p.role||''}">${esc(before.trim())}</span></span>`;first=false;}
+      seg+=` <span class="gapwrap" data-sid="${sid}"><span class="gap" data-gap="1">(&nbsp;&nbsp;)</span><span class="gapans"></span></span>`;
+      if(after.trim()){seg+=" "+`<span class="tok"><span class="w ${p.role||''}">${esc(after.trim())}</span></span>`;}
+      html+=seg; first=false;
+      if(p.role&&RLAB[p.role])prevRole=p.role;
+      return;
+    }
+    const head=(p.role&&RLAB[p.role]&&p.role!==prevRole);
+    const cls=["tok"]; if(p.pp)cls.push("pp"); if(p.tap)cls.push("hastip");
+    const hasHL=/==/.test(p.t);
+    const wcls=["w"]; if(p.role)wcls.push(p.role); if(p.tap)wcls.push("tap"); if(hasHL)wcls.push("hl");
+    if(p.dm||p.dmSpan) wcls.push("dmword");
+    let pre="";
+    if(p.ptail){
+      const rl=(p.role&&RLAB[p.role])?RLAB[p.role]:"";
+      pre=`<span class="pnum2">${rl}${p.ptail}</span>`;
+    } else if((head||p.lab)&&p.role&&RLAB[p.role]){
+      pre=`<span class="rlab ${p.role}">${p.lab?p.lab:RLAB[p.role]}</span>`;
+    }
+    let preDm="";
+    if(p.dm) preDm=`<span class="dmlab dmcat">${esc(p.dm)}</span>`;
+    else if(p.dmSpan) preDm=`<span class="dmlab dmspan">${esc(p.dmSpan)}</span>`;
+    pre=preDm+pre;
+    const txt=hasHL?p.t.replace(/==/g,""):p.t;
+    let inner=`${pre}<span class="${wcls.join(' ')}">${esc(txt)}</span>`;
+    if(p.tap) inner+=`<span class="tip"><b>${esc(p.tap.w)}</b> <span class="pos">${esc(p.tap.pos)}</span><br>${esc(p.tap.ja)}</span>`;
+    const node=`<span class="${cls.join(' ')}">${inner}</span>`;
+    html+=(!first&&!leadSpace(p.t)?" ":"")+node;
+    first=false;
+    if(p.role&&RLAB[p.role])prevRole=p.role;
+  });
+  return html;
+}
+
+const ALL=DATA;
+const parasEl=document.getElementById("paras");
+const gapStore={};
+
+ALL.forEach(p=>{
+  const head=document.createElement("div");
+  head.className="phead";
+  head.innerHTML=`<span class="pnum">${p.id.replace('p','')}</span><span class="prole">${p.role}</span>`;
+  parasEl.appendChild(head);
+
+  const sents=document.createElement("div");
+  sents.className="sents";
+  p.sents.forEach(st=>{
+    const d=document.createElement("div");
+    d.className="sent"+(st.imp?" imp":""); d.id=st.id;
+    const badge=st.pattern?`<span class="badge">${st.pattern}</span>`:"";
+    d.innerHTML=`<div class="en">${badge}${renderParts(st.parts,st.id)}</div><div class="jp">${st.jp}</div>`+(st.pt?`<div class="pt">${st.pt}</div>`:"");
+    sents.appendChild(d);
+    if(st.gap) gapStore[st.id]=st.gap;
+  });
+  parasEl.appendChild(sents);
+
+  // 段落末：語句・要旨
+  const foot=document.createElement("div");
+  foot.className="pfoot";
+  foot.innerHTML=`<button data-panel="vocab-${p.id}">語句</button><button data-panel="summary-${p.id}">要旨</button>`;
+  parasEl.appendChild(foot);
+
+  const vrows=p.vocab.map(v=>`<tr><td><span class="wd">${esc(v.word)}</span> <span class="ps">${esc(v.pos)}</span></td><td>${esc(v.ja)}</td><td><span class="lv ${v.level}">${v.level}</span></td></tr>`).join("");
+  const vp=document.createElement("div");
+  vp.className="panel vocab"; vp.id=`vocab-${p.id}`;
+  vp.innerHTML=`<table>${vrows}</table>`;
+  parasEl.appendChild(vp);
+
+  const sp=document.createElement("div");
+  sp.className="panel summary"; sp.id=`summary-${p.id}`;
+  sp.innerHTML=esc(p.summary);
+  parasEl.appendChild(sp);
+});
+
+/* 文法索引：全段落のtagsを集約し、出現文へジャンプ */
+const tagMap={};
+ALL.forEach(p=>p.sents.forEach(s=>{(s.tags||[]).forEach(tg=>{(tagMap[tg]=tagMap[tg]||[]).push(s.id);});}));
+const gidx=document.getElementById("gidx");
+Object.keys(tagMap).forEach(tg=>{
+  const b=document.createElement("button");
+  b.textContent=TAGLABEL[tg]||tg;
+  b.dataset.t=tagMap[tg].join(",");
+  gidx.appendChild(b);
+});
+
+/* 設問id→文/段落の逆引き */
+function findSentAndPara(id){
+  for(const p of ALL){
+    const s=p.sents.find(x=>x.id===id);
+    if(s) return {para:p, sent:s};
+  }
+  return null;
+}
+
+/* ブラケット式 構文解釈図：S・Oは名詞句として[ ]に統一。C=⟨ ⟩、M=( )、V=下線 */
+function bracketDiagram(parts){
+  const BR={s:['[',']'],o:['[',']'],c:['⟨','⟩'],m:['(',')']};
+  let html='', i=0;
+  while(i<parts.length){
+    const p=parts[i];
+    const clean=t=>t.replace(/==/g,'').replace(/\{\{gap\d+\}\}/g,'( )');
+    if(!p.role){ html+=' '+esc(clean(p.t))+' '; i++; continue; }
+    if(p.role==='corr'){ html+=` <span class="db-corr">${esc(clean(p.t))}</span> `; i++; continue; }
+    if(p.role==='v'){
+      let j=i, buf='';
+      while(j<parts.length && parts[j].role==='v'){ buf+=(buf?' ':'')+clean(parts[j].t); j++; }
+      html+=` <span class="db-v">${esc(buf)}</span><span class="db-sub">V</span> `;
+      i=j; continue;
+    }
+    let j=i, buf='', hasPar=false;
+    const runPP=p.pp||null;
+    while(j<parts.length && parts[j].role===p.role && (parts[j].pp||null)===runPP && (j===i || !parts[j].lab)){
+      buf+=(buf?' ':'')+clean(parts[j].t);
+      if(parts[j].pp) hasPar=true;
+      j++;
+    }
+    const [open,close]=BR[p.role]||['[',']'];
+    const lab=(p.lab||RLAB[p.role]||p.role.toUpperCase())+(p.ptail?p.ptail:'');
+    html+=` <span class="db-${p.role}${hasPar?' db-par':''}">${open}${esc(buf)}${close}</span><span class="db-sub">${esc(lab)}</span> `;
+    i=j;
+  }
+  return html;
+}
+
+/* 選択肢テキスト中の誤り部分を赤波線マーク */
+function markErr(text,err){
+  if(!err) return esc(text);
+  const idx=text.indexOf(err);
+  if(idx<0) return esc(text);
+  return esc(text.slice(0,idx))+'<span class="cerr">'+esc(text.slice(idx,idx+err.length))+'</span>'+esc(text.slice(idx+err.length));
+}
+
+/* 選択肢検証カードのHTML生成 */
+function choiceGridHtml(choices){
+  return '<div class="choice-grid">'+choices.map(c=>{
+    const cls=c.correct?'ok':'ng';
+    const mark=c.correct?'○':'✕';
+    const textHtml=markErr(c.text,c.err);
+    const quoteHtml=c.quote?`<div class="choice-quote">本文：<span class="qwavy">${esc(c.quote)}</span>${c.pid?`<span class="choice-para-tag">（第${c.pid.replace('p','')}段落）</span>`:''}</div>`:'';
+    return `<div class="choice-card ${cls}">
+      <div class="choice-row"><span class="choice-label">(${c.label})</span><span class="choice-badge">${mark} ${esc(c.tag)}</span></div>
+      <div class="choice-text">${textHtml}</div>
+      ${quoteHtml}
+      <div class="choice-note">${esc(c.note)}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+/* ===== 設問対応表 ===== */
+const QMAP=[
+  {label:"問1", type:"free",
+    question:"下線部(1)を、itが表す内容を明示して、日本語に訳しなさい。",
+    ids:["p1s8"],
+    short:"it＝This（直前文の内容）と同一対象を軽く受ける代名詞。同一対象を1文中で2度指す時、1度目は強い指示語This、2度目は軽いitで受けるのが自然な語法（指示語問題の頻出パターン）。訳：単一の物語によって、真実全体が明るみに出ることが妨げられる。",
+    modelAnswer:"単一の物語によって、真実全体が明るみに出ることが妨げられる。",
+    altAnswer:"単一の物語が、真実全体を明るみに出すことを妨げてしまう。",
+    elements:[
+      {id:1, desc:"itの指示内容を「単一の物語」と明示できているか"},
+      {id:2, desc:"prevent A from -ing を「妨げる」と訳せているか"},
+      {id:3, desc:"「真実全体」（complete truth）を訳せているか"},
+      {id:4, desc:"「明るみに出る」（come to light）のニュアンスを訳せているか"}
+    ]},
+  {label:"問2", type:"choice",
+    question:"下線部(2)の内容の言い換えとして最も適切なものを次の(A)〜(D)から選び、記号で答えなさい。",
+    ids:["p2s8"],
+    choices:[
+      {label:"A", text:"she could not find books that she could enjoy reading", err:"books that she could enjoy reading", correct:false, tag:"本文に記述なし", note:"読書の好みの話ではない。"},
+      {label:"B", text:"she was a real person, not a character in the world of fiction", err:"not a character in the world of fiction", correct:false, tag:"本文に記述なし", note:"実在／虚構という対立軸は本文にない。"},
+      {label:"C", text:"she was not a recognized writer yet", err:"not a recognized writer", correct:false, tag:"本文に記述なし", note:"『作家として認知されるか』の話ではない。"},
+      {label:"D", text:"there were no characters in the stories that resembled her", correct:true, tag:"パラフレーズ", note:"not represented in literature の言い換え。"}
+    ]},
+  {label:"問3", type:"text",
+    question:"空欄(ア)に入る最も適切な語(1語)を同じ段落から探して、書きなさい。",
+    ids:["p4s7"],
+    answer:"poverty",
+    short:"正解は poverty。直前の引用文中の語をそのまま抜き出す。"},
+  {label:"問4", type:"free",
+    question:"下線部(3)を、文頭のItが表す内容を明示して、日本語に訳しなさい。",
+    ids:["p5s10"],
+    short:"It＝having a single story。訳：単一の物語は、差別や攻撃の根本原因となる固定観念を作り出す。",
+    modelAnswer:"単一の物語は、人々や文化の集団への差別や攻撃の根本的原因の1つである、一連の固定観念を作り出す。",
+    altAnswer:"単一の物語を持つことは、ある人々や文化の集団に対する差別や攻撃の主要な原因となる固定観念を生み出す。",
+    elements:[
+      {id:1, desc:"Itの指示内容を「単一の物語（を持つこと）」と明示できているか"},
+      {id:2, desc:"「一連の固定観念を作り出す」を訳せているか"},
+      {id:3, desc:"「差別や攻撃の根本的原因の1つ」を訳せているか"},
+      {id:4, desc:"「人々や文化の集団に対する」を訳せているか"}
+    ]},
+  {label:"問5", type:"blank2",
+    question:"空欄(イ)と(ウ)に入る最も適切な語句を次の(A)〜(D)からそれぞれ選び、記号で答えなさい。",
+    ids:["p6s6"],
+    blanks:["イ","ウ"],
+    choices:[
+      {label:"A", text:"how we are different", correct:true, correctFor:"イ", tag:"正解（イ）", note:"『対等な人間性の認識』を妨げるのは相違点の強調。"},
+      {label:"B", text:"how we are similar", correct:true, correctFor:"ウ", tag:"正解（ウ）", note:"rather than の後ろ＝軽視される側＝共通点。"},
+      {label:"C", text:"how we lose dignity", err:"dignity", correct:false, correctFor:null, tag:"微妙なすり替え", note:"直前の dignity という語に引きずられた誤答。"},
+      {label:"D", text:"how we maintain honour", err:"honour", correct:false, correctFor:null, tag:"本文に記述なし", note:"名誉(honour)は本文で扱われていない。"}
+    ]},
+  {label:"問6", type:"multi",
+    question:"本文の内容と一致しないものを次の(A)〜(G)から2つ選び、記号で答えなさい。",
+    ids:[],
+    choices:[
+      {label:"A", pid:"p2", quote:"They ate apples, while mangoes were mostly consumed in Nigeria.", text:"In the passage, apples were mentioned as something that represented the culture of Adichie's home country.", err:"culture of Adichie's home country", correct:false, tag:"本文と逆", note:"リンゴ＝英米の児童書の話。ナイジェリアを代表するのはマンゴー。"},
+      {label:"B", pid:"p3", quote:"Adichie's mother instilled in her young mind that she should feel sorry for him and his family.", text:"Adichie's mother instructed her to be compassionate toward Fide and his family.", correct:true, tag:"パラフレーズ", note:"instilled→instructed、feel sorry→compassionate。"},
+      {label:"C", pid:"p4", quote:"Adichie jumped to conclusions that Fide was illiterate and ill-fated forever.", text:"Adichie rightly assumed that Fide had lived a miserable life.", err:"rightly", correct:false, tag:"本文と逆", note:"jumped to conclusions＝早合点。rightly（正しく）ではない。"},
+      {label:"D", pid:"p5", quote:"Indeed, tribal music is part of the Nigerian culture but there are also blues, pop, and other types of music in Nigeria.", text:"Aside from tribal music, pop songs are also played in Nigeria.", correct:true, tag:"ほぼ完全一致", note:"部族音楽以外にpopもある、とそのまま一致。"},
+      {label:"E", pid:"p6", quote:"Adichie's speech reminds me of the recent tsunami of spiteful attacks directed to Asians because of the COVID-19 pandemic.", text:"The COVID-19 pandemic reveals how people are prone to committing the dangers of a single story.", correct:true, tag:"パラフレーズ", note:"第6段落全体の趣旨と一致。"},
+      {label:"F", pid:"p7", quote:"There is also a need for us to distinguish facts from assumptions and acknowledge our biases.", text:"Fact-checking is a way to avoid becoming a victim of single stories.", correct:true, tag:"パラフレーズ", note:"distinguish facts from assumptions ≈ fact-checking。"},
+      {label:"G", pid:"p3", quote:"she shares another example to illustrate how children are more predisposed to the problems of single stories.", text:"Children are more vulnerable to the negative consequences of single stories than adults.", correct:true, tag:"パラフレーズ", note:"predisposed ≈ vulnerable。"}
+    ]}
+];
+const qidx=document.getElementById("qidx");
+QMAP.forEach((q,idx)=>{
+  const b=document.createElement("button");
+  b.textContent=q.label;
+  b.dataset.qidx=idx;
+  qidx.appendChild(b);
+});
+
+/* 設問モーダルの開閉 */
+function openQModal(q){
+  document.getElementById('qmodalQnum').textContent=q.label;
+  document.getElementById('qmodalQuestion').textContent=q.question||'';
+
+  let first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  document.getElementById('qmodalParaRole').textContent=first?`第${first.para.id.replace('p','')}段落：${first.para.role}`:'';
+
+  const paraSection=document.getElementById('qmodalParaSection');
+  const diagSection=document.getElementById('qmodalDiagramSection');
+  const choiceSection=document.getElementById('qmodalChoiceSection');
+  const reasonSection=document.getElementById('qmodalReasonSection');
+
+  const showParaDiagram = q.type!=='multi' && first;
+  paraSection.style.display = showParaDiagram ? 'block':'none';
+  diagSection.style.display = showParaDiagram ? 'block':'none';
+  if(showParaDiagram){
+    const paraHtml=first.para.sents.map(s=>{
+      const isTarget=q.ids.includes(s.id);
+      const inner=renderParts(s.parts,s.id);
+      return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+    }).join(' ');
+    document.getElementById('qmodalPara').innerHTML=paraHtml;
+    document.getElementById('qmodalDiagram').innerHTML=q.ids.map(id=>{
+      const f=findSentAndPara(id);
+      return f?`<div class="qdiagram-line">${bracketDiagram(f.sent.parts)}</div>`:'';
+    }).join('');
+  }
+
+  const isChoice = q.type==='choice' || q.type==='multi' || q.type==='blank2';
+  choiceSection.style.display = isChoice ? 'block':'none';
+  reasonSection.style.display = isChoice ? 'none':'block';
+  if(isChoice){
+    document.getElementById('qmodalChoices').innerHTML=choiceGridHtml(q.choices);
+  } else if(q.type==='free'){
+    document.getElementById('qmodalReason').innerHTML=
+      `<b>模範解答：</b>${esc(q.modelAnswer)}<br><b>別解：</b>${esc(q.altAnswer)}<br><br>${q.short||''}`;
+  } else {
+    document.getElementById('qmodalReason').innerHTML=q.short||'';
+  }
+
+  document.getElementById('qmodalBackdrop').classList.add('open');
+  document.getElementById('qmodalBackdrop').scrollTop=0;
+}
+function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); }
+document.getElementById('qmodalClose').addEventListener('click', closeQModal);
+document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); } });
+
+/* ===== ①設問チェック ダッシュボード ===== */
+function dashHintHtml(q, uid){
+  if(q.type==='multi'){
+    const lines=q.choices.map(c=>
+      `<div class="dash-hint-qline"><b>(${c.label})</b> 第${c.pid.replace('p','')}段落：「${esc(c.quote)}」 <button type="button" class="dash-hint-jump" data-jump="${c.pid}">読む →</button></div>`
+    ).join('');
+    return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（各選択肢の該当箇所）</button>
+      <div class="dash-hint-body" id="${uid}_hint">${lines}</div>`;
+  }
+  const first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  if(!first) return '';
+  const paraHtml=first.para.sents.map(s=>{
+    const isTarget=q.ids.includes(s.id);
+    const inner=renderParts(s.parts,s.id);
+    return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+  }).join(' ');
+  return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（該当段落）</button>
+    <div class="dash-hint-body" id="${uid}_hint">
+      <div class="dash-hint-role">第${first.para.id.replace('p','')}段落：${esc(first.para.role)}</div>
+      <div class="dash-hint-para">${paraHtml}</div>
+      <button type="button" class="dash-hint-jump" data-jump="${first.para.id}">この段落を本文で読む →</button>
+    </div>`;
+}
+
+function dashQuestionHtml(q, qidx){
+  const uid=`dq_${qidx}`;
+  let inner='';
+  if(q.type==='choice'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-opt-label"><input type="radio" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  } else if(q.type==='blank2'){
+    inner=q.blanks.map(bk=>
+      `<div class="dash-blank-title">空欄（${bk}）</div><div class="dash-opts">${q.choices.map(c=>
+        `<label class="dash-opt-label"><input type="radio" name="${uid}_${bk}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+      ).join('')}</div>`
+    ).join('');
+  } else if(q.type==='text'){
+    inner=`<input type="text" class="dash-text-input" id="${uid}_input" placeholder="単語を入力">`;
+  } else if(q.type==='free'){
+    inner=`<textarea class="dash-textarea" id="${uid}_input" placeholder="（任意）自分の訳を書いてみる"></textarea>
+      <div class="dash-free-note">採点すると模範解答・別解・チェック項目が表示されます。</div>`;
+  } else if(q.type==='multi'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-mc-item"><input type="checkbox" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  }
+  let reveal='';
+  if(q.type==='free'){
+    reveal=`<div class="dash-reveal" id="${uid}_reveal">
+      <div class="dash-reveal-ans"><b>模範解答：</b>${esc(q.modelAnswer)}<br><b>別解：</b>${esc(q.altAnswer)}</div>
+      ${q.elements.map(el=>`<label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb">${esc(el.desc)}</label>`).join('')}
+      <div class="dash-coherent"><label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb dash-coherent-cb">日本語の文として自然に成立している</label></div>
+      <div class="dash-achieve" id="${uid}_achieve">達成率：―</div>
+    </div>`;
+  }
+  return `<div class="dash-qcard" data-qidx="${qidx}" data-uid="${uid}" data-qtype="${q.type}">
+    <div class="dash-qhead"><span class="dash-qlabel">${q.label}</span><span class="dash-badge" id="${uid}_badge"></span></div>
+    <div class="dash-qtext">${esc(q.question)}</div>
+    ${inner}
+    ${dashHintHtml(q, uid)}
+    ${reveal}
+  </div>`;
+}
+
+function renderDashboard(){
+  document.getElementById('dashQCards').innerHTML=QMAP.map((q,qidx)=>dashQuestionHtml(q,qidx)).join('');
+  document.getElementById('dashScoreSummary').innerHTML='';
+  document.getElementById('dashReview').innerHTML='';
+}
+
+/* 記述式：達成率のライブ更新 */
+document.body.addEventListener('change', e=>{
+  const cb=e.target.closest('.dash-elem-cb');
+  if(!cb) return;
+  const uid=cb.dataset.uid;
+  const all=document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`);
+  const elemCbs=[...all].filter(x=>!x.classList.contains('dash-coherent-cb'));
+  const checked=elemCbs.filter(x=>x.checked).length;
+  const pct=elemCbs.length? Math.round(checked/elemCbs.length*100):0;
+  const achEl=document.getElementById(uid+'_achieve');
+  if(achEl) achEl.textContent=`達成率：${checked}/${elemCbs.length}（${pct}%）`;
+});
+
+/* 採点する */
+function gradeQuestion(q, qidx){
+  const uid=`dq_${qidx}`;
+  if(q.type==='choice'){
+    const sel=document.querySelector(`input[name="${uid}"]:checked`);
+    const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+    return {ok: chosen ? chosen.correct : false, answered: !!sel};
+  }
+  if(q.type==='blank2'){
+    let allOk=true, anyAnswered=false;
+    q.blanks.forEach(bk=>{
+      const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+      if(sel) anyAnswered=true;
+      const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+      if(!chosen || chosen.correctFor!==bk) allOk=false;
+    });
+    return {ok:allOk, answered:anyAnswered};
+  }
+  if(q.type==='text'){
+    const inp=document.getElementById(uid+'_input');
+    const val=inp ? inp.value.trim().toLowerCase():'';
+    return {ok: val===q.answer.toLowerCase(), answered: val.length>0};
+  }
+  if(q.type==='multi'){
+    const sels=[...document.querySelectorAll(`input[name="${uid}"]:checked`)].map(x=>x.value).sort();
+    const correctSet=q.choices.filter(c=>!c.correct).map(c=>c.label).sort();
+    const ok = sels.length===correctSet.length && sels.every((v,i)=>v===correctSet[i]);
+    return {ok, answered: sels.length>0};
+  }
+  if(q.type==='free'){
+    const uidReveal=document.getElementById(uid+'_reveal');
+    if(uidReveal) uidReveal.classList.add('show');
+    const elemCbs=[...document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`)].filter(x=>!x.classList.contains('dash-coherent-cb'));
+    const checked=elemCbs.filter(x=>x.checked).length;
+    return {free:true, checked, total:elemCbs.length};
+  }
+  return {ok:false, answered:false};
+}
+
+document.getElementById('dashGradeBtn').addEventListener('click', ()=>{
+  let choiceCorrect=0, choiceTotal=0;
+  const freeStats=[];
+  const results=[];
+  QMAP.forEach((q,qidx)=>{
+    const uid=`dq_${qidx}`;
+    const r=gradeQuestion(q,qidx);
+    const badge=document.getElementById(uid+'_badge');
+    if(q.type==='free'){
+      freeStats.push({q, checked:r.checked, total:r.total});
+      if(badge){ badge.className='dash-badge show pending'; badge.textContent=`要素:${r.checked}/${r.total}`; }
+      results.push({q, qidx, kind:'free', checked:r.checked, total:r.total});
+    } else if(q.type==='blank2'){
+      choiceTotal+=2; // イ・ウで2項目扱い
+      let sub=0;
+      q.blanks.forEach(bk=>{
+        const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+        const chosen=sel? q.choices.find(c=>c.label===sel.value):null;
+        if(chosen && chosen.correctFor===bk) sub++;
+      });
+      choiceCorrect+=sub;
+      if(badge){ badge.className='dash-badge show '+(sub===2?'ok':'ng'); badge.textContent=sub===2?'○ 正解':`△ ${sub}/2`; }
+      results.push({q, qidx, kind:'choice', ok: sub===2});
+    } else {
+      choiceTotal+=1;
+      if(r.ok) choiceCorrect+=1;
+      if(badge){ badge.className='dash-badge show '+(r.ok?'ok':'ng'); badge.textContent=r.ok?'○ 正解':'✕ 不正解'; }
+      results.push({q, qidx, kind:'choice', ok:r.ok});
+    }
+  });
+
+  const freeAvg = freeStats.length ? Math.round(freeStats.reduce((s,f)=>s+(f.total?f.checked/f.total:0),0)/freeStats.length*100) : null;
+  document.getElementById('dashScoreSummary').innerHTML=
+    `選択・記述(単語)式：<b>${choiceCorrect}/${choiceTotal}</b>　　自由記述の平均達成率：<b>${freeAvg===null?'―':freeAvg+'%'}</b>`;
+
+  renderReview(results);
+});
+
+function renderReview(results){
+  const rows=results.map(r=>{
+    const uid=`dq_${r.qidx}`;
+    let badgeHtml;
+    if(r.kind==='free'){
+      const full=r.total>0 && r.checked===r.total;
+      badgeHtml=`<span class="dash-badge show ${full?'ok':'pending'}">要素:${r.checked}/${r.total}</span>`;
+    } else {
+      badgeHtml=`<span class="dash-badge show ${r.ok?'ok':'ng'}">${r.ok?'○ 正解':'✕ 不正解'}</span>`;
+    }
+    return `<div class="dash-review-row">
+      <span class="dash-qlabel">${r.q.label}</span>
+      ${badgeHtml}
+      <span class="dash-review-qtext">${esc(r.q.question.slice(0,34))}${r.q.question.length>34?'…':''}</span>
+      <button type="button" class="dash-review-btn" data-qidx="${r.qidx}">解説を見る</button>
+    </div>`;
+  }).join('');
+  document.getElementById('dashReview').innerHTML=`<div class="dash-review"><div class="dash-review-title">③ 各設問の解説（正解・不正解に関わらず確認できます）</div>${rows}</div>`;
+}
+
+document.body.addEventListener('click', e=>{
+  const hintToggle=e.target.closest('.dash-hint-toggle');
+  if(hintToggle){
+    const body=document.getElementById(hintToggle.dataset.uid+'_hint');
+    if(body) body.classList.toggle('show');
+    return;
+  }
+  const jumpBtn=e.target.closest('.dash-hint-jump');
+  if(jumpBtn){
+    const pid=jumpBtn.dataset.jump;
+    closeDashModal();
+    const p=ALL.find(pp=>pp.id===pid);
+    if(p && p.sents[0]){
+      const el=document.getElementById(p.sents[0].id);
+      if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80); }
+    }
+    return;
+  }
+  const reviewBtn=e.target.closest('.dash-review-btn');
+  if(reviewBtn){
+    closeDashModal();
+    openQModal(QMAP[+reviewBtn.dataset.qidx]);
+    return;
+  }
+});
+
+let dashRendered=false;
+function openDashModal(){ if(!dashRendered){ renderDashboard(); dashRendered=true; } document.getElementById('dashBackdrop').classList.add('open'); document.getElementById('dashBackdrop').scrollTop=0; }
+function closeDashModal(){ document.getElementById('dashBackdrop').classList.remove('open'); }
+document.getElementById('dashOpenBtn').addEventListener('click', openDashModal);
+document.getElementById('dashClose').addEventListener('click', closeDashModal);
+document.getElementById('dashBackdrop').addEventListener('click', e=>{ if(e.target.id==='dashBackdrop') closeDashModal(); });
+
+/* 空所の答え描画 */
+function fillGap(wrap){
+  const sid=wrap.dataset.sid; const g=gapStore[sid]; if(!g)return;
+  const gap=wrap.querySelector(".gap"); const ans=wrap.querySelector(".gapans");
+  gap.textContent=g.answer; gap.classList.add("filled");
+  ans.innerHTML=`<b>${esc(g.answer)}</b> ― ${esc(g.why)}`;
+  wrap.classList.add("open");
+}
+
+document.body.addEventListener("click",e=>{
+  // 空所
+  const gw=e.target.closest(".gapwrap");
+  if(gw){e.stopPropagation(); if(gw.classList.contains("open")){gw.classList.remove("open");}else{fillGap(gw);} return;}
+  // タップ語義
+  const tap=e.target.closest(".tok");
+  if(tap&&tap.querySelector(".tip")){e.stopPropagation();const on=tap.classList.contains("active");document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));if(!on)tap.classList.add("active");return;}
+  // 文法索引チップ
+  const chip=e.target.closest("#gidx button");
+  if(chip){const ids=chip.dataset.t.split(",");document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash"));ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add("flash");});const f=document.getElementById(ids[0]);if(f)f.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash")),1600);return;}
+  // 設問対応表チップ：モーダル表示
+  const qchip=e.target.closest("#qidx button");
+  if(qchip){ openQModal(QMAP[+qchip.dataset.qidx]); return; }
+  // 段落パネル（語句・要旨）
+  const pb=e.target.closest(".pfoot button");
+  if(pb){const panel=document.getElementById(pb.dataset.panel);if(panel){const open=panel.classList.toggle("open");pb.classList.toggle("on",open);}return;}
+  // 文タップ（和訳・ポイント）
+  const sent=e.target.closest(".sent");
+  if(sent)sent.classList.toggle("open");
+  else document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));
+});
+
+document.querySelectorAll(".controls button[data-cls]").forEach(b=>{
+  b.addEventListener("click",()=>{document.body.classList.toggle(b.dataset.cls);b.classList.toggle("active");});
+});
+</script>
+</body>
+</html>
