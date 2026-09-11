@@ -1,4 +1,4 @@
-<!-- 精読ノート：北海道大学2022 The Danger of a Single Story | version v2 | updated 2026-09-11 -->
+<!-- 精読ノート：北海道大学2022 The Danger of a Single Story | version v1 | updated 2026-09-11 -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -134,7 +134,10 @@
   .qmodal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:28px 28px 36px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
   .qmodal-close{position:absolute;top:16px;right:18px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
   .qmodal-close:hover{border-color:var(--shu);color:var(--shu);}
-  .qmodal-head{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .qmodal-back{display:none;position:absolute;top:16px;right:130px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--ai);font-family:inherit;}
+  .qmodal-back.show{display:inline-block;}
+  .qmodal-back:hover{border-color:var(--ai);background:#f4f6fa;}
+  .qmodal-head{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:220px;}
   .qmodal-qnum{font-family:Georgia,serif;font-size:23px;font-weight:700;color:var(--ai);margin-right:12px;}
   .qmodal-preview{font-size:13px;color:var(--sub);}
   .qmodal-question{background:#fff8ea;border:1px solid #ecd9a0;border-left:4px solid #c9760c;border-radius:0 8px 8px 0;padding:11px 15px;font-size:13px;line-height:1.75;color:#5c4a1f;margin-bottom:18px;}
@@ -312,6 +315,9 @@
 
   @media (max-width:640px){
     .qmodal{padding:20px 14px 26px;}
+    .qmodal-head{padding-right:170px;}
+    .qmodal-back{right:100px;font-size:11px;padding:5px 10px;}
+    .qmodal-close{font-size:11px;padding:5px 10px;}
     .qmodal-diagram{font-size:16px;line-height:2.5;padding:14px 12px;}
   }
 
@@ -366,11 +372,12 @@
   </div>
 
   <div id="paras"></div>
-  <footer>精読ノート ― 構造表示対応版（v2 / 2026-09-11 更新）</footer>
+  <footer>精読ノート ― 構造表示対応版（v1 / 2026-09-11 更新）</footer>
 </div>
 
 <div class="qmodal-backdrop" id="qmodalBackdrop">
   <div class="qmodal">
+    <button class="qmodal-back" id="qmodalBack">← 採点結果に戻る</button>
     <button class="qmodal-close" id="qmodalClose">✕ 閉じる</button>
     <div class="qmodal-head">
       <span class="qmodal-qnum" id="qmodalQnum"></span>
@@ -668,9 +675,8 @@ const DATA = [
       jp:"アディーチェによれば、私たちは特に幼い頃、単一の物語に容易に影響される。" },
     { id:"p2s2", imp:false, pattern:"",
       parts:[
-        {t:"She",role:null},
-        {t:"relates",role:null,tap:{w:"relate",pos:"動詞",ja:"（体験などを）語る"}},
-        {t:"that when she was little, she read a lot of British and American children's books.",role:null}
+        {t:"She",role:null,tap:{w:"relate",pos:"動詞",ja:"（体験などを）語る"}},
+        {t:"relates that when she was little, she read a lot of British and American children's books.",role:null}
       ],
       jp:"彼女が語るところによると、幼い頃、イギリスやアメリカの児童書をたくさん読んだという。" },
     { id:"p2s3", imp:false, pattern:"",
@@ -782,9 +788,8 @@ const DATA = [
       jp:"彼女は、とても貧しい家庭出身の、一家のお手伝いさんフィデについて語っている。" },
     { id:"p3s3", imp:false, pattern:"",
       parts:[
-        {t:"Adichie's mother",role:null},
-        {t:"instilled",role:null,tap:{w:"instill",pos:"動詞",ja:"（考えなどを）教え込む"}},
-        {t:"in her young mind that she should feel sorry for him and his family.",role:null}
+        {t:"Adichie's mother",role:null,tap:{w:"instill",pos:"動詞",ja:"（考えなどを）教え込む"}},
+        {t:"instilled in her young mind that she should feel sorry for him and his family.",role:null}
       ],
       jp:"アディーチェの母親は、彼と彼の家族を気の毒に思うべきだという考えを、幼い彼女の心に植え付けた。" }
   ]
@@ -892,9 +897,8 @@ const DATA = [
   sents:[
     { id:"p5s1", imp:false, pattern:"",
       parts:[
-        {t:"Another",role:null},
-        {t:"noteworthy",role:null,tap:{w:"noteworthy",pos:"形容詞",ja:"注目すべき"}},
-        {t:"story that Adichie talked about in her lecture was her American roommate in college.",role:null}
+        {t:"Another",role:null,tap:{w:"noteworthy",pos:"形容詞",ja:"注目すべき"}},
+        {t:"noteworthy story that Adichie talked about in her lecture was her American roommate in college.",role:null}
       ],
       jp:"アディーチェが講演で語ったもう一つの注目すべき話は、大学時代のアメリカ人ルームメイトについてだった。" },
     { id:"p5s2", imp:true, pattern:"SVO", tags:["parallel"],
@@ -1405,7 +1409,10 @@ QMAP.forEach((q,idx)=>{
 });
 
 /* 設問モーダルの開閉 */
-function openQModal(q){
+let qmodalReturnTo=null;
+function openQModal(q, returnTo){
+  qmodalReturnTo = returnTo || null;
+  document.getElementById('qmodalBack').classList.toggle('show', qmodalReturnTo==='dash');
   document.getElementById('qmodalQnum').textContent=q.label;
   document.getElementById('qmodalQuestion').textContent=q.question||'';
 
@@ -1449,8 +1456,15 @@ function openQModal(q){
   document.getElementById('qmodalBackdrop').classList.add('open');
   document.getElementById('qmodalBackdrop').scrollTop=0;
 }
-function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); }
+function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); qmodalReturnTo=null; }
+function backQModalToDash(){
+  const rt=qmodalReturnTo;
+  document.getElementById('qmodalBackdrop').classList.remove('open');
+  qmodalReturnTo=null;
+  if(rt==='dash') openDashModal();
+}
 document.getElementById('qmodalClose').addEventListener('click', closeQModal);
+document.getElementById('qmodalBack').addEventListener('click', backQModalToDash);
 document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); } });
 
@@ -1663,7 +1677,7 @@ document.body.addEventListener('click', e=>{
   const reviewBtn=e.target.closest('.dash-review-btn');
   if(reviewBtn){
     closeDashModal();
-    openQModal(QMAP[+reviewBtn.dataset.qidx]);
+    openQModal(QMAP[+reviewBtn.dataset.qidx], 'dash');
     return;
   }
 });
