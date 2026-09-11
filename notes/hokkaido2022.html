@@ -226,12 +226,21 @@
   .flow-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--ai);}
   .flow-sub{font-size:12px;color:var(--sub);margin-top:5px;}
   .flow-node{cursor:pointer;}
-  .flow-node rect{transition:filter .15s;}
-  .flow-node:hover rect{filter:brightness(0.95);}
+  .flow-node rect{transition:opacity .15s, transform .15s;transform-box:fill-box;transform-origin:center;}
+  .flow-node:hover rect{opacity:.88;transform:translateY(-1px);}
   .flow-node:hover text{text-decoration:underline;}
   .flow-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--hair);font-size:11px;color:var(--sub);}
   .flow-legend span{display:inline-flex;align-items:center;gap:5px;}
   .flow-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;}
+  .flow-table-wrap{margin-top:18px;padding-top:14px;border-top:1px dashed var(--hair);}
+  .flow-table-title{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .flow-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .flow-table th{text-align:left;font-size:11px;color:var(--sub);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--hair);}
+  .flow-table td{padding:8px;vertical-align:top;border-bottom:1px solid #f0ede5;line-height:1.6;cursor:pointer;}
+  .flow-table tr:hover td{background:#f6f4ee;}
+  .flow-table .ft-num{font-family:Georgia,serif;font-weight:700;color:var(--ai);white-space:nowrap;}
+  .flow-table .ft-role{font-weight:700;color:#3a3833;white-space:nowrap;}
+  .flow-table .ft-summary{color:#54524a;}
   .dash-open-btn:hover{opacity:.9;}
   .dash-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:110;padding:26px 14px;overflow-y:auto;}
   .dash-backdrop.open{display:block;}
@@ -409,15 +418,15 @@
     <button class="qmodal-close" id="vocabClose">✕ 閉じる</button>
     <div class="vocab-head">
       <div class="vocab-title">② 単語チェック</div>
-      <div class="vocab-sub">段落ごとに抽出した語句から4択クイズに挑戦できます。</div>
+      <div class="vocab-sub">英単語を見て、日本語の意味または英語の定義を4択から選びます。<br><span style="color:var(--sub);font-size:11px;">※「英語の定義」モードの選択肢は英英辞典（学習者向け辞書）の説明内容を参考に、教材用に簡潔へ書き改めたものです。</span></div>
     </div>
 
     <div class="vc-setup" id="vcSetup">
       <div class="vc-setup-row">
         <div class="vc-setup-label">出題形式</div>
         <div class="vc-radio-group">
-          <label class="vc-radio-label"><input type="radio" name="vcDir" value="e2j" checked><span>英語 → 日本語の意味</span></label>
-          <label class="vc-radio-label"><input type="radio" name="vcDir" value="j2e"><span>日本語の意味 → 英語</span></label>
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="e2j" checked><span>英語 → 日本語の意味</span></label>
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="def"><span>英語の定義（英英）</span></label>
         </div>
       </div>
       <div class="vc-setup-row">
@@ -453,40 +462,55 @@
     <svg viewBox="0 0 760 610" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 z" fill="#8a887f"/>
+          <path d="M0,0 L10,5 L0,10 z" fill="#9a95ab"/>
         </marker>
+        <linearGradient id="gradNavy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#33456f"/>
+          <stop offset="100%" stop-color="#233657"/>
+        </linearGradient>
+        <linearGradient id="gradLight" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f2f6fb"/>
+          <stop offset="100%" stop-color="#e3ecf7"/>
+        </linearGradient>
+        <linearGradient id="gradAmber" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fff4de"/>
+          <stop offset="100%" stop-color="#fbe6bf"/>
+        </linearGradient>
+        <filter id="nodeShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#2c3e66" flood-opacity="0.18"/>
+        </filter>
       </defs>
 
       <!-- 矢印: p1 -> p2/p3/p5 (3つの具体例へ分岐) -->
-      <path d="M380,72 C380,100 125,110 125,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <path d="M380,72 L380,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <path d="M380,72 C380,100 635,110 635,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <text x="380" y="100" text-anchor="middle" font-size="11" fill="#8a887f" font-family="Yu Gothic,sans-serif">3つの具体例で示す</text>
+      <path d="M380,72 C380,100 125,110 125,148" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <path d="M380,72 L380,148" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <path d="M380,72 C380,100 635,110 635,148" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <text x="380" y="100" text-anchor="middle" font-size="11" fill="#726d82" font-family="Yu Gothic,sans-serif" font-weight="700">3つの具体例で示す</text>
 
       <!-- p3 -> p4 転換 -->
       <path d="M380,215 L380,248" fill="none" stroke="#c9760c" stroke-width="1.8" marker-end="url(#arrow)"/>
       <text x="392" y="235" font-size="10.5" fill="#c9760c" font-family="Yu Gothic,sans-serif" font-weight="700">転換</text>
 
       <!-- 収束: p2/p4/p5 -> p6 -->
-      <path d="M125,215 C125,340 300,360 340,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <path d="M380,313 L380,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <path d="M635,215 C635,340 460,360 420,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
-      <text x="380" y="358" text-anchor="middle" font-size="11" fill="#8a887f" font-family="Yu Gothic,sans-serif">一般化（COVID-19への応用）</text>
+      <path d="M125,215 C125,340 300,360 340,398" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <path d="M380,313 L380,398" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <path d="M635,215 C635,340 460,360 420,398" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+      <text x="380" y="358" text-anchor="middle" font-size="11" fill="#726d82" font-family="Yu Gothic,sans-serif" font-weight="700">一般化（COVID-19への応用）</text>
 
       <!-- p6 -> p7 -->
-      <path d="M380,463 L380,497" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <path d="M380,463 L380,497" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
       <text x="392" y="484" font-size="10.5" fill="#8a887f" font-family="Yu Gothic,sans-serif" font-weight="700">結論づけ</text>
 
       <!-- p1 導入 -->
       <g class="flow-node" data-jump="p1">
-        <rect x="290" y="14" width="180" height="58" rx="10" fill="#2c3e66"/>
+        <rect x="290" y="14" width="180" height="58" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
         <text x="380" y="36" text-anchor="middle" font-size="11.5" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">① 導入</text>
         <text x="380" y="54" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">単一の物語の弊害</text>
       </g>
 
       <!-- p2 具体例① -->
       <g class="flow-node" data-jump="p2">
-        <rect x="30" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <rect x="30" y="148" width="190" height="67" rx="14" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
         <text x="125" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">② 具体例①</text>
         <text x="125" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">子供時代の</text>
         <text x="125" y="204" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">読書経験</text>
@@ -494,21 +518,21 @@
 
       <!-- p3 具体例② -->
       <g class="flow-node" data-jump="p3">
-        <rect x="285" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <rect x="285" y="148" width="190" height="67" rx="14" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
         <text x="380" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">③ 具体例②</text>
         <text x="380" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">Fideの紹介</text>
       </g>
 
       <!-- p4 具体例②続 -->
       <g class="flow-node" data-jump="p4">
-        <rect x="285" y="248" width="190" height="65" rx="10" fill="#fdf0d5" stroke="#c9760c" stroke-width="1.3"/>
+        <rect x="285" y="248" width="190" height="65" rx="14" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
         <text x="380" y="271" text-anchor="middle" font-size="11" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">④ 具体例②続</text>
         <text x="380" y="288" text-anchor="middle" font-size="10" fill="#8a5a10" font-family="Yu Gothic,sans-serif">思い込みと転換</text>
       </g>
 
       <!-- p5 具体例③ -->
       <g class="flow-node" data-jump="p5">
-        <rect x="540" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <rect x="540" y="148" width="190" height="67" rx="14" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
         <text x="635" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑤ 具体例③</text>
         <text x="635" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">ルームメイトの</text>
         <text x="635" y="204" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">エピソード</text>
@@ -516,23 +540,27 @@
 
       <!-- p6 COVID接続 -->
       <g class="flow-node" data-jump="p6">
-        <rect x="230" y="398" width="300" height="65" rx="10" fill="#fdf0d5" stroke="#c9760c" stroke-width="1.3"/>
+        <rect x="230" y="398" width="300" height="65" rx="14" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
         <text x="380" y="424" text-anchor="middle" font-size="11.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">⑥ COVID-19との接続</text>
         <text x="380" y="443" text-anchor="middle" font-size="10" fill="#8a5a10" font-family="Yu Gothic,sans-serif">引用による結論への橋渡し</text>
       </g>
 
       <!-- p7 結論 -->
       <g class="flow-node" data-jump="p7">
-        <rect x="230" y="497" width="300" height="75" rx="10" fill="#2c3e66"/>
+        <rect x="230" y="497" width="300" height="75" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
         <text x="380" y="524" text-anchor="middle" font-size="12" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">⑦ 結論</text>
         <text x="380" y="544" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">複数の物語の重要性</text>
         <text x="380" y="560" text-anchor="middle" font-size="9.5" fill="#c3cbdc" font-family="Yu Gothic,sans-serif">（事実と憶測を区別し偏見を自覚する）</text>
       </g>
     </svg>
     <div class="flow-legend">
-      <span><i style="background:#2c3e66"></i>導入・結論（主張）</span>
-      <span><i style="background:#eaf0f8;border:1px solid #2c3e66"></i>具体例</span>
-      <span><i style="background:#fdf0d5;border:1px solid #c9760c"></i>転換・接続点</span>
+      <span><i style="background:linear-gradient(#33456f,#233657)"></i>導入・結論（主張）</span>
+      <span><i style="background:linear-gradient(#f2f6fb,#e3ecf7);border:1px solid #2c3e66"></i>具体例</span>
+      <span><i style="background:linear-gradient(#fff4de,#fbe6bf);border:1px solid #c9760c"></i>転換・接続点</span>
+    </div>
+    <div class="flow-table-wrap">
+      <div class="flow-table-title">段落ごとの要旨一覧（クリックで本文へ移動）</div>
+      <table class="flow-table"><tbody id="flowTableBody"></tbody></table>
     </div>
   </div>
 </div>
@@ -544,15 +572,15 @@ const DATA = [
   id:"p1", role:"導入：単一の物語の弊害", 
   summary:"TED Talksでのアディーチェの講演「シングルストーリーの危険性」を紹介し、単一の物語が誤解を生み、真実の一部しか伝えないという危険性を提示する。",
   vocab:[
-    {word:"a single story",pos:"キーワード",ja:"【訳語の幅】単一の物語／一つの物語／一面的な物語。原義は『その対象について知っている物語がひとつしかないこと』という数量的な限定であり、「単一」が持つ均質・非混合のニュアンス（単一民族、単一通貨など）とは少しずれる。本文全体を通じたキーワードのため、本教材では和訳・模範解答とも東進の公式解答に準拠し「単一の物語」で統一している。答案を書く際はこの訳語に合わせるのが安全。",level:"最重要"},
-    {word:"household",pos:"名詞",ja:"家庭、世帯",level:"標準"},
-    {word:"extend from A to B",pos:"熟語",ja:"AからBにまで及ぶ",level:"標準"},
-    {word:"narrative",pos:"名詞",ja:"物語、語り",level:"標準"},
-    {word:"adverse",pos:"形容詞",ja:"逆の、不利な",level:"難関"},
-    {word:"narrow-minded",pos:"形容詞",ja:"偏狭な",level:"標準"},
-    {word:"misconception",pos:"名詞",ja:"誤解",level:"難関"},
-    {word:"portion",pos:"名詞",ja:"部分",level:"標準"},
-    {word:"come to light",pos:"熟語",ja:"明るみに出る",level:"標準"}
+    {word:"a single story",pos:"キーワード",ja:"【訳語の幅】単一の物語／一つの物語／一面的な物語。原義は『その対象について知っている物語がひとつしかないこと』という数量的な限定であり、「単一」が持つ均質・非混合のニュアンス（単一民族、単一通貨など）とは少しずれる。本文全体を通じたキーワードのため、本教材では和訳・模範解答とも東進の公式解答に準拠し「単一の物語」で統一している。答案を書く際はこの訳語に合わせるのが安全。",level:"最重要",def:"An incomplete picture of a person, place, or culture based on only one repeated narrative"},
+    {word:"household",pos:"名詞",ja:"家庭、世帯",level:"標準",def:"A home and the people who live together in it"},
+    {word:"extend from A to B",pos:"熟語",ja:"AからBにまで及ぶ",level:"標準",def:"To range or spread continuously from one point to another"},
+    {word:"narrative",pos:"名詞",ja:"物語、語り",level:"標準",def:"A spoken or written account of connected events; a story"},
+    {word:"adverse",pos:"形容詞",ja:"逆の、不利な",level:"難関",def:"Preventing success or having a harmful effect"},
+    {word:"narrow-minded",pos:"形容詞",ja:"偏狭な",level:"標準",def:"Unwilling to consider new or different ideas"},
+    {word:"misconception",pos:"名詞",ja:"誤解",level:"難関",def:"An idea or belief that is incorrect because it is based on faulty reasoning"},
+    {word:"portion",pos:"名詞",ja:"部分",level:"標準",def:"A part of a whole that has been divided among a number of people or things"},
+    {word:"come to light",pos:"熟語",ja:"明るみに出る",level:"標準",def:"To become known or discovered after being hidden"}
   ],
   sents:[
     { id:"p1s1", imp:false, pattern:"",
@@ -625,13 +653,13 @@ const DATA = [
   id:"p2", role:"具体例①：子供時代の読書経験",
   summary:"アディーチェは幼少期、自分と異なる登場人物ばかりの英米の児童書を読み、自分自身の物語からも自分の文化が抜け落ちていたと振り返る。これが彼女にとっての『単一の物語』だった。",
   vocab:[
-    {word:"relate",pos:"動詞",ja:"（体験などを）語る",level:"標準"},
-    {word:"circumstance",pos:"名詞",ja:"状況",level:"標準"},
-    {word:"complexion",pos:"名詞",ja:"肌の色、顔色",level:"難関"},
-    {word:"consume",pos:"動詞",ja:"消費する、食べる",level:"標準"},
-    {word:"be represented in",pos:"熟語",ja:"（作品などに）描かれる",level:"標準"},
-    {word:"embody",pos:"動詞",ja:"具体化する、体現する",level:"難関"},
-    {word:"consumption",pos:"名詞",ja:"摂取、消費",level:"標準"}
+    {word:"relate",pos:"動詞",ja:"（体験などを）語る",level:"標準",def:"To tell or give an account of something that happened"},
+    {word:"circumstance",pos:"名詞",ja:"状況",level:"標準",def:"A fact or condition connected with or relevant to an event"},
+    {word:"complexion",pos:"名詞",ja:"肌の色、顔色",level:"難関",def:"The natural color and appearance of a person's skin, especially the face"},
+    {word:"consume",pos:"動詞",ja:"消費する、食べる",level:"標準",def:"To eat or drink something; to use up a resource"},
+    {word:"be represented in",pos:"熟語",ja:"（作品などに）描かれる",level:"標準",def:"To be shown, portrayed, or included within something"},
+    {word:"embody",pos:"動詞",ja:"具体化する、体現する",level:"難関",def:"To represent or express an idea or quality in a tangible form"},
+    {word:"consumption",pos:"名詞",ja:"摂取、消費",level:"標準",def:"The action of using up a resource, especially food, energy, or media"}
   ],
   sents:[
     { id:"p2s1", imp:false, pattern:"",
@@ -733,9 +761,9 @@ const DATA = [
   id:"p3", role:"具体例②：Fideの紹介",
   summary:"アディーチェは、一家のお手伝いだったフィデの例を挙げ、子供が単一の物語の影響を受けやすいことを示す。母親は彼を気の毒に思うよう教え込んだ。",
   vocab:[
-    {word:"predisposed",pos:"形容詞",ja:"～しがちな、～の傾向がある",level:"難関"},
-    {word:"illustrate",pos:"動詞",ja:"例示する、説明する",level:"標準"},
-    {word:"instill",pos:"動詞",ja:"（考えなどを）教え込む",level:"難関"}
+    {word:"predisposed",pos:"形容詞",ja:"～しがちな、～の傾向がある",level:"難関",def:"Having a tendency toward something before it happens"},
+    {word:"illustrate",pos:"動詞",ja:"例示する、説明する",level:"標準",def:"To explain or make something clear by using examples"},
+    {word:"instill",pos:"動詞",ja:"（考えなどを）教え込む",level:"難関",def:"To gradually but firmly establish an idea or feeling in someone's mind"}
   ],
   sents:[
     { id:"p3s1", imp:false, pattern:"",
@@ -762,14 +790,14 @@ const DATA = [
   id:"p4", role:"具体例②続：フィデをめぐる思い込みと転換",
   summary:"アディーチェは幼さと母の影響からフィデを『貧しく不幸な人』と決めつけていたが、村を訪れて彼の兄の才能を見て考えを改める。貧しさは彼の物語の一部に過ぎなかった。",
   vocab:[
-    {word:"jump to conclusions",pos:"熟語",ja:"早合点する",level:"標準"},
-    {word:"illiterate",pos:"形容詞",ja:"読み書きができない",level:"難関"},
-    {word:"ill-fated",pos:"形容詞",ja:"不運な",level:"難関"},
-    {word:"deprived",pos:"形容詞",ja:"貧困な、恵まれない",level:"難関"},
-    {word:"ignorant",pos:"形容詞",ja:"無知な",level:"標準"},
-    {word:"perseverance",pos:"名詞",ja:"忍耐力、根気",level:"難関"},
-    {word:"triumph",pos:"名詞",ja:"勝利、成功",level:"標準"},
-    {word:"anything else but",pos:"熟語",ja:"～以外の何ものでもない",level:"難関"}
+    {word:"jump to conclusions",pos:"熟語",ja:"早合点する",level:"標準",def:"To judge or decide something too quickly, without enough evidence"},
+    {word:"illiterate",pos:"形容詞",ja:"読み書きができない",level:"難関",def:"Unable to read or write"},
+    {word:"ill-fated",pos:"形容詞",ja:"不運な",level:"難関",def:"Destined to have bad luck or an unfortunate outcome"},
+    {word:"deprived",pos:"形容詞",ja:"貧困な、恵まれない",level:"難関",def:"Lacking the basic necessities or comforts of life"},
+    {word:"ignorant",pos:"形容詞",ja:"無知な",level:"標準",def:"Lacking knowledge, information, or awareness"},
+    {word:"perseverance",pos:"名詞",ja:"忍耐力、根気",level:"難関",def:"Continued effort and determination despite difficulty"},
+    {word:"triumph",pos:"名詞",ja:"勝利、成功",level:"標準",def:"A great victory, success, or achievement"},
+    {word:"anything else but",pos:"熟語",ja:"～以外の何ものでもない",level:"難関",def:"Nothing other than; only"}
   ],
   sents:[
     { id:"p4s1", imp:true, pattern:"SVC", tags:["form-it","all-that"],
@@ -848,15 +876,15 @@ const DATA = [
   id:"p5", role:"具体例③：ルームメイトのエピソード",
   summary:"アディーチェは大学のルームメイトに一方的に決めつけられた経験を語る。こうした逸話から、単一の物語は差別や攻撃の根本原因となる固定観念を生むと結論づける。",
   vocab:[
-    {word:"noteworthy",pos:"形容詞",ja:"注目すべき",level:"難関"},
-    {word:"stereotype",pos:"動詞",ja:"型にはめて決めつける",level:"標準"},
-    {word:"inexperienced",pos:"形容詞",ja:"経験不足な",level:"標準"},
-    {word:"tribal",pos:"形容詞",ja:"部族の",level:"標準"},
-    {word:"assumption",pos:"名詞",ja:"思い込み、仮定",level:"標準"},
-    {word:"notion",pos:"名詞",ja:"考え、概念",level:"標準"},
-    {word:"characterize",pos:"動詞",ja:"特徴づける",level:"標準"},
-    {word:"root cause",pos:"熟語",ja:"根本的原因",level:"標準"},
-    {word:"aggression",pos:"名詞",ja:"攻撃性",level:"難関"}
+    {word:"noteworthy",pos:"形容詞",ja:"注目すべき",level:"難関",def:"Deserving attention because it is interesting, important, or unusual"},
+    {word:"stereotype",pos:"動詞",ja:"型にはめて決めつける",level:"標準",def:"To view or describe someone through an oversimplified, fixed image"},
+    {word:"inexperienced",pos:"形容詞",ja:"経験不足な",level:"標準",def:"Lacking the knowledge or skill that comes from doing something before"},
+    {word:"tribal",pos:"形容詞",ja:"部族の",level:"標準",def:"Relating to a tribe or a traditional social group"},
+    {word:"assumption",pos:"名詞",ja:"思い込み、仮定",level:"標準",def:"Something accepted as true without proof"},
+    {word:"notion",pos:"名詞",ja:"考え、概念",level:"標準",def:"A belief, idea, or understanding of something"},
+    {word:"characterize",pos:"動詞",ja:"特徴づける",level:"標準",def:"To describe or identify the typical qualities of someone or something"},
+    {word:"root cause",pos:"熟語",ja:"根本的原因",level:"標準",def:"The fundamental reason an event or problem occurs"},
+    {word:"aggression",pos:"名詞",ja:"攻撃性",level:"難関",def:"Hostile or violent behavior or feelings toward others"}
   ],
   sents:[
     { id:"p5s1", imp:false, pattern:"",
@@ -962,12 +990,12 @@ const DATA = [
   id:"p6", role:"COVID-19との接続と引用による結論",
   summary:"筆者はアディーチェの講演をCOVID-19禍でのアジア人差別に重ね合わせる。単一の物語は人々の尊厳を奪い、対等な人間性の認識を妨げ、相違点を強調してしまうとアディーチェは述べる。",
   vocab:[
-    {word:"spiteful",pos:"形容詞",ja:"悪意のある",level:"難関"},
-    {word:"carrier",pos:"名詞",ja:"保菌者、運び手",level:"標準"},
-    {word:"generalize",pos:"動詞",ja:"一般化する",level:"標準"},
-    {word:"erroneous",pos:"形容詞",ja:"誤った",level:"難関"},
-    {word:"prejudice",pos:"名詞",ja:"偏見",level:"標準"},
-    {word:"dignity",pos:"名詞",ja:"尊厳",level:"標準"}
+    {word:"spiteful",pos:"形容詞",ja:"悪意のある",level:"難関",def:"Showing a deliberate desire to hurt or upset someone"},
+    {word:"carrier",pos:"名詞",ja:"保菌者、運び手",level:"標準",def:"A person, animal, or thing that carries or transmits something"},
+    {word:"generalize",pos:"動詞",ja:"一般化する",level:"標準",def:"To draw a broad conclusion from a small number of specific cases"},
+    {word:"erroneous",pos:"形容詞",ja:"誤った",level:"難関",def:"Wrong; based on incorrect facts or reasoning"},
+    {word:"prejudice",pos:"名詞",ja:"偏見",level:"標準",def:"A preconceived opinion, usually negative, not based on actual experience or reason"},
+    {word:"dignity",pos:"名詞",ja:"尊厳",level:"標準",def:"The state or quality of being worthy of honor and respect"}
   ],
   sents:[
     { id:"p6s1", imp:false, pattern:"",
@@ -1033,12 +1061,12 @@ const DATA = [
   id:"p7", role:"結論：複数の物語の重要性",
   summary:"結論として、アディーチェの講演は、複数の物語を持つことで深い洞察を得て誤った判断を避けることの重要性を説く。事実と憶測を区別し偏見を自覚することで、単一の物語の危険を防ぎ『楽園』を取り戻せると述べる。",
   vocab:[
-    {word:"profound",pos:"形容詞",ja:"深い、深遠な",level:"標準"},
-    {word:"insight",pos:"名詞",ja:"洞察",level:"標準"},
-    {word:"misleading",pos:"形容詞",ja:"誤解を招く",level:"標準"},
-    {word:"distinguish A from B",pos:"熟語",ja:"AとBを区別する",level:"標準"},
-    {word:"bias",pos:"名詞",ja:"偏見",level:"標準"},
-    {word:"paradise",pos:"名詞",ja:"楽園",level:"基礎"}
+    {word:"profound",pos:"形容詞",ja:"深い、深遠な",level:"標準",def:"Showing great depth of understanding or feeling; very great in degree"},
+    {word:"insight",pos:"名詞",ja:"洞察",level:"標準",def:"A clear, deep understanding of a complicated situation or person"},
+    {word:"misleading",pos:"形容詞",ja:"誤解を招く",level:"標準",def:"Giving a false or mistaken impression"},
+    {word:"distinguish A from B",pos:"熟語",ja:"AとBを区別する",level:"標準",def:"To recognize or treat one thing as different from another"},
+    {word:"bias",pos:"名詞",ja:"偏見",level:"標準",def:"A tendency to favor or oppose someone or something unfairly"},
+    {word:"paradise",pos:"名詞",ja:"楽園",level:"基礎",def:"A place or state of ideal happiness or beauty"}
   ],
   sents:[
     { id:"p7s1", imp:true, pattern:"SVC", tags:["rel-what"],
@@ -1215,6 +1243,17 @@ ALL.forEach(p=>{
   sp.innerHTML=esc(p.summary);
   parasEl.appendChild(sp);
 });
+
+/* 論理構造図：段落要旨テーブルの描画 */
+const flowTableBody=document.getElementById('flowTableBody');
+if(flowTableBody){
+  flowTableBody.innerHTML = ALL.map(p=>`
+    <tr data-jump="${p.id}">
+      <td class="ft-num">${p.id.replace('p','')}</td>
+      <td class="ft-role">${esc(p.role)}</td>
+      <td class="ft-summary">${esc(p.summary)}</td>
+    </tr>`).join('');
+}
 
 /* 文法索引：全段落のtagsを集約し、出現文へジャンプ */
 const tagMap={};
@@ -1451,8 +1490,7 @@ function dashQuestionHtml(q, qidx){
   } else if(q.type==='text'){
     inner=`<input type="text" class="dash-text-input" id="${uid}_input" placeholder="単語を入力">`;
   } else if(q.type==='free'){
-    inner=`<textarea class="dash-textarea" id="${uid}_input" placeholder="（任意）自分の訳を書いてみる"></textarea>
-      <div class="dash-free-note">下のチェック項目を見ながら、自分の訳に含まれているかを確認しましょう。</div>`;
+    inner=''; // 記述問題は入力欄を持たず、チェック項目とヒントのみで自己確認する
   } else if(q.type==='multi'){
     inner=`<div class="dash-opts">${q.choices.map(c=>
       `<label class="dash-mc-item"><input type="checkbox" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
@@ -1612,6 +1650,12 @@ document.body.addEventListener('click', e=>{
     jumpToParagraph(flowNode.dataset.jump);
     return;
   }
+  const flowRow=e.target.closest('.flow-table tr[data-jump]');
+  if(flowRow){
+    closeFlowModal();
+    jumpToParagraph(flowRow.dataset.jump);
+    return;
+  }
   const reviewBtn=e.target.closest('.dash-review-btn');
   if(reviewBtn){
     closeDashModal();
@@ -1643,12 +1687,20 @@ document.getElementById('flowBackdrop').addEventListener('click', e=>{ if(e.targ
 
 /* ===== ②単語チェック（4択クイズ） ===== */
 const VOCAB_POOL=[];
-ALL.forEach(p=>p.vocab.forEach(v=>VOCAB_POOL.push({word:v.word,pos:v.pos,ja:v.ja,pid:p.id,prole:p.role})));
+ALL.forEach(p=>p.vocab.forEach(v=>VOCAB_POOL.push({word:v.word,pos:v.pos,ja:v.ja,def:v.def,pid:p.id,prole:p.role})));
+
+let vcQuestions=[], vcIndex=0, vcScore=0, vcLocked=false;
+const VC_MAX_Q=15;
+const DEF_MAX_Q=5;
 
 const vcScopeSel=document.getElementById('vcScope');
 (function buildScopeOptions(){
+  const optRandom=document.createElement('option');
+  optRandom.id='vcOptRandom';
+  optRandom.value='random';
+  vcScopeSel.appendChild(optRandom);
   const optAll=document.createElement('option');
-  optAll.value='all'; optAll.textContent=`全段落（全${VOCAB_POOL.length}語）`;
+  optAll.value='all'; optAll.textContent=`全段落（全${VOCAB_POOL.length}語を出題）`;
   vcScopeSel.appendChild(optAll);
   ALL.forEach(p=>{
     const n=p.vocab.length;
@@ -1658,24 +1710,34 @@ const vcScopeSel=document.getElementById('vcScope');
     vcScopeSel.appendChild(opt);
   });
 })();
-
-let vcQuestions=[], vcIndex=0, vcScore=0, vcLocked=false;
-const VC_MAX_Q=15;
+function updateRandomOptionLabel(){
+  const mode=document.querySelector('input[name="vcMode"]:checked').value;
+  const n = mode==='def' ? DEF_MAX_Q : VC_MAX_Q;
+  const opt=document.getElementById('vcOptRandom');
+  if(opt) opt.textContent=`ランダム（全段落から${Math.min(n,VOCAB_POOL.length)}問）`;
+}
+updateRandomOptionLabel();
+document.querySelectorAll('input[name="vcMode"]').forEach(r=>r.addEventListener('change', updateRandomOptionLabel));
 
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
 function buildQuiz(){
-  const dir=document.querySelector('input[name="vcDir"]:checked').value;
+  const mode=document.querySelector('input[name="vcMode"]:checked').value; // 'e2j' or 'def'
+  const isDef = mode==='def';
   const scope=vcScopeSel.value;
-  const pool = scope==='all' ? VOCAB_POOL : VOCAB_POOL.filter(v=>v.pid===scope);
-  const picked = shuffle(pool).slice(0, VC_MAX_Q);
+  const pool = (scope==='random'||scope==='all') ? VOCAB_POOL : VOCAB_POOL.filter(v=>v.pid===scope);
+  const shuffledPool = shuffle(pool);
+  const maxQ = isDef ? DEF_MAX_Q : VC_MAX_Q;
+  const picked = (scope==='all') ? shuffledPool : shuffledPool.slice(0, maxQ);
   vcQuestions = picked.map(item=>{
-    const isE2J = dir==='e2j';
-    const correctText = isE2J ? item.ja : item.word;
-    const distractPool = VOCAB_POOL.filter(v=>v.word!==item.word && (isE2J? v.ja!==item.ja : v.word!==item.word));
-    const distractors = shuffle(distractPool).slice(0,3).map(v=> isE2J? v.ja : v.word);
+    const correctText = isDef ? item.def : item.ja;
+    const notSame = v=> v.word!==item.word && (isDef ? v.def!==item.def : v.ja!==item.ja);
+    // 誤答の質：まず同じ品詞(pos)の語から選び、足りない分だけ他の語で補う（明らかに違うと分かる誤答を避ける）
+    const samePos = VOCAB_POOL.filter(v=> notSame(v) && v.pos===item.pos);
+    const otherPos = VOCAB_POOL.filter(v=> notSame(v) && v.pos!==item.pos);
+    const distractors = shuffle(samePos).concat(shuffle(otherPos)).slice(0,3).map(v=> isDef ? v.def : v.ja);
     const choices = shuffle([correctText, ...distractors]);
-    return { prompt: isE2J? item.word : item.ja, promptPos: item.pos, correct: correctText, choices, isE2J };
+    return { prompt: item.word, promptPos: item.pos, correct: correctText, choices };
   });
   vcIndex=0; vcScore=0;
 }
@@ -1688,14 +1750,13 @@ function renderQuestion(){
   document.getElementById('vcScoreNow').textContent=vcScore;
   const promptEl=document.getElementById('vcPrompt');
   promptEl.textContent=q.prompt;
-  promptEl.className='vc-prompt'+(q.isE2J?'':' jp');
+  promptEl.className='vc-prompt';
   const choicesEl=document.getElementById('vcChoices');
   choicesEl.innerHTML='';
   q.choices.forEach(choice=>{
     const b=document.createElement('button');
-    b.type='button'; b.className='vc-choice-btn'+(q.isE2J?'':''); 
+    b.type='button'; b.className='vc-choice-btn';
     b.textContent=choice;
-    if(!q.isE2J===false){} // no-op guard
     b.addEventListener('click', ()=>onChoose(b, choice));
     choicesEl.appendChild(b);
   });
