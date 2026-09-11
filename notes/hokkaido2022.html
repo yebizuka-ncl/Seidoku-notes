@@ -176,6 +176,62 @@
 
   /* ===== ①概要ダッシュボード ===== */
   .dash-open-btn{background:var(--shu)!important;border-color:var(--shu)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn{background:var(--ai)!important;border-color:var(--ai)!important;color:#fff!important;font-weight:700;}
+  .vocab-open-btn{background:var(--midori)!important;border-color:var(--midori)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn:hover,.dash-open-btn:hover,.vocab-open-btn:hover{opacity:.9;}
+
+  .vocab-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:115;padding:24px 14px;overflow-y:auto;}
+  .vocab-backdrop.open{display:block;}
+  .vocab-modal{max-width:560px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .vocab-head{margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--midori);padding-right:90px;}
+  .vocab-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--midori);}
+  .vocab-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+
+  .vc-setup-row{margin-bottom:16px;}
+  .vc-setup-label{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .vc-radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .vc-radio-label{flex:1;min-width:140px;display:flex;align-items:center;gap:7px;border:1px solid var(--hair);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;}
+  .vc-radio-label:hover{border-color:var(--midori);}
+  .vc-radio-label input:checked ~ span{color:var(--midori);font-weight:700;}
+  .vc-select{width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:8px;background:#fff;}
+  .vc-start-btn{width:100%;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:11px 0;margin-top:6px;}
+  .vc-start-btn:hover{opacity:.9;}
+  .vc-pool-note{font-size:11px;color:var(--sub);margin-top:6px;}
+
+  .vc-quiz{display:none;}
+  .vc-quiz.show{display:block;}
+  .vc-progress{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--sub);margin-bottom:14px;}
+  .vc-progress b{color:var(--midori);font-family:Georgia,serif;}
+  .vc-prompt{font-family:Georgia,"Times New Roman",serif;font-size:22px;text-align:center;color:var(--ink);background:#f9f8f4;border:1px solid var(--hair);border-radius:10px;padding:22px 16px;margin-bottom:18px;line-height:1.5;}
+  .vc-prompt.jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:16px;}
+  .vc-choices{display:flex;flex-direction:column;gap:9px;}
+  .vc-choice-btn{font-family:inherit;font-size:13.5px;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--hair);border-radius:9px;padding:11px 14px;transition:.12s;}
+  .vc-choice-btn:hover:not(:disabled){border-color:var(--midori);background:#f6faf7;}
+  .vc-choice-btn:disabled{cursor:default;}
+  .vc-choice-btn.correct{border-color:var(--midori);background:#e3f3e9;color:#1f5f45;font-weight:700;}
+  .vc-choice-btn.wrong{border-color:var(--shu);background:#fbe6e3;color:#8a2e22;font-weight:700;}
+  .vc-next-btn{width:100%;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 0;margin-top:16px;display:none;}
+  .vc-next-btn.show{display:block;}
+
+  .vc-result{display:none;text-align:center;padding:20px 0;}
+  .vc-result.show{display:block;}
+  .vc-result-score{font-family:Georgia,serif;font-size:34px;font-weight:700;color:var(--midori);margin-bottom:8px;}
+  .vc-result-msg{font-size:13px;color:var(--sub);margin-bottom:20px;}
+  .vc-retry-btn{font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+
+  .flow-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:120;padding:24px 14px;overflow-y:auto;}
+  .flow-backdrop.open{display:block;}
+  .flow-modal{max-width:860px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .flow-head{margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .flow-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--ai);}
+  .flow-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+  .flow-node{cursor:pointer;}
+  .flow-node rect{transition:filter .15s;}
+  .flow-node:hover rect{filter:brightness(0.95);}
+  .flow-node:hover text{text-decoration:underline;}
+  .flow-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--hair);font-size:11px;color:var(--sub);}
+  .flow-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .flow-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;}
   .dash-open-btn:hover{opacity:.9;}
   .dash-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:110;padding:26px 14px;overflow-y:auto;}
   .dash-backdrop.open{display:block;}
@@ -264,6 +320,8 @@
   <div class="ttl"><span id="docTitle">精読ノート ― The Danger of a Single Story</span> <small id="docSub">北海道大学 2022年度 大問1（出典：Chimamanda Ngozi Adichie, TED Talk）</small></div>
   <div class="controls">
     <button id="dashOpenBtn" type="button" class="dash-open-btn">① 設問チェック</button>
+    <button id="vocabOpenBtn" type="button" class="vocab-open-btn">② 単語チェック</button>
+    <button id="flowOpenBtn" type="button" class="flow-open-btn">🗺 論理構造図</button>
     <span class="sep"></span>
     <button data-cls="show-jp">和訳</button>
     <button data-cls="show-pt">ポイント</button>
@@ -343,6 +401,139 @@
       <div class="dash-score-summary" id="dashScoreSummary"></div>
     </div>
     <div id="dashReview"></div>
+  </div>
+</div>
+
+<div class="vocab-backdrop" id="vocabBackdrop">
+  <div class="vocab-modal">
+    <button class="qmodal-close" id="vocabClose">✕ 閉じる</button>
+    <div class="vocab-head">
+      <div class="vocab-title">② 単語チェック</div>
+      <div class="vocab-sub">段落ごとに抽出した語句から4択クイズに挑戦できます。</div>
+    </div>
+
+    <div class="vc-setup" id="vcSetup">
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題形式</div>
+        <div class="vc-radio-group">
+          <label class="vc-radio-label"><input type="radio" name="vcDir" value="e2j" checked><span>英語 → 日本語の意味</span></label>
+          <label class="vc-radio-label"><input type="radio" name="vcDir" value="j2e"><span>日本語の意味 → 英語</span></label>
+        </div>
+      </div>
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題範囲</div>
+        <select class="vc-select" id="vcScope"></select>
+        <div class="vc-pool-note" id="vcPoolNote"></div>
+      </div>
+      <button type="button" class="vc-start-btn" id="vcStartBtn">クイズを始める</button>
+    </div>
+
+    <div class="vc-quiz" id="vcQuiz">
+      <div class="vc-progress"><span>問題 <b id="vcQNum">1</b> / <span id="vcQTotal">10</span></span><span>正解 <b id="vcScoreNow">0</b></span></div>
+      <div class="vc-prompt" id="vcPrompt"></div>
+      <div class="vc-choices" id="vcChoices"></div>
+      <button type="button" class="vc-next-btn" id="vcNextBtn">次の問題へ →</button>
+    </div>
+
+    <div class="vc-result" id="vcResult">
+      <div class="vc-result-score" id="vcResultScore">0 / 0</div>
+      <div class="vc-result-msg" id="vcResultMsg"></div>
+      <button type="button" class="vc-retry-btn" id="vcRetryBtn">設定に戻ってもう一度</button>
+    </div>
+  </div>
+</div>
+
+<div class="flow-backdrop" id="flowBackdrop">
+  <div class="flow-modal">
+    <button class="qmodal-close" id="flowClose">✕ 閉じる</button>
+    <div class="flow-head">
+      <div class="flow-title">論理構造図</div>
+      <div class="flow-sub">段落どうしの関係を図解しています。ボックスをクリックすると本文の該当段落へ移動します。</div>
+    </div>
+    <svg viewBox="0 0 760 610" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#8a887f"/>
+        </marker>
+      </defs>
+
+      <!-- 矢印: p1 -> p2/p3/p5 (3つの具体例へ分岐) -->
+      <path d="M380,72 C380,100 125,110 125,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <path d="M380,72 L380,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <path d="M380,72 C380,100 635,110 635,148" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <text x="380" y="100" text-anchor="middle" font-size="11" fill="#8a887f" font-family="Yu Gothic,sans-serif">3つの具体例で示す</text>
+
+      <!-- p3 -> p4 転換 -->
+      <path d="M380,215 L380,248" fill="none" stroke="#c9760c" stroke-width="1.8" marker-end="url(#arrow)"/>
+      <text x="392" y="235" font-size="10.5" fill="#c9760c" font-family="Yu Gothic,sans-serif" font-weight="700">転換</text>
+
+      <!-- 収束: p2/p4/p5 -> p6 -->
+      <path d="M125,215 C125,340 300,360 340,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <path d="M380,313 L380,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <path d="M635,215 C635,340 460,360 420,398" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <text x="380" y="358" text-anchor="middle" font-size="11" fill="#8a887f" font-family="Yu Gothic,sans-serif">一般化（COVID-19への応用）</text>
+
+      <!-- p6 -> p7 -->
+      <path d="M380,463 L380,497" fill="none" stroke="#8a887f" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <text x="392" y="484" font-size="10.5" fill="#8a887f" font-family="Yu Gothic,sans-serif" font-weight="700">結論づけ</text>
+
+      <!-- p1 導入 -->
+      <g class="flow-node" data-jump="p1">
+        <rect x="290" y="14" width="180" height="58" rx="10" fill="#2c3e66"/>
+        <text x="380" y="36" text-anchor="middle" font-size="11.5" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">① 導入</text>
+        <text x="380" y="54" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">単一の物語の弊害</text>
+      </g>
+
+      <!-- p2 具体例① -->
+      <g class="flow-node" data-jump="p2">
+        <rect x="30" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <text x="125" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">② 具体例①</text>
+        <text x="125" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">子供時代の</text>
+        <text x="125" y="204" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">読書経験</text>
+      </g>
+
+      <!-- p3 具体例② -->
+      <g class="flow-node" data-jump="p3">
+        <rect x="285" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <text x="380" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">③ 具体例②</text>
+        <text x="380" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">Fideの紹介</text>
+      </g>
+
+      <!-- p4 具体例②続 -->
+      <g class="flow-node" data-jump="p4">
+        <rect x="285" y="248" width="190" height="65" rx="10" fill="#fdf0d5" stroke="#c9760c" stroke-width="1.3"/>
+        <text x="380" y="271" text-anchor="middle" font-size="11" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">④ 具体例②続</text>
+        <text x="380" y="288" text-anchor="middle" font-size="10" fill="#8a5a10" font-family="Yu Gothic,sans-serif">思い込みと転換</text>
+      </g>
+
+      <!-- p5 具体例③ -->
+      <g class="flow-node" data-jump="p5">
+        <rect x="540" y="148" width="190" height="67" rx="10" fill="#eaf0f8" stroke="#2c3e66" stroke-width="1.3"/>
+        <text x="635" y="172" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑤ 具体例③</text>
+        <text x="635" y="190" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">ルームメイトの</text>
+        <text x="635" y="204" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">エピソード</text>
+      </g>
+
+      <!-- p6 COVID接続 -->
+      <g class="flow-node" data-jump="p6">
+        <rect x="230" y="398" width="300" height="65" rx="10" fill="#fdf0d5" stroke="#c9760c" stroke-width="1.3"/>
+        <text x="380" y="424" text-anchor="middle" font-size="11.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">⑥ COVID-19との接続</text>
+        <text x="380" y="443" text-anchor="middle" font-size="10" fill="#8a5a10" font-family="Yu Gothic,sans-serif">引用による結論への橋渡し</text>
+      </g>
+
+      <!-- p7 結論 -->
+      <g class="flow-node" data-jump="p7">
+        <rect x="230" y="497" width="300" height="75" rx="10" fill="#2c3e66"/>
+        <text x="380" y="524" text-anchor="middle" font-size="12" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">⑦ 結論</text>
+        <text x="380" y="544" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">複数の物語の重要性</text>
+        <text x="380" y="560" text-anchor="middle" font-size="9.5" fill="#c3cbdc" font-family="Yu Gothic,sans-serif">（事実と憶測を区別し偏見を自覚する）</text>
+      </g>
+    </svg>
+    <div class="flow-legend">
+      <span><i style="background:#2c3e66"></i>導入・結論（主張）</span>
+      <span><i style="background:#eaf0f8;border:1px solid #2c3e66"></i>具体例</span>
+      <span><i style="background:#fdf0d5;border:1px solid #c9760c"></i>転換・接続点</span>
+    </div>
   </div>
 </div>
 
@@ -1106,7 +1297,7 @@ const QMAP=[
     ids:["p1s8"],
     short:"it＝This（直前文の内容）と同一対象を軽く受ける代名詞。同一対象を1文中で2度指す時、1度目は強い指示語This、2度目は軽いitで受けるのが自然な語法（指示語問題の頻出パターン）。訳：単一の物語によって、真実全体が明るみに出ることが妨げられる。",
     modelAnswer:"単一の物語によって、真実全体が明るみに出ることが妨げられる。",
-    altAnswer:"単一の物語が、真実全体を明るみに出すことを妨げてしまう。",
+    altAnswers:["単一の物語が、真実全体を明るみに出すことを妨げてしまう。","単一の物語が真実全体のほんの一部しか示さないことが、真実全体が明るみに出ることを妨げている。"],
     elements:[
       {id:1, desc:"itの指示内容を「単一の物語」と明示できているか"},
       {id:2, desc:"prevent A from -ing を「妨げる」と訳せているか"},
@@ -1132,7 +1323,7 @@ const QMAP=[
     ids:["p5s10"],
     short:"It＝having a single story。訳：単一の物語は、差別や攻撃の根本原因となる固定観念を作り出す。",
     modelAnswer:"単一の物語は、人々や文化の集団への差別や攻撃の根本的原因の1つである、一連の固定観念を作り出す。",
-    altAnswer:"単一の物語を持つことは、ある人々や文化の集団に対する差別や攻撃の主要な原因となる固定観念を生み出す。",
+    altAnswers:["単一の物語を持つことは、ある人々や文化の集団に対する差別や攻撃の主要な原因となる固定観念を生み出す。"],
     elements:[
       {id:1, desc:"Itの指示内容を「単一の物語（を持つこと）」と明示できているか"},
       {id:2, desc:"「一連の固定観念を作り出す」を訳せているか"},
@@ -1205,8 +1396,9 @@ function openQModal(q){
   if(isChoice){
     document.getElementById('qmodalChoices').innerHTML=choiceGridHtml(q.choices);
   } else if(q.type==='free'){
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
     document.getElementById('qmodalReason').innerHTML=
-      `<b>模範解答：</b>${esc(q.modelAnswer)}<br><b>別解：</b>${esc(q.altAnswer)}<br><br>${q.short||''}`;
+      `<b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}<br><br>${q.short||''}`;
   } else {
     document.getElementById('qmodalReason').innerHTML=q.short||'';
   }
@@ -1217,7 +1409,7 @@ function openQModal(q){
 function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); }
 document.getElementById('qmodalClose').addEventListener('click', closeQModal);
 document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); } });
 
 /* ===== ①設問チェック ダッシュボード ===== */
 function dashHintHtml(q, uid){
@@ -1260,7 +1452,7 @@ function dashQuestionHtml(q, qidx){
     inner=`<input type="text" class="dash-text-input" id="${uid}_input" placeholder="単語を入力">`;
   } else if(q.type==='free'){
     inner=`<textarea class="dash-textarea" id="${uid}_input" placeholder="（任意）自分の訳を書いてみる"></textarea>
-      <div class="dash-free-note">採点すると模範解答・別解・チェック項目が表示されます。</div>`;
+      <div class="dash-free-note">下のチェック項目を見ながら、自分の訳に含まれているかを確認しましょう。</div>`;
   } else if(q.type==='multi'){
     inner=`<div class="dash-opts">${q.choices.map(c=>
       `<label class="dash-mc-item"><input type="checkbox" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
@@ -1268,11 +1460,12 @@ function dashQuestionHtml(q, qidx){
   }
   let reveal='';
   if(q.type==='free'){
-    reveal=`<div class="dash-reveal" id="${uid}_reveal">
-      <div class="dash-reveal-ans"><b>模範解答：</b>${esc(q.modelAnswer)}<br><b>別解：</b>${esc(q.altAnswer)}</div>
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
+    reveal=`<div class="dash-reveal show" id="${uid}_reveal">
+      <div class="dash-reveal-ans"><b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}</div>
       ${q.elements.map(el=>`<label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb">${esc(el.desc)}</label>`).join('')}
       <div class="dash-coherent"><label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb dash-coherent-cb">日本語の文として自然に成立している</label></div>
-      <div class="dash-achieve" id="${uid}_achieve">達成率：―</div>
+      <div class="dash-achieve" id="${uid}_achieve">達成率：0/${q.elements.length}（0%）</div>
     </div>`;
   }
   return `<div class="dash-qcard" data-qidx="${qidx}" data-uid="${uid}" data-qtype="${q.type}">
@@ -1409,13 +1602,14 @@ document.body.addEventListener('click', e=>{
   }
   const jumpBtn=e.target.closest('.dash-hint-jump');
   if(jumpBtn){
-    const pid=jumpBtn.dataset.jump;
     closeDashModal();
-    const p=ALL.find(pp=>pp.id===pid);
-    if(p && p.sents[0]){
-      const el=document.getElementById(p.sents[0].id);
-      if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80); }
-    }
+    jumpToParagraph(jumpBtn.dataset.jump);
+    return;
+  }
+  const flowNode=e.target.closest('.flow-node');
+  if(flowNode){
+    closeFlowModal();
+    jumpToParagraph(flowNode.dataset.jump);
     return;
   }
   const reviewBtn=e.target.closest('.dash-review-btn');
@@ -1426,12 +1620,148 @@ document.body.addEventListener('click', e=>{
   }
 });
 
+function jumpToParagraph(pid){
+  const p=ALL.find(pp=>pp.id===pid);
+  if(p && p.sents[0]){
+    const el=document.getElementById(p.sents[0].id);
+    if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80); }
+  }
+}
+
 let dashRendered=false;
 function openDashModal(){ if(!dashRendered){ renderDashboard(); dashRendered=true; } document.getElementById('dashBackdrop').classList.add('open'); document.getElementById('dashBackdrop').scrollTop=0; }
 function closeDashModal(){ document.getElementById('dashBackdrop').classList.remove('open'); }
 document.getElementById('dashOpenBtn').addEventListener('click', openDashModal);
 document.getElementById('dashClose').addEventListener('click', closeDashModal);
 document.getElementById('dashBackdrop').addEventListener('click', e=>{ if(e.target.id==='dashBackdrop') closeDashModal(); });
+
+function openFlowModal(){ document.getElementById('flowBackdrop').classList.add('open'); }
+function closeFlowModal(){ document.getElementById('flowBackdrop').classList.remove('open'); }
+document.getElementById('flowOpenBtn').addEventListener('click', openFlowModal);
+document.getElementById('flowClose').addEventListener('click', closeFlowModal);
+document.getElementById('flowBackdrop').addEventListener('click', e=>{ if(e.target.id==='flowBackdrop') closeFlowModal(); });
+
+/* ===== ②単語チェック（4択クイズ） ===== */
+const VOCAB_POOL=[];
+ALL.forEach(p=>p.vocab.forEach(v=>VOCAB_POOL.push({word:v.word,pos:v.pos,ja:v.ja,pid:p.id,prole:p.role})));
+
+const vcScopeSel=document.getElementById('vcScope');
+(function buildScopeOptions(){
+  const optAll=document.createElement('option');
+  optAll.value='all'; optAll.textContent=`全段落（全${VOCAB_POOL.length}語）`;
+  vcScopeSel.appendChild(optAll);
+  ALL.forEach(p=>{
+    const n=p.vocab.length;
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=`第${p.id.replace('p','')}段落：${p.role}（${n}語）`;
+    vcScopeSel.appendChild(opt);
+  });
+})();
+
+let vcQuestions=[], vcIndex=0, vcScore=0, vcLocked=false;
+const VC_MAX_Q=15;
+
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function buildQuiz(){
+  const dir=document.querySelector('input[name="vcDir"]:checked').value;
+  const scope=vcScopeSel.value;
+  const pool = scope==='all' ? VOCAB_POOL : VOCAB_POOL.filter(v=>v.pid===scope);
+  const picked = shuffle(pool).slice(0, VC_MAX_Q);
+  vcQuestions = picked.map(item=>{
+    const isE2J = dir==='e2j';
+    const correctText = isE2J ? item.ja : item.word;
+    const distractPool = VOCAB_POOL.filter(v=>v.word!==item.word && (isE2J? v.ja!==item.ja : v.word!==item.word));
+    const distractors = shuffle(distractPool).slice(0,3).map(v=> isE2J? v.ja : v.word);
+    const choices = shuffle([correctText, ...distractors]);
+    return { prompt: isE2J? item.word : item.ja, promptPos: item.pos, correct: correctText, choices, isE2J };
+  });
+  vcIndex=0; vcScore=0;
+}
+
+function renderQuestion(){
+  vcLocked=false;
+  const q=vcQuestions[vcIndex];
+  document.getElementById('vcQNum').textContent=vcIndex+1;
+  document.getElementById('vcQTotal').textContent=vcQuestions.length;
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const promptEl=document.getElementById('vcPrompt');
+  promptEl.textContent=q.prompt;
+  promptEl.className='vc-prompt'+(q.isE2J?'':' jp');
+  const choicesEl=document.getElementById('vcChoices');
+  choicesEl.innerHTML='';
+  q.choices.forEach(choice=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='vc-choice-btn'+(q.isE2J?'':''); 
+    b.textContent=choice;
+    if(!q.isE2J===false){} // no-op guard
+    b.addEventListener('click', ()=>onChoose(b, choice));
+    choicesEl.appendChild(b);
+  });
+  document.getElementById('vcNextBtn').classList.remove('show');
+}
+
+function onChoose(btn, choice){
+  if(vcLocked) return;
+  vcLocked=true;
+  const q=vcQuestions[vcIndex];
+  const ok = choice===q.correct;
+  if(ok) vcScore++;
+  [...document.getElementById('vcChoices').children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.correct) b.classList.add('correct');
+    else if(b===btn) b.classList.add('wrong');
+  });
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const nextBtn=document.getElementById('vcNextBtn');
+  nextBtn.textContent = (vcIndex<vcQuestions.length-1) ? '次の問題へ →' : '結果を見る →';
+  nextBtn.classList.add('show');
+}
+
+document.getElementById('vcNextBtn').addEventListener('click', ()=>{
+  vcIndex++;
+  if(vcIndex>=vcQuestions.length){ finishQuiz(); return; }
+  renderQuestion();
+});
+
+function finishQuiz(){
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.add('show');
+  const total=vcQuestions.length;
+  document.getElementById('vcResultScore').textContent=`${vcScore} / ${total}`;
+  const pct = total? Math.round(vcScore/total*100):0;
+  let msg='復習して、もう一度チャレンジしましょう。';
+  if(pct>=90) msg='素晴らしい！ほぼ完璧です。';
+  else if(pct>=70) msg='よくできました。あと少しで満点です。';
+  else if(pct>=50) msg='半分以上正解。間違えた語句を確認しましょう。';
+  document.getElementById('vcResultMsg').textContent=`正答率 ${pct}%　${msg}`;
+}
+
+document.getElementById('vcStartBtn').addEventListener('click', ()=>{
+  buildQuiz();
+  if(vcQuestions.length<2){ document.getElementById('vcPoolNote').textContent='この範囲には十分な語数がありません。'; return; }
+  document.getElementById('vcSetup').style.display='none';
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcQuiz').classList.add('show');
+  renderQuestion();
+});
+
+document.getElementById('vcRetryBtn').addEventListener('click', ()=>{
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcSetup').style.display='block';
+});
+
+function openVocabModal(){
+  document.getElementById('vcSetup').style.display='block';
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vocabBackdrop').classList.add('open');
+}
+function closeVocabModal(){ document.getElementById('vocabBackdrop').classList.remove('open'); }
+document.getElementById('vocabOpenBtn').addEventListener('click', openVocabModal);
+document.getElementById('vocabClose').addEventListener('click', closeVocabModal);
+document.getElementById('vocabBackdrop').addEventListener('click', e=>{ if(e.target.id==='vocabBackdrop') closeVocabModal(); });
 
 /* 空所の答え描画 */
 function fillGap(wrap){
