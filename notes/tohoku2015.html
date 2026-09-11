@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精読ノート ― Tohoku 2015 大問II</title>
+<style>
+  :root{
+    --paper:#f7f6f2;--card:#fffdf9;--ink:#1c1b19;--sub:#6f6b63;--hair:#e4e1d8;
+    --shu:#b23b2e;--ai:#2c3e66;--midori:#2e7d5b;
+    --s-bg:#dfe9f6;--s-tx:#234e84;
+    --v-bg:#f6ddd6;--v-tx:#9a3320;
+    --o-bg:#d9efe4;--o-tx:#1f6b4e;
+    --c-bg:#e6e0f4;--c-tx:#4f3f8a;
+    --m-bg:#ebe9e3;--m-tx:#6f6d66;
+    --par:#c9760c;--hl:#ffe94d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.6;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 90px;}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(247,246,242,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--hair);}
+  .topbar .inner{max-width:880px;margin:0 auto;padding:10px 18px;}
+  .ttl{font-family:Georgia,serif;font-size:15px;color:var(--ai);font-weight:700;}
+  .ttl small{display:block;font-weight:400;font-size:11px;color:var(--sub);}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+  .controls button{font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--hair);background:var(--card);color:var(--sub);border-radius:999px;padding:5px 13px;transition:.15s;}
+  .controls button:hover{border-color:var(--ai);color:var(--ai);}
+  .controls button.active{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .controls .sep{width:1px;height:18px;background:var(--hair);margin:0 2px;}
+
+  .lead{margin:20px 0 4px;font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .lead b{color:var(--shu);}
+
+  .index{margin:14px 0 6px;background:#fbfaf6;border:1px solid var(--hair);border-radius:9px;padding:11px 14px;}
+  .index .ih{font-size:12px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .index .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .index .chips button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 11px;}
+  .index .chips button:hover{border-color:var(--shu);color:var(--shu);}
+
+  .legend{display:none;flex-wrap:wrap;gap:7px;margin:12px 0 4px;align-items:center;}
+  body.struct-on .legend{display:flex;}
+  .legend span{font-size:12px;padding:2px 9px;border-radius:5px;}
+  .legend .ls{background:var(--s-bg);color:var(--s-tx);}.legend .lv{background:var(--v-bg);color:var(--v-tx);}
+  .legend .lo{background:var(--o-bg);color:var(--o-tx);}.legend .lc{background:var(--c-bg);color:var(--c-tx);}
+  .legend .lm{background:var(--m-bg);color:var(--m-tx);}
+  .legend .lp{background:none;color:var(--par);border-bottom:3px solid var(--par);border-radius:0;padding:2px 2px 1px;}
+
+  .phead{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ai);padding-bottom:8px;margin:30px 0 4px;}
+  .phead:first-of-type{margin-top:18px;}
+  .pnum{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--ai);}
+  .prole{font-size:13px;color:var(--ai);font-weight:700;}
+
+  .sents{border-left:2px solid #ece9e0;padding-left:16px;margin-left:6px;}
+  .sent{padding:13px 0;border-bottom:1px solid #f0ede5;cursor:pointer;transition:background .5s;}
+  .sent:last-child{border-bottom:none;}
+  .sent.flash{background:#fff6d8;}
+  .badge{display:none;font-family:Georgia,serif;font-size:11px;font-weight:700;color:#fff;background:var(--ai);border-radius:5px;padding:1px 7px;margin-right:8px;vertical-align:2px;}
+  .sent.imp .badge{display:inline-block;}
+
+  .en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:2.2;}
+  .tok{position:relative;display:inline;}
+  .w{padding:1px 0;border-radius:3px;}
+  .w.tap{border-bottom:1px dotted #b48a3a;cursor:pointer;}
+  .w.tap:hover{color:#000;}
+  /* 黄ハイライト：構造OFF時のみ。構造ONでは色塗りを優先 */
+  .w.hl{background:var(--hl);}
+  body.struct-on .en .hl{background:transparent;}
+  body.struct-on .en .s{background:var(--s-bg);}
+  body.struct-on .en .v{background:var(--v-bg);}
+  body.struct-on .en .o{background:var(--o-bg);}
+  body.struct-on .en .c{background:var(--c-bg);}
+  body.struct-on .en .m{background:var(--m-bg);}
+  body.struct-on .en .corr{color:var(--par);font-weight:bold;}
+  body.skel-on .en .m{opacity:.32;}
+
+  .rlab,.pnum2{display:none;}
+  .tok.hastip{display:inline-block;}
+  body.struct-on .rlab,body.struct-on .pnum2{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;vertical-align:0.55em;line-height:0;margin-right:3px;white-space:nowrap;}
+  .rlab.s{color:var(--s-tx);}.rlab.v{color:var(--v-tx);}.rlab.o{color:var(--o-tx);}.rlab.c{color:var(--c-tx);}.rlab.m{color:var(--m-tx);}
+  .pnum2{color:var(--par);}
+  body.struct-on .en .pp .w{border-bottom:3px solid var(--par);border-radius:0;padding-bottom:0;}
+
+  /* 空所 */
+  .gap{display:inline-block;min-width:54px;text-align:center;border-bottom:2px solid var(--ai);color:var(--ai);font-weight:700;cursor:pointer;padding:0 6px;font-family:"Yu Gothic",sans-serif;font-size:14px;vertical-align:1px;}
+  .gap.filled{border-bottom-color:var(--midori);color:var(--midori);}
+  .gapwrap{position:relative;display:inline-block;}
+  .gapans{display:none;position:absolute;top:100%;left:0;margin-top:6px;width:max-content;max-width:300px;background:#fff;border:1px solid var(--hair);border-left:3px solid var(--midori);border-radius:0 6px 6px 0;padding:7px 11px;font-family:"Yu Gothic",sans-serif;font-size:12px;color:#34322d;line-height:1.6;z-index:15;box-shadow:0 3px 12px rgba(0,0,0,.1);}
+  .gapwrap.open .gapans{display:block;}
+  .gapans b{color:var(--midori);}
+
+  .tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#2b2b28;color:#fff;font-size:11.5px;line-height:1.5;padding:7px 10px;border-radius:7px;width:max-content;max-width:210px;z-index:20;margin-bottom:7px;text-align:left;font-family:"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+  .tip b{color:#ffe085;}.tip .pos{color:#bdbdb8;font-size:10.5px;}
+  .tok.active .tip{display:block;}
+
+  .jp,.pt{display:none;}
+  body.show-jp .jp,.sent.open .jp{display:block;}
+  body.show-pt .pt,.sent.open .pt{display:block;}
+  .jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:14.5px;color:#2a2a28;background:#f3f8f4;border-left:3px solid var(--midori);padding:7px 11px;margin-top:9px;border-radius:0 4px 4px 0;}
+  .pt{font-size:13px;color:#34322d;background:#f4f6fa;border-left:3px solid var(--ai);padding:7px 11px;margin-top:7px;border-radius:0 4px 4px 0;}
+  .pt::before{content:"ポイント ";font-weight:700;color:var(--ai);}
+
+  /* 段落フッタ：語句・要旨 */
+  .pfoot{margin:12px 0 4px;display:flex;gap:7px;}
+  .pfoot button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .pfoot button:hover{border-color:var(--ai);color:var(--ai);}
+  .pfoot button.on{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .panel{display:none;margin:6px 0 0;border:1px solid var(--hair);border-radius:8px;padding:11px 14px;background:#fcfbf7;font-size:13px;line-height:1.75;}
+  .panel.open{display:block;}
+  .panel.vocab table{width:100%;border-collapse:collapse;}
+  .panel.vocab td{padding:3px 6px;vertical-align:top;border-bottom:1px solid #f0ede5;}
+  .panel.vocab .lv{white-space:nowrap;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 6px;}
+  .panel.vocab .lv.基礎{background:#e9f3ec;color:#2e7d5b;}
+  .panel.vocab .lv.標準{background:#eaf0f8;color:#2c3e66;}
+  .panel.vocab .lv.難関{background:#f7e7e4;color:#b23b2e;}
+  .panel.vocab .wd{font-family:Georgia,serif;font-weight:700;}
+  .panel.vocab .ps{color:var(--sub);font-size:11px;}
+  .panel.summary{color:#34322d;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:46px;border-top:1px solid var(--hair);padding-top:16px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  @media print{
+    .topbar{position:static;} .controls,.pfoot{display:none;}
+    body.show-jp .jp,.pt{display:block;} .panel{display:block;}
+    .qmodal-backdrop{display:none!important;}
+    .dash-backdrop{display:none!important;}
+  }
+
+  .dm-legend{display:none!important;}
+  body.dm-on .dm-legend{display:flex!important;}
+  .legend .ld{background:none;color:#2c3e66;border-bottom:1.5px dotted #2c3e66;border-radius:0;padding:2px 2px 1px;}
+
+  /* ディスコースマーカー（因果・対比・譲歩・列挙・例示） */
+  .dmlab{display:none;}
+  body.dm-on .dmlab{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;color:#2c3e66;vertical-align:0.55em;line-height:0;margin-right:2px;white-space:nowrap;}
+  body.dm-on .en .dmword{border-bottom:1.5px dotted #2c3e66;padding-bottom:1px;}
+
+  /* ===== 設問モーダル ===== */
+  .qmodal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:100;padding:28px 14px;overflow-y:auto;}
+  .qmodal-backdrop.open{display:block;}
+  .qmodal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:28px 28px 36px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .qmodal-close{position:absolute;top:16px;right:18px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
+  .qmodal-close:hover{border-color:var(--shu);color:var(--shu);}
+  .qmodal-back{display:none;position:absolute;top:16px;right:130px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--ai);font-family:inherit;}
+  .qmodal-back.show{display:inline-block;}
+  .qmodal-back:hover{border-color:var(--ai);background:#f4f6fa;}
+  .qmodal-head{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:220px;}
+  .qmodal-qnum{font-family:Georgia,serif;font-size:23px;font-weight:700;color:var(--ai);margin-right:12px;}
+  .qmodal-preview{font-size:13px;color:var(--sub);}
+  .qmodal-question{background:#fff8ea;border:1px solid #ecd9a0;border-left:4px solid #c9760c;border-radius:0 8px 8px 0;padding:11px 15px;font-size:13px;line-height:1.75;color:#5c4a1f;margin-bottom:18px;}
+  .qmodal-section{margin:20px 0;}
+  .qmodal-sectitle{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;letter-spacing:.02em;}
+  .qmodal-para{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:2.1;color:#6b685f;}
+  .qmodal-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;box-shadow:0 0 0 1px #f0dfa0;}
+  .qmodal-diagram{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:2.9;background:#fbfaf6;border:1px solid var(--hair);border-radius:10px;padding:20px 22px;}
+  .qmodal-diagram .db-s{color:var(--s-tx);}
+  .qmodal-diagram .db-o{color:var(--o-tx);}
+  .qmodal-diagram .db-c{color:var(--c-tx);}
+  .qmodal-diagram .db-m{color:var(--m-tx);font-style:italic;}
+  .qmodal-diagram .db-v{color:var(--v-tx);font-weight:700;text-decoration:underline;text-underline-offset:4px;}
+  .qmodal-diagram .db-corr{color:var(--par);font-weight:700;}
+  .qmodal-diagram .db-sub{font-size:10.5px;vertical-align:sub;font-family:"Yu Gothic",sans-serif;font-weight:700;color:var(--sub);margin:0 3px 0 1px;}
+  .qmodal-diagram .db-par{border-bottom:3px solid var(--par);padding-bottom:1px;}
+  .qmodal-diagram .qdiagram-line{margin:5px 0;}
+  .qmodal-diagram-legend{font-size:11px;color:var(--sub);margin-top:12px;border-top:1px dashed var(--hair);padding-top:9px;line-height:1.8;}
+  .qmodal-reason{font-size:13.5px;line-height:1.8;background:#f4f6fa;border-left:3px solid var(--ai);padding:11px 15px;border-radius:0 8px 8px 0;}
+
+  /* 選択肢検証カード */
+  .choice-grid{display:flex;flex-direction:column;gap:9px;}
+  .choice-card{border:1px solid var(--hair);border-left:5px solid var(--hair);border-radius:0 10px 10px 0;padding:11px 14px;background:#fff;}
+  .choice-card.ok{border-left-color:var(--midori);background:#f6faf7;}
+  .choice-card.ng{border-left-color:var(--shu);background:#fdf6f5;}
+  .choice-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .choice-label{font-family:Georgia,serif;font-weight:700;color:var(--ink);}
+  .choice-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;}
+  .choice-card.ok .choice-badge{background:#e3f3e9;color:var(--midori);}
+  .choice-card.ng .choice-badge{background:#fbe6e3;color:var(--shu);}
+  .choice-text{font-family:Georgia,serif;font-size:14px;line-height:1.65;margin:6px 0 0;}
+  .choice-text .cerr{color:var(--shu);font-weight:700;text-decoration:underline;text-decoration-style:wavy;text-decoration-color:var(--shu);text-underline-offset:3px;border-radius:2px;animation:cflash 1.4s ease-in-out 1;}
+  @keyframes cflash{0%{background:#ffcfc7;}55%{background:#ffe4df;}100%{background:transparent;}}
+  .choice-quote{font-size:11.5px;color:#6b6a63;margin-top:6px;padding-left:9px;border-left:2px dashed var(--hair);}
+  .choice-quote .qwavy{text-decoration:underline;text-decoration-style:wavy;text-underline-offset:3px;}
+  .choice-card.ng .choice-quote .qwavy{text-decoration-color:var(--shu);color:#8a2e22;}
+  .choice-card.ok .choice-quote .qwavy{text-decoration-color:var(--midori);color:#1f5f45;}
+  .choice-para-tag{font-size:10px;color:var(--sub);margin-left:3px;}
+  .choice-note{font-size:12px;color:#54524a;margin-top:5px;line-height:1.6;}
+
+  /* ===== ①概要ダッシュボード ===== */
+  .dash-open-btn{background:var(--shu)!important;border-color:var(--shu)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn{background:var(--ai)!important;border-color:var(--ai)!important;color:#fff!important;font-weight:700;}
+  .vocab-open-btn{background:var(--midori)!important;border-color:var(--midori)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn:hover,.dash-open-btn:hover,.vocab-open-btn:hover{opacity:.9;}
+
+  .vocab-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:115;padding:24px 14px;overflow-y:auto;}
+  .vocab-backdrop.open{display:block;}
+  .vocab-modal{max-width:560px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .vocab-head{margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--midori);padding-right:90px;}
+  .vocab-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--midori);}
+  .vocab-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+
+  .vc-setup-row{margin-bottom:16px;}
+  .vc-setup-label{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .vc-radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .vc-radio-label{flex:1;min-width:140px;display:flex;align-items:center;gap:7px;border:1px solid var(--hair);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;}
+  .vc-radio-label:hover{border-color:var(--midori);}
+  .vc-radio-label input:checked ~ span{color:var(--midori);font-weight:700;}
+  .vc-select{width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:8px;background:#fff;}
+  .vc-start-btn{width:100%;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:11px 0;margin-top:6px;}
+  .vc-start-btn:hover{opacity:.9;}
+  .vc-pool-note{font-size:11px;color:var(--sub);margin-top:6px;}
+
+  .vc-quiz{display:none;}
+  .vc-quiz.show{display:block;}
+  .vc-progress{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--sub);margin-bottom:14px;}
+  .vc-progress b{color:var(--midori);font-family:Georgia,serif;}
+  .vc-prompt{font-family:Georgia,"Times New Roman",serif;font-size:22px;text-align:center;color:var(--ink);background:#f9f8f4;border:1px solid var(--hair);border-radius:10px;padding:22px 16px;margin-bottom:18px;line-height:1.5;}
+  .vc-prompt.jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:16px;}
+  .vc-choices{display:flex;flex-direction:column;gap:9px;}
+  .vc-choice-btn{font-family:inherit;font-size:13.5px;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--hair);border-radius:9px;padding:11px 14px;transition:.12s;}
+  .vc-choice-btn:hover:not(:disabled){border-color:var(--midori);background:#f6faf7;}
+  .vc-choice-btn:disabled{cursor:default;}
+  .vc-choice-btn.correct{border-color:var(--midori);background:#e3f3e9;color:#1f5f45;font-weight:700;}
+  .vc-choice-btn.wrong{border-color:var(--shu);background:#fbe6e3;color:#8a2e22;font-weight:700;}
+  .vc-next-btn{width:100%;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 0;margin-top:16px;display:none;}
+  .vc-next-btn.show{display:block;}
+
+  .vc-result{display:none;text-align:center;padding:20px 0;}
+  .vc-result.show{display:block;}
+  .vc-result-score{font-family:Georgia,serif;font-size:34px;font-weight:700;color:var(--midori);margin-bottom:8px;}
+  .vc-result-msg{font-size:13px;color:var(--sub);margin-bottom:20px;}
+  .vc-retry-btn{font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+
+  .flow-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:120;padding:24px 14px;overflow-y:auto;}
+  .flow-backdrop.open{display:block;}
+  .flow-modal{max-width:860px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .flow-head{margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .flow-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--ai);}
+  .flow-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+  .flow-node{cursor:pointer;}
+  .flow-node rect{transition:opacity .15s, transform .15s;transform-box:fill-box;transform-origin:center;}
+  .flow-node:hover rect{opacity:.88;transform:translateY(-1px);}
+  .flow-node:hover text{text-decoration:underline;}
+  .flow-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--hair);font-size:11px;color:var(--sub);}
+  .flow-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .flow-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;}
+  .flow-table-wrap{margin-top:18px;padding-top:14px;border-top:1px dashed var(--hair);}
+  .flow-table-title{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .flow-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .flow-table th{text-align:left;font-size:11px;color:var(--sub);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--hair);}
+  .flow-table td{padding:8px;vertical-align:top;border-bottom:1px solid #f0ede5;line-height:1.6;cursor:pointer;}
+  .flow-table tr:hover td{background:#f6f4ee;}
+  .flow-table .ft-num{font-family:Georgia,serif;font-weight:700;color:var(--ai);white-space:nowrap;}
+  .flow-table .ft-role{font-weight:700;color:#3a3833;white-space:nowrap;}
+  .flow-table .ft-summary{color:#54524a;}
+  .dash-open-btn:hover{opacity:.9;}
+  .dash-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:110;padding:26px 14px;overflow-y:auto;}
+  .dash-backdrop.open{display:block;}
+  .dash-modal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:26px 26px 34px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .dash-head{margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .dash-title{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--ai);}
+  .dash-sub{font-size:12.5px;color:var(--sub);margin-top:6px;line-height:1.7;}
+
+  .dash-qcard{border:1px solid var(--hair);border-radius:10px;padding:14px 16px;margin-bottom:12px;background:#fff;}
+  .dash-qhead{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;}
+  .dash-qlabel{font-family:Georgia,serif;font-weight:700;color:var(--shu);font-size:15px;}
+  .dash-qtext{font-size:13px;color:#3a3833;line-height:1.7;margin-bottom:9px;}
+  .dash-badge{display:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:auto;}
+  .dash-badge.show{display:inline-block;}
+  .dash-badge.ok{background:#e3f3e9;color:var(--midori);}
+  .dash-badge.ng{background:#fbe6e3;color:var(--shu);}
+  .dash-badge.pending{background:#f0eee6;color:var(--sub);}
+
+  .dash-opts{display:flex;flex-direction:column;gap:6px;}
+  .dash-opt-label{display:flex;gap:8px;align-items:baseline;font-size:13px;line-height:1.6;cursor:pointer;padding:5px 8px;border-radius:6px;}
+  .dash-opt-label:hover{background:#f6f4ee;}
+  .dash-opt-label input{margin-top:3px;flex-shrink:0;}
+  .dash-blank-title{font-size:12px;font-weight:700;color:var(--ai);margin:8px 0 4px;}
+  .dash-text-input{width:160px;font-family:inherit;font-size:13.5px;padding:6px 10px;border:1px solid var(--hair);border-radius:6px;}
+  .dash-textarea{width:100%;min-height:52px;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:6px;resize:vertical;box-sizing:border-box;}
+  .dash-free-note{font-size:11.5px;color:var(--sub);margin-top:4px;}
+
+  .dash-hint-toggle{margin-top:10px;font-family:inherit;font-size:12px;cursor:pointer;color:#8a6d1f;background:#fffaf0;border:1px solid #ecd9a0;border-radius:999px;padding:5px 13px;}
+  .dash-hint-toggle:hover{border-color:#c9760c;}
+  .dash-hint-body{display:none;margin-top:10px;padding:11px 14px;background:#fbfaf6;border:1px solid var(--hair);border-radius:8px;}
+  .dash-hint-body.show{display:block;}
+  .dash-hint-role{font-size:11.5px;font-weight:700;color:var(--ai);margin-bottom:6px;}
+  .dash-hint-para{font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.95;color:#54524a;}
+  .dash-hint-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;}
+  .dash-hint-jump{display:block;margin-top:9px;font-family:inherit;font-size:11.5px;cursor:pointer;color:var(--ai);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 12px;}
+  .dash-hint-jump:hover{border-color:var(--ai);}
+  .dash-hint-qline{font-size:12.5px;line-height:1.8;padding:3px 0;color:#54524a;}
+  .dash-hint-qline b{color:var(--ai);}
+
+  .dash-reveal{display:none;margin-top:12px;padding:12px 14px;background:#f9f8f4;border:1px solid var(--hair);border-radius:8px;}
+  .dash-reveal.show{display:block;}
+  .dash-reveal-ans{font-size:13px;line-height:1.8;margin-bottom:10px;}
+  .dash-reveal-ans b{color:var(--ai);}
+  .dash-elem-label{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;cursor:pointer;}
+  .dash-elem-label input{margin-top:2px;flex-shrink:0;}
+  .dash-achieve{font-size:12.5px;font-weight:700;color:var(--ai);margin-top:8px;}
+  .dash-coherent{margin-top:8px;padding-top:8px;border-top:1px dashed var(--hair);}
+
+  .dash-mc-item{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;}
+
+  .dash-gradebar{display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:16px;border-top:2px solid var(--ai);flex-wrap:wrap;}
+  .dash-grade-btn{font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+  .dash-grade-btn:hover{opacity:.9;}
+  .dash-score-summary{font-size:13px;color:#3a3833;line-height:1.8;}
+  .dash-score-summary b{color:var(--shu);font-family:Georgia,serif;}
+
+  .dash-review{margin-top:20px;}
+  .dash-review-title{font-size:13px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .dash-review-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--hair);border-radius:8px;margin-bottom:7px;background:#fff;flex-wrap:wrap;}
+  .dash-review-row .dash-badge{margin-left:0;}
+  .dash-review-qtext{flex:1;min-width:180px;font-size:12.5px;color:#54524a;}
+  .dash-review-btn{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .dash-review-btn:hover{border-color:var(--ai);color:var(--ai);}
+
+  @media (max-width:640px){
+    .dash-modal{padding:20px 14px 26px;}
+  }
+
+  @media (max-width:640px){
+    .qmodal{padding:20px 14px 26px;}
+    .qmodal-head{padding-right:170px;}
+    .qmodal-back{right:100px;font-size:11px;padding:5px 10px;}
+    .qmodal-close{font-size:11px;padding:5px 10px;}
+    .qmodal-diagram{font-size:16px;line-height:2.5;padding:14px 12px;}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <div class="ttl"><span id="docTitle">精読ノート ― What to Listen For in Music</span> <small id="docSub">東北大学 2015年 前期日程 大問II（Aaron Copland）</small></div>
+  <div class="controls">
+    <button id="dashOpenBtn" type="button" class="dash-open-btn">① 設問チェック</button>
+    <button id="vocabOpenBtn" type="button" class="vocab-open-btn">② 単語チェック</button>
+    <button id="flowOpenBtn" type="button" class="flow-open-btn">🗺 論理構造図</button>
+    <span class="sep"></span>
+    <button data-cls="show-jp">和訳</button>
+    <button data-cls="show-pt">ポイント</button>
+    <span class="sep"></span>
+    <button data-cls="struct-on">構造</button>
+    <button data-cls="skel-on">骨格</button>
+    <button data-cls="dm-on">ディスコースマーカー</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="lead">
+    英文をまず素読 → <b>文をタップ</b>で和訳・ポイント。<b>点線の語</b>はタップで語義（受験レベルのみ）。<b>構造</b>で重要文の語が S/V/O/C/M に色分けされ、対句・並列は橙の太下線＋番号。<b>骨格</b>でMを薄く落として核を浮かせます。<b>ディスコースマーカー</b>で因果・対比・譲歩・列挙などの論理関係を表示します。各段落末に語句・要旨。上部の<b>①設問チェック・②単語チェック・🗺論理構造図</b>で理解度を確認できます。
+  </div>
+
+  <div class="index">
+    <div class="ih">本文で復習する文法（タップで該当文へジャンプ）</div>
+    <div class="chips" id="gidx"></div>
+  </div>
+
+  <div class="index" id="qmapWrap">
+    <div class="ih">設問との対応（タップで設問ビューを表示）</div>
+    <div class="chips" id="qidx"></div>
+  </div>
+
+  <div class="legend">
+    <span class="ls">S 主語</span><span class="lv">V 動詞</span><span class="lo">O 目的語</span><span class="lc">C 補語</span><span class="lm">M 修飾語</span>
+    <span class="lp">対句・並列（番号で対応）</span>
+  </div>
+  <div class="legend dm-legend" id="dmLegend">
+    <span class="ld">因果＝因/果　対比＝対A/対B　譲歩＝譲/主　列挙＝列①②③</span>
+  </div>
+
+  <div id="paras"></div>
+  <footer>精読ノート ― 構造表示・設問チェック対応版</footer>
+</div>
+
+<div class="qmodal-backdrop" id="qmodalBackdrop">
+  <div class="qmodal">
+    <button class="qmodal-back" id="qmodalBack">← 採点結果に戻る</button>
+    <button class="qmodal-close" id="qmodalClose">✕ 閉じる</button>
+    <div class="qmodal-head">
+      <span class="qmodal-qnum" id="qmodalQnum"></span>
+      <span class="qmodal-preview" id="qmodalParaRole"></span>
+    </div>
+    <div class="qmodal-question" id="qmodalQuestion"></div>
+
+    <div class="qmodal-section" id="qmodalParaSection">
+      <div class="qmodal-sectitle">段落全文（該当文をハイライト）</div>
+      <div class="qmodal-para" id="qmodalPara"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalDiagramSection">
+      <div class="qmodal-sectitle">構文解釈図</div>
+      <div class="qmodal-diagram" id="qmodalDiagram"></div>
+      <div class="qmodal-diagram-legend">[ ]<b>=名詞句（S・O共通）</b>　下線<b>=V動詞</b>　⟨ ⟩<b>=C補語</b>　( )<b>=M修飾語</b>　橙の下線・番号<b>=対句・並列の対応</b></div>
+    </div>
+    <div class="qmodal-section" id="qmodalChoiceSection">
+      <div class="qmodal-sectitle">選択肢の検証</div>
+      <div id="qmodalChoices"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalReasonSection">
+      <div class="qmodal-sectitle">解答の根拠</div>
+      <div class="qmodal-reason" id="qmodalReason"></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-backdrop" id="dashBackdrop">
+  <div class="dash-modal">
+    <button class="qmodal-close" id="dashClose">✕ 閉じる</button>
+    <div class="dash-head">
+      <div class="dash-title">① 設問チェック</div>
+      <div class="dash-sub">各設問に答えてから「採点する」を押してください。わからないときは「ヒントを見る」で該当段落を確認できます。</div>
+    </div>
+    <div id="dashQCards"></div>
+    <div class="dash-gradebar">
+      <button id="dashGradeBtn" type="button" class="dash-grade-btn">採点する</button>
+      <div class="dash-score-summary" id="dashScoreSummary"></div>
+    </div>
+    <div id="dashReview"></div>
+  </div>
+</div>
+
+<div class="vocab-backdrop" id="vocabBackdrop">
+  <div class="vocab-modal">
+    <button class="qmodal-close" id="vocabClose">✕ 閉じる</button>
+    <div class="vocab-head">
+      <div class="vocab-title">② 単語チェック</div>
+      <div class="vocab-sub">英単語を見て、日本語の意味または英語の定義を4択から選びます。<br><span style="color:var(--sub);font-size:11px;">※「英語の定義」モードの選択肢は英英辞典（学習者向け辞書）の説明内容を参考に、教材用に簡潔へ書き改めたものです。</span></div>
+    </div>
+
+    <div class="vc-setup" id="vcSetup">
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題形式</div>
+        <div class="vc-radio-group">
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="e2j" checked><span>英語 → 日本語の意味</span></label>
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="def"><span>英語の定義（英英）</span></label>
+        </div>
+      </div>
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題範囲</div>
+        <select class="vc-select" id="vcScope"></select>
+        <div class="vc-pool-note" id="vcPoolNote"></div>
+      </div>
+      <button type="button" class="vc-start-btn" id="vcStartBtn">クイズを始める</button>
+    </div>
+
+    <div class="vc-quiz" id="vcQuiz">
+      <div class="vc-progress"><span>問題 <b id="vcQNum">1</b> / <span id="vcQTotal">10</span></span><span>正解 <b id="vcScoreNow">0</b></span></div>
+      <div class="vc-prompt" id="vcPrompt"></div>
+      <div class="vc-choices" id="vcChoices"></div>
+      <button type="button" class="vc-next-btn" id="vcNextBtn">次の問題へ →</button>
+    </div>
+
+    <div class="vc-result" id="vcResult">
+      <div class="vc-result-score" id="vcResultScore">0 / 0</div>
+      <div class="vc-result-msg" id="vcResultMsg"></div>
+      <button type="button" class="vc-retry-btn" id="vcRetryBtn">設定に戻ってもう一度</button>
+    </div>
+  </div>
+</div>
+
+<div class="flow-backdrop" id="flowBackdrop">
+  <div class="flow-modal">
+    <button class="qmodal-close" id="flowClose">✕ 閉じる</button>
+    <div class="flow-head">
+      <div class="flow-title">論理構造図</div>
+      <div class="flow-sub">段落どうしの関係を図解しています。ボックスをクリックすると本文の該当段落へ移動します。</div>
+    </div>
+<svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a95ab"/>
+    </marker>
+    <linearGradient id="gradNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#33456f"/>
+      <stop offset="100%" stop-color="#233657"/>
+    </linearGradient>
+    <linearGradient id="gradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f2f6fb"/>
+      <stop offset="100%" stop-color="#e3ecf7"/>
+    </linearGradient>
+    <linearGradient id="gradAmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff4de"/>
+      <stop offset="100%" stop-color="#fbe6bf"/>
+    </linearGradient>
+    <filter id="nodeShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#2c3e66" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- P1 -> 三つの列（感覚的／表現的／純音楽的） -->
+  <path d="M390,70 C390,92 125,96 125,112" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M390,70 L390,112" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M390,70 C390,92 655,96 655,112" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="390" y="90" text-anchor="middle" font-size="10.5" fill="#726d82" font-family="Yu Gothic,sans-serif" font-weight="700">三つのレベルに分けて聴く</text>
+
+  <!-- 列内の縦つながり -->
+  <path d="M125,166 L125,180" fill="none" stroke="#9a95ab" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M125,234 L125,248" fill="none" stroke="#9a95ab" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M125,302 L125,316" fill="none" stroke="#9a95ab" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <path d="M390,166 L390,180" fill="none" stroke="#9a95ab" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M390,234 L390,248" fill="none" stroke="#c9760c" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="402" y="245" font-size="9.5" fill="#c9760c" font-family="Yu Gothic,sans-serif" font-weight="700">転換</text>
+
+  <path d="M655,166 L655,180" fill="none" stroke="#9a95ab" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 収束：各列の最後 -> 結論 -->
+  <path d="M125,370 C125,392 260,392 300,400" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M390,302 L390,400" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M655,234 C655,320 520,392 480,400" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="390" y="392" text-anchor="middle" font-size="10.5" fill="#726d82" font-family="Yu Gothic,sans-serif" font-weight="700">実際には三つを同時に統合</text>
+
+  <!-- P1 導入 -->
+  <g class="flow-node" data-jump="p1">
+    <rect x="290" y="14" width="200" height="56" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
+    <text x="390" y="37" text-anchor="middle" font-size="11.5" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">① 導入</text>
+    <text x="390" y="55" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">聴取を三段階に分解</text>
+  </g>
+
+  <!-- 感覚的レベル列 -->
+  <g class="flow-node" data-jump="p2">
+    <rect x="20" y="112" width="210" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="125" y="134" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">② 感覚的レベル：定義</text>
+    <text x="125" y="150" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">音そのものを聴く快さ</text>
+  </g>
+  <g class="flow-node" data-jump="p3">
+    <rect x="20" y="180" width="210" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="125" y="202" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">③ 具体例</text>
+    <text x="125" y="218" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">ピアノの一音の力</text>
+  </g>
+  <g class="flow-node" data-jump="p4">
+    <rect x="20" y="248" width="210" height="54" rx="13" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="125" y="270" text-anchor="middle" font-size="10.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">④ 濫用への批判</text>
+    <text x="125" y="286" text-anchor="middle" font-size="9.5" fill="#8a5a10" font-family="Yu Gothic,sans-serif">音楽通気取りの現実逃避</text>
+  </g>
+  <g class="flow-node" data-jump="p5">
+    <rect x="20" y="316" width="210" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="125" y="338" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑤ まとめ</text>
+    <text x="125" y="354" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">重要だが全てではない</text>
+  </g>
+
+  <!-- 表現的レベル列 -->
+  <g class="flow-node" data-jump="p6">
+    <rect x="280" y="112" width="220" height="54" rx="13" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="390" y="134" text-anchor="middle" font-size="10.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">⑥ 表現的レベル：論争</text>
+    <text x="390" y="150" text-anchor="middle" font-size="9.5" fill="#8a5a10" font-family="Yu Gothic,sans-serif">ストラヴィンスキーの主張</text>
+  </g>
+  <g class="flow-node" data-jump="p7">
+    <rect x="280" y="180" width="220" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="390" y="202" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑦ 筆者の見解</text>
+    <text x="390" y="218" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">音楽の意味は言い切れない</text>
+  </g>
+  <g class="flow-node" data-jump="p8">
+    <rect x="280" y="248" width="220" height="54" rx="13" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="390" y="270" text-anchor="middle" font-size="10.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">⑧ 単純な聴取への批判</text>
+    <text x="390" y="286" text-anchor="middle" font-size="9.5" fill="#8a5a10" font-family="Yu Gothic,sans-serif">安易な具体性志向</text>
+  </g>
+
+  <!-- 純音楽的レベル列 -->
+  <g class="flow-node" data-jump="p9">
+    <rect x="545" y="112" width="210" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="650" y="134" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑨ 純音楽的レベル：導入</text>
+    <text x="650" y="150" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">音符そのものの次元</text>
+  </g>
+  <g class="flow-node" data-jump="p10">
+    <rect x="545" y="180" width="210" height="54" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="650" y="202" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑩ その重要性</text>
+    <text x="650" y="218" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">意識的な聴取と音楽形式</text>
+  </g>
+
+  <!-- 結論 -->
+  <g class="flow-node" data-jump="p11">
+    <rect x="250" y="400" width="280" height="72" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
+    <text x="390" y="426" text-anchor="middle" font-size="12" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">⑪ 結論</text>
+    <text x="390" y="445" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">三レベルは本来一体</text>
+    <text x="390" y="461" text-anchor="middle" font-size="9.5" fill="#c3cbdc" font-family="Yu Gothic,sans-serif">（無意識のうちに同時に統合される）</text>
+  </g>
+</svg>
+    <div class="flow-legend">
+      <span><i style="background:linear-gradient(#33456f,#233657)"></i>導入・結論（主張）</span>
+      <span><i style="background:linear-gradient(#f2f6fb,#e3ecf7);border:1px solid #2c3e66"></i>定義・具体例</span>
+      <span><i style="background:linear-gradient(#fff4de,#fbe6bf);border:1px solid #c9760c"></i>転換・批判</span>
+    </div>
+    <div class="flow-table-wrap">
+      <div class="flow-table-title">段落ごとの要旨一覧（クリックで本文へ移動）</div>
+      <table class="flow-table"><tbody id="flowTableBody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 教材データ ここに差し込む =====
+   下の DATA を、生成した構造データで置き換えてください。
+   形式：const DATA = [ {段落}, {段落}, ... ];
+   段落 = { id:"p1", role:"段落の役割(短く)", summary:"要旨", sents:[...文...], vocab:[...語句...] }
+   詳細はプロジェクト指示書のスキーマ参照。
+=================================================== */
+const DATA = [
+{
+  id:"p1", role:"導入：聴取を三つのレベルに分解する",
+  summary:"私たちは音楽を三つの異なるレベル（感覚的・表現的・純音楽的）で聴いている。この分類はあくまで分析のための便宜的な区分であり、その利点は聴き方をより明確に捉えられる点にある。",
+  sents:[
+    { id:"p1s1", imp:false, pattern:"",
+      parts:[
+        {t:"We all listen to music according to our",role:null},
+        {t:"separate",role:null},
+        {t:"capacities.",role:null,tap:{w:"capacity",pos:"名詞",ja:"能力、受容力"}}
+      ],
+      jp:"私たちは皆、それぞれの能力に応じて音楽を聴いている。" },
+    { id:"p1s2", imp:false, pattern:"",
+      parts:[
+        {t:"But,",role:null},
+        {t:"for the sake of",role:null,tap:{w:"for the sake of",pos:"熟語",ja:"~のために"}},
+        {t:"analysis, the whole listening process may become clearer if we break it up into its",role:null},
+        {t:"component",role:null,tap:{w:"component",pos:"形容詞",ja:"構成要素の"}},
+        {t:"parts,",role:null},
+        {t:"so to speak.",role:null,tap:{w:"so to speak",pos:"熟語",ja:"いわば"}}
+      ],
+      jp:"しかし、分析のために、聴取のプロセス全体を構成要素に分解すれば、いわばより明確になるかもしれない。" },
+    { id:"p1s3", imp:true, pattern:"SVM", tags:["theme"],
+      parts:[
+        {t:"In a certain sense",role:"m",lab:"M"},
+        {t:"we all",role:"s",lab:"S"},
+        {t:"listen",role:"v",lab:"V"},
+        {t:"to music on three separate levels.",role:"m",lab:"M"}
+      ],
+      jp:"ある意味で、私たちは皆、音楽を三つの異なるレベルで聴いている。",
+      pt:"on three separate levelsが本文全体を貫く主題（三段階構成）を提示する文。" },
+    { id:"p1s4", imp:false, pattern:"",
+      parts:[
+        {t:"For lack of better words,",role:null,tap:{w:"for lack of better words",pos:"熟語",ja:"適切な言葉がないので"}},
+        {t:"one might name these: (1) the",role:null},
+        {t:"sensuous",role:null,tap:{w:"sensuous",pos:"形容詞",ja:"感覚的な"},dmSpan:"列①"},
+        {t:"level, (2) the expressive level,",role:null,dmSpan:"列②"},
+        {t:"(3) the purely musical level.",role:null,dmSpan:"列③"}
+      ],
+      jp:"適切な言葉がないので、これらを、(1)感覚的レベル、(2)表現的レベル、(3)純音楽的レベルと名づけることにする。" },
+    { id:"p1s5", imp:true, pattern:"SVC", tags:["ev-A","prep-rel"],
+      parts:[
+        {t:"The only advantage to be gained from mechanically splitting up the listening process into these hypothetical levels",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"the clearer view to be had of the way in which we listen.",role:"c",lab:"C"}
+      ],
+      jp:"この聴取のプロセスを機械的にこれらの仮説的なレベルへと分割することによって得られる唯一の利点は、私たちがどのように聴いているかについて、より明確な見方が得られるということである。",
+      pt:"設問1(A)の訳出対象。S・Cともに「to be+p.p.（未来受動）＋長い前置詞句」の同型構造。C内のthe way in which we listenは前置詞+関係代名詞（＝関係副詞相当）。" }
+  ],
+  vocab:[
+    {word:"capacity",pos:"名",ja:"能力、受容力",def:"the ability to do or understand something",level:"標準"},
+    {word:"component",pos:"形",ja:"構成要素の",def:"being one of the parts that something is made of",level:"標準"},
+    {word:"sensuous",pos:"形",ja:"感覚的な",def:"relating to the senses rather than the mind",level:"難関"},
+    {word:"hypothetical",pos:"形",ja:"仮説的な",def:"imagined or suggested but not necessarily real",level:"難関"}
+  ]
+},
+{
+  id:"p2", role:"第一のレベル：感覚的レベルの説明",
+  summary:"感覚的レベルとは、音そのものの純粋な快さのために、何も考えずに音楽を聴く最も単純な聴き方であり、いわば脳を使わない心地よい状態を生み出す。",
+  sents:[
+    { id:"p2s1", imp:true, pattern:"SVC", tags:[],
+      parts:[
+        {t:"The simplest way of listening to music",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"to listen for the pure pleasure of the musical sound itself.",role:"c",lab:"C"}
+      ],
+      jp:"音楽を聴く最も単純な方法は、音そのものが持つ純粋な喜びのために聴くことである。",
+      pt:"第一段階（感覚的レベル）の定義文。C=to不定詞の名詞的用法。" },
+    { id:"p2s2", imp:false, pattern:"",
+      parts:[ {t:"That is the sensuous level.",role:null} ],
+      jp:"それが感覚的レベルである。" },
+    { id:"p2s3", imp:false, pattern:"",
+      parts:[ {t:"It is the level on which we hear music without thinking, without considering it in any way.",role:null} ],
+      jp:"それは、何も考えず、いかなる意味でも吟味することなく音楽を聴くレベルである。" },
+    { id:"p2s4", imp:false, pattern:"",
+      parts:[
+        {t:"One turns on the radio while doing something else and",role:null},
+        {t:"absent-mindedly",role:null,tap:{w:"absent-mindedly",pos:"副詞",ja:"うわの空で、放心状態で"}},
+        {t:"bathes in",role:null,tap:{w:"bathe in",pos:"熟語",ja:"~に浸る"}},
+        {t:"the sound.",role:null}
+      ],
+      jp:"人は何か他のことをしながらラジオをつけ、うわの空でその音に浸る。" },
+    { id:"p2s5", imp:false, pattern:"",
+      parts:[
+        {t:"A kind of",role:null},
+        {t:"brainless",role:null,tap:{w:"brainless",pos:"形容詞",ja:"何も考えない、無思慮な"}},
+        {t:"but attractive state of mind is produced by the",role:null},
+        {t:"mere",role:null,tap:{w:"mere",pos:"形容詞",ja:"単なる"}},
+        {t:"sound appeal of the music.",role:null}
+      ],
+      jp:"何も考えないが心地よい一種の精神状態が、音楽の単なる音の魅力によって作り出される。" }
+  ],
+  vocab:[
+    {word:"absent-mindedly",pos:"副",ja:"うわの空で",def:"without paying attention to what you are doing",level:"難関"},
+    {word:"brainless",pos:"形",ja:"何も考えない",def:"done or acting without careful thought",level:"標準"},
+    {word:"mere",pos:"形",ja:"単なる",def:"nothing more than; simply",level:"標準"}
+  ]
+},
+{
+  id:"p3", role:"感覚的レベルの具体例（ピアノの一音）",
+  summary:"読書中にピアノの音が一つ鳴っただけで部屋の雰囲気が変わる。これは音の要素が軽視できないほど強力で神秘的な力を持つことを示している。",
+  sents:[
+    { id:"p3s1", imp:false, pattern:"",
+      parts:[ {t:"You may be sitting in a room reading a book.",role:null} ],
+      jp:"あなたは部屋で本を読んでいるかもしれない。" },
+    { id:"p3s2", imp:false, pattern:"",
+      parts:[
+        {t:"Imagine one",role:null},
+        {t:"note",role:null,tap:{w:"note",pos:"名詞",ja:"音、音符"}},
+        {t:"struck on the piano.",role:null}
+      ],
+      jp:"ピアノで一音が鳴らされたと想像してみよう。" },
+    { id:"p3s3", imp:true, pattern:"SVC", tags:["bunshi","rel-extra-it"],
+      parts:[
+        {t:"Immediately",role:"m",lab:"M"},
+        {t:"that one note",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"enough to change the atmosphere of the room",role:"c",lab:"C"},
+        {t:"— proving that the sound element in music is a powerful and mysterious force, which it would be foolish to ridicule or underestimate.",role:"m",lab:"分詞構文"}
+      ],
+      jp:"たちまち、その一音だけで部屋の雰囲気は変わる――これは、音楽における音の要素が、あなどったり過小評価したりするのは愚かであるほど強力で神秘的な力であることを証明している。",
+      pt:"分詞構文proving that...でSVの根拠を補足説明。that節内のwhichは、it would be foolish to ridicule or underestimate the force（形式主語構文）のthe forceが関係代名詞化して前に出た難所。" }
+  ],
+  vocab:[
+    {word:"ridicule",pos:"動",ja:"あざける、ばかにする",def:"to make fun of someone or something in a cruel way",level:"難関"},
+    {word:"underestimate",pos:"動",ja:"過小評価する",def:"to think that something is smaller or less important than it really is",level:"標準"}
+  ]
+},
+{
+  id:"p4", role:"感覚的レベルの濫用への批判",
+  summary:"自らを音楽通だと考える人々の多くが、実は感覚的レベルを乱用している。彼らはコンサートで現実逃避をし、音楽そのものを聴かずに夢想しているに過ぎない。",
+  sents:[
+    { id:"p4s1", imp:true, pattern:"SVC", tags:["ev-B","rel-who"],
+      parts:[
+        {t:"The surprising thing",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"that many people who consider themselves qualified music lovers",role:"c",lab:"C"},
+        {t:"abuse",role:"v"},
+        {t:"that level in listening.",role:"o",lab:"O"}
+      ],
+      jp:"驚くべきことに、自分を一人前の音楽愛好家だとみなす多くの人々が、聴取におけるそのレベル（感覚的レベル）を乱用している。",
+      pt:"設問2(B)の指示内容そのもの。that節内はwho consider themselves qualified music loversがmany peopleを修飾し、節自体のS・V・Oを構成する。" },
+    { id:"p4s2", imp:false, pattern:"",
+      parts:[
+        {t:"They go to concerts in order to",role:null},
+        {t:"lose themselves.",role:null,tap:{w:"lose oneself",pos:"熟語",ja:"我を忘れる"}}
+      ],
+      jp:"彼らは我を忘れるためにコンサートへ行く。" },
+    { id:"p4s3", imp:false, pattern:"",
+      parts:[ {t:"They use music as a comfort or an escape.",role:null} ],
+      jp:"彼らは音楽を慰めや現実逃避の手段として使う。" },
+    { id:"p4s4", imp:false, pattern:"",
+      parts:[
+        {t:"They enter an ideal world where one doesn't have to think of the",role:null},
+        {t:"realities",role:null,tap:{w:"reality",pos:"名詞",ja:"現実"}},
+        {t:"of everyday life.",role:null}
+      ],
+      jp:"彼らは、日常生活の現実について考えずに済む理想の世界に入り込む。" },
+    { id:"p4s5", imp:false, pattern:"",
+      parts:[ {t:"Of course, they aren't thinking about the music either.",role:null} ],
+      jp:"もちろん、彼らはその音楽についても考えてはいない。" },
+    { id:"p4s6", imp:true, pattern:"SVOC＋SVM", tags:["heiretsu","yet","bunshi"],
+      parts:[
+        {t:"Music",role:"s",lab:"S"},
+        {t:"allows",role:"v",lab:"V"},
+        {t:"them",role:"o",lab:"O"},
+        {t:"to leave it,",role:"c",lab:"C"},
+        {t:"and",role:"corr"},
+        {t:"they",role:"s",lab:"S"},
+        {t:"go off",role:"v",lab:"V"},
+        {t:"to a place to dream,",role:"m",lab:"M"},
+        {t:"dreaming because of the music",role:"m",pp:1,ptail:"①"},
+        {t:"yet",role:"corr"},
+        {t:"never quite listening to it.",role:"m",pp:1,ptail:"②"}
+      ],
+      jp:"音楽は彼らにそれ（現実）を離れることを許し、彼らは夢見るためにある場所へと赴き、その音楽のせいで夢想しながら、それでいてその音楽を全く聴いてはいないのである。",
+      pt:"allow O to do（第5文型）。andで結ばれた第2節の中で、dreaming...とlistening...がyet（逆接）で対比的に並列（分詞構文の並列、①②）。" }
+  ],
+  vocab:[
+    {word:"abuse",pos:"動",ja:"乱用する",def:"to use something in a wrong or harmful way",level:"標準"},
+    {word:"reality",pos:"名",ja:"現実",def:"the true situation that actually exists",level:"標準"},
+    {word:"lose oneself",pos:"熟",ja:"我を忘れる",def:"to become completely absorbed in something",level:"標準"}
+  ]
+},
+{
+  id:"p5", role:"感覚的レベルのまとめ",
+  summary:"音の持つ魅力は強力な力だが、それに関心を独占させてはならない。感覚的レベルは重要だが、音楽の全てではない。",
+  sents:[
+    { id:"p5s1", imp:true, pattern:"SVC／SVOC", tags:["but-turn"],
+      parts:[
+        {t:"Yes,",role:null},
+        {t:"the sound appeal of music",role:"s",lab:"S",dmSpan:"対A"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"a potent and primitive force,",role:"c",lab:"C"},
+        {t:"but",role:"corr",dm:"対比"},
+        {t:"you",role:"s",lab:"S",dmSpan:"対B"},
+        {t:"must not allow",role:"v",lab:"V"},
+        {t:"it",role:"o",lab:"O"},
+        {t:"to take over an unbalanced share of your interest.",role:"c",lab:"C"}
+      ],
+      jp:"そう、音楽の持つ音の魅力は強力で根源的な力である。しかし、それにあなたの関心の均衡を欠くほどの割合を占めさせてはならない。",
+      pt:"but逆接で前段落の内容（感覚的レベルの重要性）を認めつつ限界を示す。allow O to do（第5文型）がp4s6と同じ形で再度使われている点に注目。" },
+    { id:"p5s2", imp:true, pattern:"SVC", tags:["but-turn"],
+      parts:[
+        {t:"The sensuous level",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"an important one in music, a very important one,",role:"c",lab:"C"},
+        {t:"but",role:"corr"},
+        {t:"it",role:"s",lab:"S"},
+        {t:"does not constitute",role:"v",lab:"V"},
+        {t:"the whole story.",role:"o",lab:"O"}
+      ],
+      jp:"感覚的レベルは音楽において重要な一要素であり、非常に重要な要素であるが、それが全てというわけではない。",
+      pt:"a very important oneは直前のan important oneを反復して強めた挿入的な言い換え。感覚的レベル（第一段階）全体のまとめ文。" }
+  ],
+  vocab:[
+    {word:"potent",pos:"形",ja:"強力な",def:"having great power or strength",level:"難関"},
+    {word:"primitive",pos:"形",ja:"根源的な、原始的な",def:"relating to an early, basic stage of development",level:"標準"},
+    {word:"constitute",pos:"動",ja:"~を構成する、~に等しい",def:"to be or form the whole of something",level:"標準"}
+  ]
+},
+{
+  id:"p6", role:"第二のレベル：表現的レベルと論争",
+  summary:"第二の表現的レベルは論争を呼ぶ。ストラヴィンスキーは音楽に純音楽的存在以外の意味はないと主張したが、これは音楽の意味を明確に言い切ることの難しさゆえかもしれない。だからといって表現性を全否定すべきではない。",
+  sents:[
+    { id:"p6s1", imp:false, pattern:"",
+      parts:[ {t:"The second level on which music exists is what I have called the expressive one.",role:null} ],
+      jp:"音楽が存在する第二のレベルは、私が表現的レベルと呼んできたものである。" },
+    { id:"p6s2", imp:true, pattern:"SVO", tags:["ev-C"],
+      parts:[
+        {t:"Here, immediately,",role:"m",lab:"M"},
+        {t:"we",role:"s",lab:"S"},
+        {t:"face",role:"v",lab:"V"},
+        {t:"controversy.",role:"o",lab:"O"}
+      ],
+      jp:"ここで、すぐさま、私たちは論争に直面する。",
+      pt:"設問3(C)の対象。理由は以降の文脈（作曲家がしばしば表現性の議論を避け、ストラヴィンスキー自身「音楽は純音楽的存在以外の意味を持たない」と主張したこと、また音楽の意味を明確に言い切るのが難しいこと）から読み取る。" },
+    { id:"p6s3", imp:false, pattern:"",
+      parts:[ {t:"Composers often ignore any discussion of music's expressive side.",role:null} ],
+      jp:"作曲家はしばしば、音楽の表現的な側面についての議論を避ける。" },
+    { id:"p6s4", imp:true, pattern:"倒置疑問文", tags:["parallel"],
+      parts:[
+        {t:"Did",role:"v",lab:"V"},
+        {t:"not",role:"corr"},
+        {t:"Stravinsky himself",role:"s",lab:"S"},
+        {t:"claim",role:"v"},
+        {t:"that his music was",role:"o",lab:"O"},
+        {t:"an \u201cobject,\u201d",role:"o",pp:1,ptail:"①"},
+        {t:"a \u201cthing,\u201d",role:"o",pp:1,ptail:"②"},
+        {t:"with a life of its own,",role:"o",pp:2,ptail:"①"},
+        {t:"and",role:"corr"},
+        {t:"with no other meaning than its own purely musical existence?",role:"o",pp:2,ptail:"②"}
+      ],
+      jp:"ストラヴィンスキー自身、自分の音楽は独自の生命を持ち、それ自体の純粋な音楽的存在以外にいかなる意味も持たない「対象」であり「物」であると主張したのではなかったか。",
+      pt:"Did not...claim=倒置による修辞疑問文（＝実際には主張したという強い含み）。\u201cobject,\u201dと\u201cthing,\u201dが同格的並列（①②）、with a life of its ownとwith no other meaning...も並列（別グループ①②）。" },
+    { id:"p6s5", imp:false, pattern:"",
+      parts:[
+        {t:"This",role:null,dmSpan:"果"},
+        {t:"inflexible",role:null,tap:{w:"inflexible",pos:"形容詞",ja:"頑固な、融通の利かない"}},
+        {t:"attitude of Stravinsky's may",role:null},
+        {t:"be due to",role:null,tap:{w:"be due to",pos:"熟語",ja:"~が原因である"},dm:"因果"},
+        {t:"the fact that so many people have tried to read different meanings into so many pieces.",role:null,dmSpan:"因"}
+      ],
+      jp:"ストラヴィンスキーのこの頑なな態度は、非常に多くの人々があまりにも多くの作品にさまざまな意味を読み込もうとしてきたという事実に起因するのかもしれない。" },
+    { id:"p6s6", imp:false, pattern:"",
+      parts:[
+        {t:"Certainly, it is difficult enough to say",role:null,dmSpan:"譲"},
+        {t:"precisely",role:null,tap:{w:"precisely",pos:"副詞",ja:"正確に"}},
+        {t:"what it is that a piece of music means, to say it",role:null},
+        {t:"definitely,",role:null,tap:{w:"definitely",pos:"副詞",ja:"明確に、はっきりと"}},
+        {t:"to say it finally so that everyone is satisfied with your explanation.",role:null}
+      ],
+      jp:"確かに、一曲の音楽が意味するものが正確には何であるかを言うこと、それをはっきりと、誰もがその説明に納得するように最終的に言い切ることは、十分に難しいことである。" },
+    { id:"p6s7", imp:true, pattern:"SVO", tags:["but-turn"],
+      parts:[
+        {t:"But",role:"corr",dm:"譲歩"},
+        {t:"that",role:"s",lab:"S",dmSpan:"主"},
+        {t:"should not lead",role:"v",lab:"V"},
+        {t:"one",role:"o",lab:"O"},
+        {t:"to the other extreme of denying to music the right to be \u201cexpressive.\u201d",role:"m",lab:"M"}
+      ],
+      jp:"しかし、そのことによって、音楽が「表現的」である権利を否定するというもう一方の極端に走ってはならない。",
+      pt:"lead A to B（AをBに導く）。段落6の結論文で、次段落の「筆者自身の見解」への橋渡しとなる。" }
+  ],
+  vocab:[
+    {word:"controversy",pos:"名",ja:"論争",def:"a lot of public disagreement about something",level:"標準"},
+    {word:"inflexible",pos:"形",ja:"頑固な",def:"unwilling to change one's opinion or behavior",level:"難関"},
+    {word:"be due to",pos:"熟",ja:"~が原因である",def:"to be caused by",level:"標準"},
+    {word:"extreme",pos:"名",ja:"極端",def:"the furthest possible point from the center or from what is normal",level:"標準"}
+  ]
+},
+{
+  id:"p7", role:"筆者自身の「音楽の意味」観",
+  summary:"筆者自身は、すべての音楽には表現力と音符の背後にある意味があり、それこそが曲の内容そのものだと考える。ただし、その意味を明確な言葉で言い表すことはできないという難しさがある。",
+  sents:[
+    { id:"p7s1", imp:true, pattern:"SVC", tags:["parallel","rel-what","but-turn"],
+      parts:[
+        {t:"My own belief",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"that all music has an expressive power, some more and some less,",role:"c",pp:1,ptail:"①"},
+        {t:"but",role:"corr"},
+        {t:"that all music has a certain meaning behind the notes",role:"c",pp:1,ptail:"②"},
+        {t:"and",role:"corr"},
+        {t:"that the meaning behind the notes constitutes, after all, what the piece is saying, what the piece is about.",role:"c",pp:1,ptail:"③"}
+      ],
+      jp:"私自身の考えは、すべての音楽は表現力を持っている（その度合いには強弱があるが）というものであり、また、すべての音楽は音符の背後に何らかの意味を持ち、その音符の背後にある意味こそが、結局のところ、その曲が語っていること、その曲が何についてのものであるかを構成している、というものである。",
+      pt:"C＝3つのthat節の並列（①②③）。関係代名詞whatの並列（what the piece is saying, what the piece is about）にも注意。第7段落全体の主題文。" },
+    { id:"p7s2", imp:false, pattern:"",
+      parts:[ {t:"This whole problem can be stated quite simply by asking, \u201cIs there a meaning to music?\u201d",role:null} ],
+      jp:"この問題全体は、「音楽には意味があるか」と問うことで、ごく単純に表せる。" },
+    { id:"p7s3", imp:false, pattern:"",
+      parts:[ {t:"My answer to that would be, \u201cYes.\u201d",role:null} ],
+      jp:"それに対する私の答えは「イエス」だろう。" },
+    { id:"p7s4", imp:false, pattern:"",
+      parts:[ {t:"And, \u201cCan you state in so many words what the meaning is?\u201d",role:null} ],
+      jp:"では、「その意味を言葉で言い表せるか」。" },
+    { id:"p7s5", imp:false, pattern:"",
+      parts:[ {t:"My answer to that would be, \u201cNo.\u201d",role:null} ],
+      jp:"それに対する私の答えは「ノー」だろう。" },
+    { id:"p7s6", imp:false, pattern:"",
+      parts:[
+        {t:"Therein",role:null,tap:{w:"therein",pos:"副詞",ja:"そこに、その点に"}},
+        {t:"lies the difficulty.",role:null}
+      ],
+      jp:"そこにこそ、難しさがある。" }
+  ],
+  vocab:[
+    {word:"expressive",pos:"形",ja:"表現力のある",def:"showing feelings or meaning clearly",level:"標準"},
+    {word:"therein",pos:"副",ja:"そこに",def:"in that particular place, situation, or fact",level:"難関"}
+  ]
+},
+{
+  id:"p8", role:"単純な聴取態度への批判",
+  summary:"単純な聞き手は音楽に具体的な意味（列車や嵐など）を求めがちだが、こうした発想は好ましくないとして退けられる。",
+  sents:[
+    { id:"p8s1", imp:false, pattern:"",
+      parts:[
+        {t:"Simple-minded",role:null,tap:{w:"simple-minded",pos:"形容詞",ja:"単純な考えの"}},
+        {t:"souls will never be satisfied with the answer to the second of these questions.",role:null}
+      ],
+      jp:"単純な人々は、これらの問いの二番目に対する答えに決して満足しないだろう。" },
+    { id:"p8s2", imp:false, pattern:"",
+      parts:[
+        {t:"They always want music to have a meaning, and the more",role:null},
+        {t:"concrete",role:null,tap:{w:"concrete",pos:"形容詞",ja:"具体的な"}},
+        {t:"it is the better they like it.",role:null}
+      ],
+      jp:"彼らは常に音楽に意味を求め、それが具体的であればあるほど好む。" },
+    { id:"p8s3", imp:true, pattern:"the比較級,the比較級", tags:["ev-D","themore","parallel"],
+      parts:[
+        {t:"The more",role:"m",lab:"M"},
+        {t:"the music",role:"s",lab:"S"},
+        {t:"reminds",role:"v",lab:"V"},
+        {t:"them",role:"o",lab:"O"},
+        {t:"of a train,",role:"m",pp:1,ptail:"①"},
+        {t:"a storm,",role:"m",pp:1,ptail:"②"},
+        {t:"a funeral,",role:"m",pp:1,ptail:"③"},
+        {t:"or",role:"corr"},
+        {t:"any other familiar conception,",role:"m",pp:1,ptail:"④"},
+        {t:"the more expressive",role:"c",lab:"C"},
+        {t:"it",role:"s",lab:"S"},
+        {t:"appears to be",role:"v",lab:"V"},
+        {t:"to them.",role:"m",lab:"M"}
+      ],
+      jp:"音楽が彼らに列車や嵐、葬式、その他何かおなじみの観念を思い起こさせればさせるほど、それだけその音楽は彼らにとってより表現的に思われるのである。",
+      pt:"設問4(D)の訳出対象。the 比較級 A, the 比較級 B（AすればするほどますますB）の相関構文。of以下は4項の並列（①②③④、orで列挙）。" },
+    { id:"p8s4", imp:false, pattern:"",
+      parts:[
+        {t:"This popular idea of music's meaning should be",role:null},
+        {t:"discouraged",role:null,tap:{w:"discourage",pos:"動詞",ja:"思いとどまらせる、推奨しない"}},
+        {t:"wherever and whenever it is met.",role:null}
+      ],
+      jp:"音楽の意味についてのこの通俗的な考え方は、どこで出会っても、いつ出会っても、退けられるべきである。" }
+  ],
+  vocab:[
+    {word:"simple-minded",pos:"形",ja:"単純な考えの",def:"not able or willing to think about things in a complex way",level:"標準"},
+    {word:"concrete",pos:"形",ja:"具体的な",def:"specific and definite, not vague",level:"標準"},
+    {word:"discourage",pos:"動",ja:"思いとどまらせる",def:"to try to prevent something by making it seem unwise",level:"標準"}
+  ]
+},
+{
+  id:"p9", role:"第三のレベル：純音楽的レベルの導入",
+  summary:"第三の純音楽的レベルは、音符そのものとその展開に関わるレベルであり、多くの聴き手はこのレベルを十分に意識していない。",
+  sents:[
+    { id:"p9s1", imp:true, pattern:"SVC", tags:["prep-rel"],
+      parts:[
+        {t:"The third level",role:"s",lab:"S"},
+        {t:"on which music exists",role:"s"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"the purely musical level.",role:"c",lab:"C"}
+      ],
+      jp:"音楽が存在する第三のレベルは、純音楽的レベルである。",
+      pt:"前置詞+関係代名詞 on which（＝on which level music exists）。第9段落の主題文。" },
+    { id:"p9s2", imp:false, pattern:"",
+      parts:[
+        {t:"Besides",role:null,tap:{w:"besides",pos:"前置詞",ja:"~に加えて"}},
+        {t:"the pleasurable sound of music and the expressive feeling that it",role:null},
+        {t:"gives off,",role:null,tap:{w:"give off",pos:"熟語",ja:"発する、放つ"}},
+        {t:"music does exist",role:null},
+        {t:"in terms of",role:null,tap:{w:"in terms of",pos:"熟語",ja:"~の観点で"}},
+        {t:"the notes themselves and of their processes.",role:null}
+      ],
+      jp:"音楽の心地よい音や、そこから発せられる表現的な感情に加えて、音楽は音符そのものやその展開の観点からも存在している。" },
+    { id:"p9s3", imp:false, pattern:"",
+      parts:[
+        {t:"Most listeners are not",role:null},
+        {t:"sufficiently",role:null,tap:{w:"sufficiently",pos:"副詞",ja:"十分に"}},
+        {t:"conscious of this third level.",role:null}
+      ],
+      jp:"ほとんどの聴き手は、この第三のレベルを十分に意識していない。" }
+  ],
+  vocab:[
+    {word:"besides",pos:"前",ja:"~に加えて",def:"in addition to",level:"標準"},
+    {word:"give off",pos:"熟",ja:"発する",def:"to produce or release something such as heat, light, or a smell",level:"標準"},
+    {word:"in terms of",pos:"熟",ja:"~の観点で",def:"when thinking about a particular part of a situation",level:"標準"},
+    {word:"sufficiently",pos:"副",ja:"十分に",def:"enough for a particular purpose",level:"標準"}
+  ]
+},
+{
+  id:"p10", role:"純音楽的レベルの重要性",
+  summary:"純音楽的レベルにより敏感になることが重要であり、知的な聴き手は旋律・リズム・和声・音色への意識を高め、作曲家の思考を辿るために音楽形式の原理も知っておく必要がある。",
+  sents:[
+    { id:"p10s1", imp:true, pattern:"形式主語構文", tags:["form-it","ev-E"],
+      parts:[
+        {t:"It",role:"s",lab:"仮S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"very important",role:"c",lab:"C"},
+        {t:"for all of us",role:"m",lab:"M"},
+        {t:"to become more sensitive to music on its purely musical level.",role:"s",lab:"真S"}
+      ],
+      jp:"私たち全員にとって、音楽を純音楽的レベルにおいてより敏感に感じ取れるようになることは、非常に重要である。",
+      pt:"設問5(E)の対象。形式主語It...to do構文。for all of usはto不定詞の意味上の主語。" },
+    { id:"p10s2", imp:false, pattern:"",
+      parts:[
+        {t:"Intelligent listeners must be prepared to increase their",role:null},
+        {t:"awareness",role:null,tap:{w:"awareness",pos:"名詞",ja:"意識、自覚"}},
+        {t:"of the musical material and what happens to it.",role:null}
+      ],
+      jp:"知的な聴き手は、音楽的な素材とそこで起きていることへの意識を高める用意ができていなければならない。" },
+    { id:"p10s3", imp:false, pattern:"",
+      parts:[
+        {t:"They must hear the melodies, the rhythms, the harmonies, the tone colors in a more conscious",role:null},
+        {t:"fashion.",role:null,tap:{w:"fashion",pos:"名詞",ja:"やり方、様式"}}
+      ],
+      jp:"彼らは、旋律、リズム、和声、音色を、より意識的なやり方で聴かねばならない。" },
+    { id:"p10s4", imp:true, pattern:"SVO", tags:["insert-to"],
+      parts:[
+        {t:"But",role:"corr"},
+        {t:"above all",role:"m",lab:"M"},
+        {t:"they",role:"s",lab:"S"},
+        {t:"must,",role:"v",lab:"V"},
+        {t:"in order to follow the line of the composer's thought,",role:"m",lab:"挿入"},
+        {t:"know",role:"v"},
+        {t:"something of the principles of musical form.",role:"o",lab:"O"}
+      ],
+      jp:"しかし、何よりもまず、作曲家の思考の筋道をたどるために、聴き手は音楽形式の原理について何かしらを知っていなければならない。",
+      pt:"must と know の間に in order to do の挿入句（目的）が入り込む語順に注意。" },
+    { id:"p10s5", imp:false, pattern:"",
+      parts:[ {t:"Listening to all of these elements is listening on the purely musical level.",role:null} ],
+      jp:"これらすべての要素を聴くことが、純音楽的レベルでの聴取である。" }
+  ],
+  vocab:[
+    {word:"awareness",pos:"名",ja:"意識",def:"knowledge that something exists",level:"標準"},
+    {word:"fashion",pos:"名",ja:"やり方、様式",def:"a way of doing or making something",level:"標準"}
+  ]
+},
+{
+  id:"p11", role:"結論：三レベルは本来一体であり無意識的に統合される",
+  summary:"三つのレベルへの分解はあくまで便宜的なものであり、実際には私たちはそれらを同時に、しかも無意識のうちに統合しながら聴いている。",
+  sents:[
+    { id:"p11s1", imp:false, pattern:"",
+      parts:[
+        {t:"Let me repeat that I have split up",role:null},
+        {t:"mechanically",role:null,tap:{w:"mechanically",pos:"副詞",ja:"機械的に"}},
+        {t:"the three separate levels on which we listen merely for the sake of greater",role:null},
+        {t:"clarity.",role:null,tap:{w:"clarity",pos:"名詞",ja:"明瞭さ"}}
+      ],
+      jp:"繰り返しになるが、私はより明瞭にするためだけに、聴取に関わる三つの別々のレベルを機械的に分割したにすぎない。" },
+    { id:"p11s2", imp:false, pattern:"",
+      parts:[ {t:"Actually, we never listen on one or the other of these levels.",role:null} ],
+      jp:"実際には、私たちはこれらのレベルのどれか一つだけで聴くことは決してない。" },
+    { id:"p11s3", imp:true, pattern:"SVC", tags:["rel-what","bunshi"],
+      parts:[
+        {t:"What we do",role:"s",lab:"S"},
+        {t:"is",role:"v",lab:"V"},
+        {t:"to correlate them",role:"c",lab:"C"},
+        {t:"— listening in all three ways at the same time.",role:"m",lab:"M"}
+      ],
+      jp:"私たちが行っていることは、それらを統合すること――つまり、三つの方法すべてで同時に聴くことである。",
+      pt:"関係代名詞whatが主語（S）。ダッシュ以降の分詞構文が具体的内容を補足。本文全体の結論文。" },
+    { id:"p11s4", imp:false, pattern:"",
+      parts:[
+        {t:"It takes no mental effort,",role:null,dmSpan:"果"},
+        {t:"for",role:null,tap:{w:"for",pos:"接続詞",ja:"なぜなら（＝because）"},dm:"因果"},
+        {t:"we do it",role:null,dmSpan:"因"},
+        {t:"instinctively.",role:null,tap:{w:"instinctively",pos:"副詞",ja:"本能的に"}}
+      ],
+      jp:"それには精神的な努力は全く要らない。なぜなら、私たちはそれを本能的に行っているからである。" }
+  ],
+  vocab:[
+    {word:"mechanically",pos:"副",ja:"機械的に",def:"in a way that follows a fixed method, without much thought",level:"標準"},
+    {word:"clarity",pos:"名",ja:"明瞭さ",def:"the quality of being clear and easy to understand",level:"標準"},
+    {word:"instinctively",pos:"副",ja:"本能的に",def:"in a way that is natural rather than learned",level:"標準"}
+  ]
+}
+];
+
+/* ===== 文法索引ラベル ===== */
+const TAGLABEL={
+  "double-rel":"関係詞の二重限定","colon-reveal":"コロンによる種明かし",
+  "turn-into":"turn A into B","parallel-v":"動詞の並列","qualify-for":"自動詞+前置詞",
+  "theme":"主題文","passive":"受動態","apposition":"同格",
+  "rel-that":"関係詞 that","from-to":"from A to B","parallel":"並列","metaphor":"比喩",
+  "account-for":"account for","may-have-pp":"may have p.p.","ev-A":"設問A根拠","ev-E":"設問E根拠",
+  "even-as":"even as","last-time":"the last time + 節","insert-pp":"挿入句(分詞)","agreement":"主述の一致","but-turn":"逆接 But",
+  "gerund-subj":"動名詞主語","ditrans":"第4文型 give O1O2","to-parallel":"to不定詞の並列","chain-rel":"連鎖関係詞",
+  "form-it":"形式主語 it","rel-what":"関係代名詞 what","colon":"コロンによる具体化","bunshi":"分詞構文","heiretsu":"並列 A and B","yet":"逆接 Yet","notbut":"not A but B","bid":"a bid to do",
+  "ev-B":"設問B根拠","ev-C":"設問C根拠","ev-D":"設問D根拠","prep-rel":"前置詞+関係代名詞","rel-extra-it":"関係詞+形式主語(it is foolish to do)","rel-who":"関係代名詞 who","insert-to":"挿入句(to不定詞)","themore":"the 比較級, the 比較級"
+};
+const RLAB={s:"S",v:"V",o:"O",c:"C",m:"M"};
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function leadSpace(s){return /^[,.;:'!?\u2019\u201d.]/.test(s);}
+
+/* ハイライト/空所マーカーを含むテキストを内部HTMLに整形（語そのものはescの上で） */
+function renderText(t){
+  // ==..== → ハイライトspan / {{gapN}} → 空所プレースホルダ（描画は別途）
+  // ここでは == のみ処理（{{}} は part 単位で別扱い）
+  let out=""; let i=0;
+  const re=/==([^=]+)==/g; let last=0,m;
+  while((m=re.exec(t))){
+    if(m.index>last) out+=esc(t.slice(last,m.index));
+    out+=`<span class="hlmark">${esc(m[1])}</span>`;
+    last=re.lastIndex;
+  }
+  out+=esc(t.slice(last));
+  return out;
+}
+
+function renderParts(parts,sid){
+  let html=""; let first=true; let prevRole="\u0000";
+  parts.forEach((p,idx)=>{
+    // 空所part
+    const gapM=/\{\{gap(\d+)\}\}/.exec(p.t);
+    if(gapM){
+      const before=p.t.slice(0,gapM.index);
+      const after=p.t.slice(gapM.index+gapM[0].length);
+      let seg="";
+      if(before.trim()){seg+=(!first&&!leadSpace(before)?" ":"")+`<span class="tok"><span class="w ${p.role||''}">${esc(before.trim())}</span></span>`;first=false;}
+      seg+=` <span class="gapwrap" data-sid="${sid}"><span class="gap" data-gap="1">(&nbsp;&nbsp;)</span><span class="gapans"></span></span>`;
+      if(after.trim()){seg+=" "+`<span class="tok"><span class="w ${p.role||''}">${esc(after.trim())}</span></span>`;}
+      html+=seg; first=false;
+      if(p.role&&RLAB[p.role])prevRole=p.role;
+      return;
+    }
+    const head=(p.role&&RLAB[p.role]&&p.role!==prevRole);
+    const cls=["tok"]; if(p.pp)cls.push("pp"); if(p.tap)cls.push("hastip");
+    const hasHL=/==/.test(p.t);
+    const wcls=["w"]; if(p.role)wcls.push(p.role); if(p.tap)wcls.push("tap"); if(hasHL)wcls.push("hl");
+    if(p.dm||p.dmSpan) wcls.push("dmword");
+    let pre="";
+    if(p.ptail){
+      const rl=(p.role&&RLAB[p.role])?RLAB[p.role]:"";
+      pre=`<span class="pnum2">${rl}${p.ptail}</span>`;
+    } else if((head||p.lab)&&p.role&&RLAB[p.role]){
+      pre=`<span class="rlab ${p.role}">${p.lab?p.lab:RLAB[p.role]}</span>`;
+    }
+    let preDm="";
+    if(p.dm) preDm=`<span class="dmlab dmcat">${esc(p.dm)}</span>`;
+    else if(p.dmSpan) preDm=`<span class="dmlab dmspan">${esc(p.dmSpan)}</span>`;
+    pre=preDm+pre;
+    const txt=hasHL?p.t.replace(/==/g,""):p.t;
+    let inner=`${pre}<span class="${wcls.join(' ')}">${esc(txt)}</span>`;
+    if(p.tap) inner+=`<span class="tip"><b>${esc(p.tap.w)}</b> <span class="pos">${esc(p.tap.pos)}</span><br>${esc(p.tap.ja)}</span>`;
+    const node=`<span class="${cls.join(' ')}">${inner}</span>`;
+    html+=(!first&&!leadSpace(p.t)?" ":"")+node;
+    first=false;
+    if(p.role&&RLAB[p.role])prevRole=p.role;
+  });
+  return html;
+}
+
+const ALL=DATA;
+const parasEl=document.getElementById("paras");
+const gapStore={};
+
+ALL.forEach(p=>{
+  const head=document.createElement("div");
+  head.className="phead";
+  head.innerHTML=`<span class="pnum">${p.id.replace('p','')}</span><span class="prole">${p.role}</span>`;
+  parasEl.appendChild(head);
+
+  const sents=document.createElement("div");
+  sents.className="sents";
+  p.sents.forEach(st=>{
+    const d=document.createElement("div");
+    d.className="sent"+(st.imp?" imp":""); d.id=st.id;
+    const badge=st.pattern?`<span class="badge">${st.pattern}</span>`:"";
+    d.innerHTML=`<div class="en">${badge}${renderParts(st.parts,st.id)}</div><div class="jp">${st.jp}</div>`+(st.pt?`<div class="pt">${st.pt}</div>`:"");
+    sents.appendChild(d);
+    if(st.gap) gapStore[st.id]=st.gap;
+  });
+  parasEl.appendChild(sents);
+
+  // 段落末：語句・要旨
+  const foot=document.createElement("div");
+  foot.className="pfoot";
+  foot.innerHTML=`<button data-panel="vocab-${p.id}">語句</button><button data-panel="summary-${p.id}">要旨</button>`;
+  parasEl.appendChild(foot);
+
+  const vrows=p.vocab.map(v=>`<tr><td><span class="wd">${esc(v.word)}</span> <span class="ps">${esc(v.pos)}</span></td><td>${esc(v.ja)}</td><td><span class="lv ${v.level}">${v.level}</span></td></tr>`).join("");
+  const vp=document.createElement("div");
+  vp.className="panel vocab"; vp.id=`vocab-${p.id}`;
+  vp.innerHTML=`<table>${vrows}</table>`;
+  parasEl.appendChild(vp);
+
+  const sp=document.createElement("div");
+  sp.className="panel summary"; sp.id=`summary-${p.id}`;
+  sp.innerHTML=esc(p.summary);
+  parasEl.appendChild(sp);
+});
+
+/* 文法索引：全段落のtagsを集約し、出現文へジャンプ */
+const tagMap={};
+ALL.forEach(p=>p.sents.forEach(s=>{(s.tags||[]).forEach(tg=>{(tagMap[tg]=tagMap[tg]||[]).push(s.id);});}));
+const gidx=document.getElementById("gidx");
+Object.keys(tagMap).forEach(tg=>{
+  const b=document.createElement("button");
+  b.textContent=TAGLABEL[tg]||tg;
+  b.dataset.t=tagMap[tg].join(",");
+  gidx.appendChild(b);
+});
+
+/* 論理構造図：段落要旨テーブルの描画 */
+const flowTableBody=document.getElementById('flowTableBody');
+if(flowTableBody){
+  flowTableBody.innerHTML = ALL.map(p=>`
+    <tr data-jump="${p.id}">
+      <td class="ft-num">${p.id.replace('p','')}</td>
+      <td class="ft-role">${esc(p.role)}</td>
+      <td class="ft-summary">${esc(p.summary)}</td>
+    </tr>`).join('');
+}
+
+/* 設問id→文/段落の逆引き */
+function findSentAndPara(id){
+  for(const p of ALL){
+    const s=p.sents.find(x=>x.id===id);
+    if(s) return {para:p, sent:s};
+  }
+  return null;
+}
+
+/* ブラケット式 構文解釈図：S・Oは名詞句として[ ]に統一。C=⟨ ⟩、M=( )、V=下線 */
+function bracketDiagram(parts){
+  const BR={s:['[',']'],o:['[',']'],c:['⟨','⟩'],m:['(',')']};
+  let html='', i=0;
+  while(i<parts.length){
+    const p=parts[i];
+    const clean=t=>t.replace(/==/g,'').replace(/\{\{gap\d+\}\}/g,'( )');
+    if(!p.role){ html+=' '+esc(clean(p.t))+' '; i++; continue; }
+    if(p.role==='corr'){ html+=` <span class="db-corr">${esc(clean(p.t))}</span> `; i++; continue; }
+    if(p.role==='v'){
+      let j=i, buf='';
+      while(j<parts.length && parts[j].role==='v'){ buf+=(buf?' ':'')+clean(parts[j].t); j++; }
+      html+=` <span class="db-v">${esc(buf)}</span><span class="db-sub">V</span> `;
+      i=j; continue;
+    }
+    let j=i, buf='', hasPar=false;
+    const runPP=p.pp||null;
+    while(j<parts.length && parts[j].role===p.role && (parts[j].pp||null)===runPP && (j===i || !parts[j].lab)){
+      buf+=(buf?' ':'')+clean(parts[j].t);
+      if(parts[j].pp) hasPar=true;
+      j++;
+    }
+    const [open,close]=BR[p.role]||['[',']'];
+    const lab=(p.lab||RLAB[p.role]||p.role.toUpperCase())+(p.ptail?p.ptail:'');
+    html+=` <span class="db-${p.role}${hasPar?' db-par':''}">${open}${esc(buf)}${close}</span><span class="db-sub">${esc(lab)}</span> `;
+    i=j;
+  }
+  return html;
+}
+
+/* 選択肢テキスト中の誤り部分を赤波線マーク */
+function markErr(text,err){
+  if(!err) return esc(text);
+  const idx=text.indexOf(err);
+  if(idx<0) return esc(text);
+  return esc(text.slice(0,idx))+'<span class="cerr">'+esc(text.slice(idx,idx+err.length))+'</span>'+esc(text.slice(idx+err.length));
+}
+
+/* 選択肢検証カードのHTML生成 */
+function choiceGridHtml(choices){
+  return '<div class="choice-grid">'+choices.map(c=>{
+    const cls=c.correct?'ok':'ng';
+    const mark=c.correct?'○':'✕';
+    const textHtml=markErr(c.text,c.err);
+    const quoteHtml=c.quote?`<div class="choice-quote">本文：<span class="qwavy">${esc(c.quote)}</span>${c.pid?`<span class="choice-para-tag">（第${c.pid.replace('p','')}段落）</span>`:''}</div>`:'';
+    return `<div class="choice-card ${cls}">
+      <div class="choice-row"><span class="choice-label">(${c.label})</span><span class="choice-badge">${mark} ${esc(c.tag)}</span></div>
+      <div class="choice-text">${textHtml}</div>
+      ${quoteHtml}
+      <div class="choice-note">${esc(c.note)}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+/* ===== 設問対応表 ===== */
+const QMAP=[
+  {label:"問1", type:"free",
+    question:"下線部(A)を日本語に訳しなさい。",
+    ids:["p1s5"],
+    short:"S＝The only advantage to be gained from...とC＝the clearer view to be had of the way in which we listenは、どちらも「to be+過去分詞」の未来受動のto不定詞が名詞を後置修飾する同型構造。the way in whichは関係副詞相当（前置詞+関係代名詞）。",
+    modelAnswer:"このような仮説に基づいた段階に音楽を聞く過程を機械的に分類することから得られる唯一の利点は、私たちの音楽の聞き方に関するよりはっきりとした見方である。",
+    altAnswers:["聴取の過程をこれらの仮説的な段階へと機械的に分割することによって得られる唯一の利点は、私たちがどのように聴いているかについての、より明確な見方である。"],
+    elements:[
+      {id:1, desc:"The only advantage to be gained from...（〜から得られる唯一の利点）という未来受動のニュアンスを訳せているか"},
+      {id:2, desc:"mechanically splitting up the listening process into these hypothetical levels（聴取の過程を仮説的な段階に機械的に分類すること）を訳せているか"},
+      {id:3, desc:"the clearer view to be had of the way in which we listen（私たちの聴き方に関するより明確な見方）を訳せているか"}
+    ]},
+  {label:"問2", type:"choice",
+    question:"下線部(B)の具体的内容として最も適切なものを、(a)〜(d)の選択肢から選び、記号で答えなさい。",
+    ids:["p4s1"],
+    choices:[
+      {label:"a", text:"音楽愛好家を自認する人の多くが、音楽は表現的であるほどよいと考えている。", err:"表現的であるほどよいと考えている", correct:false, tag:"本文に記述なし", note:"「表現的であるほどよい」という発想は第8段落の単純な聴き手の話であり、下線部(B)の内容ではない。"},
+      {label:"b", text:"音楽愛好家の正式な資格を持つ人の多くが、コンサートで音楽を楽しんでいる。", err:"コンサートで音楽を楽しんでいる", correct:false, tag:"本文と逆", note:"本文はむしろ「音楽そのものは聴いていない」（never quite listening to it）と述べている。"},
+      {label:"c", text:"自分こそが音楽愛好家であると考える人の多くが、音楽を気晴らしと現実逃避に使う人々を批判している。", err:"批判している", correct:false, tag:"本文と逆", note:"他人を批判しているのではなく、自分自身がその乱用の主体である。"},
+      {label:"d", text:"自分こそが音楽愛好家であると考える人の多くが、音楽を気晴らしと現実逃避に使っている。", correct:true, tag:"完全一致", note:"abuse that level in listening（感覚的レベルを乱用する）＝ use music as a comfort or an escape の言い換え。"}
+    ]},
+  {label:"問3", type:"choice",
+    question:"下線部(C)のように筆者が述べる理由として最も適切なものを、(a)〜(d)の選択肢から選び、記号で答えなさい。",
+    ids:["p6s2"],
+    choices:[
+      {label:"a", text:"音楽が持つ意味を正確に言い表すことは難しいから。", correct:true, tag:"完全一致", note:"p6s6「it is difficult enough to say precisely what it is that a piece of music means...」と一致。"},
+      {label:"b", text:"作曲家が自分の作品の意味を決定しようとするから。", err:"作曲家が自分の作品の意味を決定しようとする", correct:false, tag:"本文と逆", note:"作曲家はむしろ表現的側面の議論を避ける（ignore any discussion）とある。"},
+      {label:"c", text:"音楽に表現や意味はないと、ほとんどの人が考えているから。", err:"ほとんどの人が考えている", correct:false, tag:"本文に記述なし", note:"「ほとんどの人」の見解の話ではなく、ストラヴィンスキー個人の主張の話。"},
+      {label:"d", text:"音楽が持っている表現力が意味解釈を限定するから。", correct:false, tag:"本文に記述なし", note:"本文にこのような記述はない。"}
+    ]},
+  {label:"問4", type:"free",
+    question:"下線部(D)を日本語に訳しなさい。",
+    ids:["p8s3"],
+    short:"the 比較級 A, the 比較級 B（AすればするほどますますB）の相関構文。of以下は train / a storm / a funeral / any other familiar conception の4項並列。",
+    modelAnswer:"音楽が電車、嵐、葬式、あるいはその他何かなじみのある概念を彼らに思い出させればさせるほど、音楽は彼らにとってますます表現豊かなものに思われるのだ。",
+    altAnswers:["音楽が列車や嵐、葬式、その他何かおなじみの観念を彼らに思い起こさせればさせるほど、その音楽は彼らにとってより一層表現的に感じられるのである。"],
+    elements:[
+      {id:1, desc:"the more...the more...（〜すればするほど、ますます〜）の相関構造を訳せているか"},
+      {id:2, desc:"of a train, a storm, a funeral, or any other familiar conceptionの4項列挙を訳せているか"},
+      {id:3, desc:"appears to be to them（彼らにとって〜のように思われる）のニュアンスを訳せているか"}
+    ]},
+  {label:"問5", type:"free",
+    question:"下線部(E)は具体的にどのようなことを意味しているか、本文に即して日本語で説明しなさい。",
+    ids:["p10s1"],
+    short:"下線部(E)＝形式主語構文の真主語部分（to become more sensitive...）を、直後の2文（Intelligent listeners must be prepared to...、But above all they must...）の内容で具体化して説明する。",
+    modelAnswer:"音楽の素材とその変化に対する認識を高め、メロディーやリズム、和音や音色をもっと意識的に聞くことに加え、作曲家の思考の道筋をたどるために、音楽形式の原理についていくらかの知識を持つこと。",
+    altAnswers:["音楽的な素材とそこで起きていることへの意識を高め、旋律・リズム・和声・音色をより意識的に聴くとともに、作曲家の思考の筋道を追うために音楽形式の原理についても知っておくこと。"],
+    elements:[
+      {id:1, desc:"音楽的素材とその変化（起きていること）への意識を高めることに触れているか"},
+      {id:2, desc:"旋律・リズム・和声・音色をより意識的に聴くことに触れているか"},
+      {id:3, desc:"作曲家の思考の筋道をたどるために音楽形式の原理を知ることに触れているか"}
+    ]}
+];
+const qidx=document.getElementById("qidx");
+QMAP.forEach((q,idx)=>{
+  const b=document.createElement("button");
+  b.textContent=q.label;
+  b.dataset.qidx=idx;
+  qidx.appendChild(b);
+});
+
+/* 設問モーダルの開閉 */
+let qmodalReturnTo=null;
+function openQModal(q, returnTo){
+  qmodalReturnTo = returnTo || null;
+  document.getElementById('qmodalBack').classList.toggle('show', qmodalReturnTo==='dash');
+  document.getElementById('qmodalQnum').textContent=q.label;
+  document.getElementById('qmodalQuestion').textContent=q.question||'';
+
+  let first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  document.getElementById('qmodalParaRole').textContent=first?`第${first.para.id.replace('p','')}段落：${first.para.role}`:'';
+
+  const paraSection=document.getElementById('qmodalParaSection');
+  const diagSection=document.getElementById('qmodalDiagramSection');
+  const choiceSection=document.getElementById('qmodalChoiceSection');
+  const reasonSection=document.getElementById('qmodalReasonSection');
+
+  const showParaDiagram = q.type!=='multi' && first;
+  paraSection.style.display = showParaDiagram ? 'block':'none';
+  diagSection.style.display = showParaDiagram ? 'block':'none';
+  if(showParaDiagram){
+    const paraHtml=first.para.sents.map(s=>{
+      const isTarget=q.ids.includes(s.id);
+      const inner=renderParts(s.parts,s.id);
+      return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+    }).join(' ');
+    document.getElementById('qmodalPara').innerHTML=paraHtml;
+    document.getElementById('qmodalDiagram').innerHTML=q.ids.map(id=>{
+      const f=findSentAndPara(id);
+      return f?`<div class="qdiagram-line">${bracketDiagram(f.sent.parts)}</div>`:'';
+    }).join('');
+  }
+
+  const isChoice = q.type==='choice' || q.type==='multi' || q.type==='blank2';
+  choiceSection.style.display = isChoice ? 'block':'none';
+  reasonSection.style.display = isChoice ? 'none':'block';
+  if(isChoice){
+    document.getElementById('qmodalChoices').innerHTML=choiceGridHtml(q.choices);
+  } else if(q.type==='free'){
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
+    document.getElementById('qmodalReason').innerHTML=
+      `<b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}<br><br>${q.short||''}`;
+  } else {
+    document.getElementById('qmodalReason').innerHTML=q.short||'';
+  }
+
+  document.getElementById('qmodalBackdrop').classList.add('open');
+  document.getElementById('qmodalBackdrop').scrollTop=0;
+}
+function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); qmodalReturnTo=null; }
+function backQModalToDash(){
+  const rt=qmodalReturnTo;
+  document.getElementById('qmodalBackdrop').classList.remove('open');
+  qmodalReturnTo=null;
+  if(rt==='dash') openDashModal();
+}
+document.getElementById('qmodalClose').addEventListener('click', closeQModal);
+document.getElementById('qmodalBack').addEventListener('click', backQModalToDash);
+document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); } });
+
+/* ===== ①設問チェック ダッシュボード ===== */
+function dashHintHtml(q, uid){
+  if(q.type==='multi'){
+    const lines=q.choices.map(c=>
+      `<div class="dash-hint-qline"><b>(${c.label})</b> 第${c.pid.replace('p','')}段落：「${esc(c.quote)}」 <button type="button" class="dash-hint-jump" data-jump="${c.pid}">読む →</button></div>`
+    ).join('');
+    return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（各選択肢の該当箇所）</button>
+      <div class="dash-hint-body" id="${uid}_hint">${lines}</div>`;
+  }
+  const first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  if(!first) return '';
+  const paraHtml=first.para.sents.map(s=>{
+    const isTarget=q.ids.includes(s.id);
+    const inner=renderParts(s.parts,s.id);
+    return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+  }).join(' ');
+  return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（該当段落）</button>
+    <div class="dash-hint-body" id="${uid}_hint">
+      <div class="dash-hint-role">第${first.para.id.replace('p','')}段落：${esc(first.para.role)}</div>
+      <div class="dash-hint-para">${paraHtml}</div>
+      <button type="button" class="dash-hint-jump" data-jump="${first.para.id}">この段落を本文で読む →</button>
+    </div>`;
+}
+
+function dashQuestionHtml(q, qidx){
+  const uid=`dq_${qidx}`;
+  let inner='';
+  if(q.type==='choice'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-opt-label"><input type="radio" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  } else if(q.type==='blank2'){
+    inner=q.blanks.map(bk=>
+      `<div class="dash-blank-title">空欄（${bk}）</div><div class="dash-opts">${q.choices.map(c=>
+        `<label class="dash-opt-label"><input type="radio" name="${uid}_${bk}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+      ).join('')}</div>`
+    ).join('');
+  } else if(q.type==='text'){
+    inner=`<input type="text" class="dash-text-input" id="${uid}_input" placeholder="単語を入力">`;
+  } else if(q.type==='free'){
+    inner=''; // 記述問題は入力欄を持たず、チェック項目とヒントのみで自己確認する
+  } else if(q.type==='multi'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-mc-item"><input type="checkbox" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  }
+  let reveal='';
+  if(q.type==='free'){
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
+    reveal=`<div class="dash-reveal show" id="${uid}_reveal">
+      <div class="dash-reveal-ans"><b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}</div>
+      ${q.elements.map(el=>`<label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb">${esc(el.desc)}</label>`).join('')}
+      <div class="dash-coherent"><label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb dash-coherent-cb">日本語の文として自然に成立している</label></div>
+      <div class="dash-achieve" id="${uid}_achieve">達成率：0/${q.elements.length}（0%）</div>
+    </div>`;
+  }
+  return `<div class="dash-qcard" data-qidx="${qidx}" data-uid="${uid}" data-qtype="${q.type}">
+    <div class="dash-qhead"><span class="dash-qlabel">${q.label}</span><span class="dash-badge" id="${uid}_badge"></span></div>
+    <div class="dash-qtext">${esc(q.question)}</div>
+    ${inner}
+    ${dashHintHtml(q, uid)}
+    ${reveal}
+  </div>`;
+}
+
+function renderDashboard(){
+  document.getElementById('dashQCards').innerHTML=QMAP.map((q,qidx)=>dashQuestionHtml(q,qidx)).join('');
+  document.getElementById('dashScoreSummary').innerHTML='';
+  document.getElementById('dashReview').innerHTML='';
+}
+
+/* 記述式：達成率のライブ更新 */
+document.body.addEventListener('change', e=>{
+  const cb=e.target.closest('.dash-elem-cb');
+  if(!cb) return;
+  const uid=cb.dataset.uid;
+  const all=document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`);
+  const elemCbs=[...all].filter(x=>!x.classList.contains('dash-coherent-cb'));
+  const checked=elemCbs.filter(x=>x.checked).length;
+  const pct=elemCbs.length? Math.round(checked/elemCbs.length*100):0;
+  const achEl=document.getElementById(uid+'_achieve');
+  if(achEl) achEl.textContent=`達成率：${checked}/${elemCbs.length}（${pct}%）`;
+});
+
+/* 採点する */
+function gradeQuestion(q, qidx){
+  const uid=`dq_${qidx}`;
+  if(q.type==='choice'){
+    const sel=document.querySelector(`input[name="${uid}"]:checked`);
+    const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+    return {ok: chosen ? chosen.correct : false, answered: !!sel};
+  }
+  if(q.type==='blank2'){
+    let allOk=true, anyAnswered=false;
+    q.blanks.forEach(bk=>{
+      const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+      if(sel) anyAnswered=true;
+      const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+      if(!chosen || chosen.correctFor!==bk) allOk=false;
+    });
+    return {ok:allOk, answered:anyAnswered};
+  }
+  if(q.type==='text'){
+    const inp=document.getElementById(uid+'_input');
+    const val=inp ? inp.value.trim().toLowerCase():'';
+    return {ok: val===q.answer.toLowerCase(), answered: val.length>0};
+  }
+  if(q.type==='multi'){
+    const sels=[...document.querySelectorAll(`input[name="${uid}"]:checked`)].map(x=>x.value).sort();
+    const correctSet=q.choices.filter(c=>!c.correct).map(c=>c.label).sort();
+    const ok = sels.length===correctSet.length && sels.every((v,i)=>v===correctSet[i]);
+    return {ok, answered: sels.length>0};
+  }
+  if(q.type==='free'){
+    const uidReveal=document.getElementById(uid+'_reveal');
+    if(uidReveal) uidReveal.classList.add('show');
+    const elemCbs=[...document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`)].filter(x=>!x.classList.contains('dash-coherent-cb'));
+    const checked=elemCbs.filter(x=>x.checked).length;
+    return {free:true, checked, total:elemCbs.length};
+  }
+  return {ok:false, answered:false};
+}
+
+document.getElementById('dashGradeBtn').addEventListener('click', ()=>{
+  let choiceCorrect=0, choiceTotal=0;
+  const freeStats=[];
+  const results=[];
+  QMAP.forEach((q,qidx)=>{
+    const uid=`dq_${qidx}`;
+    const r=gradeQuestion(q,qidx);
+    const badge=document.getElementById(uid+'_badge');
+    if(q.type==='free'){
+      freeStats.push({q, checked:r.checked, total:r.total});
+      if(badge){ badge.className='dash-badge show pending'; badge.textContent=`要素:${r.checked}/${r.total}`; }
+      results.push({q, qidx, kind:'free', checked:r.checked, total:r.total});
+    } else if(q.type==='blank2'){
+      choiceTotal+=2; // イ・ウで2項目扱い
+      let sub=0;
+      q.blanks.forEach(bk=>{
+        const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+        const chosen=sel? q.choices.find(c=>c.label===sel.value):null;
+        if(chosen && chosen.correctFor===bk) sub++;
+      });
+      choiceCorrect+=sub;
+      if(badge){ badge.className='dash-badge show '+(sub===2?'ok':'ng'); badge.textContent=sub===2?'○ 正解':`△ ${sub}/2`; }
+      results.push({q, qidx, kind:'choice', ok: sub===2});
+    } else {
+      choiceTotal+=1;
+      if(r.ok) choiceCorrect+=1;
+      if(badge){ badge.className='dash-badge show '+(r.ok?'ok':'ng'); badge.textContent=r.ok?'○ 正解':'✕ 不正解'; }
+      results.push({q, qidx, kind:'choice', ok:r.ok});
+    }
+  });
+
+  const freeAvg = freeStats.length ? Math.round(freeStats.reduce((s,f)=>s+(f.total?f.checked/f.total:0),0)/freeStats.length*100) : null;
+  document.getElementById('dashScoreSummary').innerHTML=
+    `選択・記述(単語)式：<b>${choiceCorrect}/${choiceTotal}</b>　　自由記述の平均達成率：<b>${freeAvg===null?'―':freeAvg+'%'}</b>`;
+
+  renderReview(results);
+});
+
+function renderReview(results){
+  const rows=results.map(r=>{
+    const uid=`dq_${r.qidx}`;
+    let badgeHtml;
+    if(r.kind==='free'){
+      const full=r.total>0 && r.checked===r.total;
+      badgeHtml=`<span class="dash-badge show ${full?'ok':'pending'}">要素:${r.checked}/${r.total}</span>`;
+    } else {
+      badgeHtml=`<span class="dash-badge show ${r.ok?'ok':'ng'}">${r.ok?'○ 正解':'✕ 不正解'}</span>`;
+    }
+    return `<div class="dash-review-row">
+      <span class="dash-qlabel">${r.q.label}</span>
+      ${badgeHtml}
+      <span class="dash-review-qtext">${esc(r.q.question.slice(0,34))}${r.q.question.length>34?'…':''}</span>
+      <button type="button" class="dash-review-btn" data-qidx="${r.qidx}">解説を見る</button>
+    </div>`;
+  }).join('');
+  document.getElementById('dashReview').innerHTML=`<div class="dash-review"><div class="dash-review-title">③ 各設問の解説（正解・不正解に関わらず確認できます）</div>${rows}</div>`;
+}
+
+document.body.addEventListener('click', e=>{
+  const hintToggle=e.target.closest('.dash-hint-toggle');
+  if(hintToggle){
+    const body=document.getElementById(hintToggle.dataset.uid+'_hint');
+    if(body) body.classList.toggle('show');
+    return;
+  }
+  const jumpBtn=e.target.closest('.dash-hint-jump');
+  if(jumpBtn){
+    closeDashModal();
+    jumpToParagraph(jumpBtn.dataset.jump);
+    return;
+  }
+  const flowNode=e.target.closest('.flow-node');
+  if(flowNode){
+    closeFlowModal();
+    jumpToParagraph(flowNode.dataset.jump);
+    return;
+  }
+  const flowRow=e.target.closest('.flow-table tr[data-jump]');
+  if(flowRow){
+    closeFlowModal();
+    jumpToParagraph(flowRow.dataset.jump);
+    return;
+  }
+  const reviewBtn=e.target.closest('.dash-review-btn');
+  if(reviewBtn){
+    closeDashModal();
+    openQModal(QMAP[+reviewBtn.dataset.qidx], 'dash');
+    return;
+  }
+});
+
+function jumpToParagraph(pid){
+  const p=ALL.find(pp=>pp.id===pid);
+  if(p && p.sents[0]){
+    const el=document.getElementById(p.sents[0].id);
+    if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80); }
+  }
+}
+
+let dashRendered=false;
+function openDashModal(){ if(!dashRendered){ renderDashboard(); dashRendered=true; } document.getElementById('dashBackdrop').classList.add('open'); document.getElementById('dashBackdrop').scrollTop=0; }
+function closeDashModal(){ document.getElementById('dashBackdrop').classList.remove('open'); }
+document.getElementById('dashOpenBtn').addEventListener('click', openDashModal);
+document.getElementById('dashClose').addEventListener('click', closeDashModal);
+document.getElementById('dashBackdrop').addEventListener('click', e=>{ if(e.target.id==='dashBackdrop') closeDashModal(); });
+
+function openFlowModal(){ document.getElementById('flowBackdrop').classList.add('open'); }
+function closeFlowModal(){ document.getElementById('flowBackdrop').classList.remove('open'); }
+document.getElementById('flowOpenBtn').addEventListener('click', openFlowModal);
+document.getElementById('flowClose').addEventListener('click', closeFlowModal);
+document.getElementById('flowBackdrop').addEventListener('click', e=>{ if(e.target.id==='flowBackdrop') closeFlowModal(); });
+
+/* ===== ②単語チェック（4択クイズ） ===== */
+const VOCAB_POOL=[];
+ALL.forEach(p=>p.vocab.forEach(v=>VOCAB_POOL.push({word:v.word,pos:v.pos,ja:v.ja,def:v.def,pid:p.id,prole:p.role})));
+
+let vcQuestions=[], vcIndex=0, vcScore=0, vcLocked=false;
+const VC_MAX_Q=15;
+const DEF_MAX_Q=5;
+
+const vcScopeSel=document.getElementById('vcScope');
+(function buildScopeOptions(){
+  const optRandom=document.createElement('option');
+  optRandom.id='vcOptRandom';
+  optRandom.value='random';
+  vcScopeSel.appendChild(optRandom);
+  const optAll=document.createElement('option');
+  optAll.value='all'; optAll.textContent=`全段落（全${VOCAB_POOL.length}語を出題）`;
+  vcScopeSel.appendChild(optAll);
+  ALL.forEach(p=>{
+    const n=p.vocab.length;
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=`第${p.id.replace('p','')}段落：${p.role}（${n}語）`;
+    vcScopeSel.appendChild(opt);
+  });
+})();
+function updateRandomOptionLabel(){
+  const mode=document.querySelector('input[name="vcMode"]:checked').value;
+  const n = mode==='def' ? DEF_MAX_Q : VC_MAX_Q;
+  const opt=document.getElementById('vcOptRandom');
+  if(opt) opt.textContent=`ランダム（全段落から${Math.min(n,VOCAB_POOL.length)}問）`;
+}
+updateRandomOptionLabel();
+document.querySelectorAll('input[name="vcMode"]').forEach(r=>r.addEventListener('change', updateRandomOptionLabel));
+
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function buildQuiz(){
+  const mode=document.querySelector('input[name="vcMode"]:checked').value; // 'e2j' or 'def'
+  const isDef = mode==='def';
+  const scope=vcScopeSel.value;
+  const pool = (scope==='random'||scope==='all') ? VOCAB_POOL : VOCAB_POOL.filter(v=>v.pid===scope);
+  const shuffledPool = shuffle(pool);
+  const maxQ = isDef ? DEF_MAX_Q : VC_MAX_Q;
+  const picked = (scope==='all') ? shuffledPool : shuffledPool.slice(0, maxQ);
+  vcQuestions = picked.map(item=>{
+    const correctText = isDef ? item.def : item.ja;
+    const notSame = v=> v.word!==item.word && (isDef ? v.def!==item.def : v.ja!==item.ja);
+    // 誤答の質：まず同じ品詞(pos)の語から選び、足りない分だけ他の語で補う（明らかに違うと分かる誤答を避ける）
+    const samePos = VOCAB_POOL.filter(v=> notSame(v) && v.pos===item.pos);
+    const otherPos = VOCAB_POOL.filter(v=> notSame(v) && v.pos!==item.pos);
+    const distractors = shuffle(samePos).concat(shuffle(otherPos)).slice(0,3).map(v=> isDef ? v.def : v.ja);
+    const choices = shuffle([correctText, ...distractors]);
+    return { prompt: item.word, promptPos: item.pos, correct: correctText, choices };
+  });
+  vcIndex=0; vcScore=0;
+}
+
+function renderQuestion(){
+  vcLocked=false;
+  const q=vcQuestions[vcIndex];
+  document.getElementById('vcQNum').textContent=vcIndex+1;
+  document.getElementById('vcQTotal').textContent=vcQuestions.length;
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const promptEl=document.getElementById('vcPrompt');
+  promptEl.textContent=q.prompt;
+  promptEl.className='vc-prompt';
+  const choicesEl=document.getElementById('vcChoices');
+  choicesEl.innerHTML='';
+  q.choices.forEach(choice=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='vc-choice-btn';
+    b.textContent=choice;
+    b.addEventListener('click', ()=>onChoose(b, choice));
+    choicesEl.appendChild(b);
+  });
+  document.getElementById('vcNextBtn').classList.remove('show');
+}
+
+function onChoose(btn, choice){
+  if(vcLocked) return;
+  vcLocked=true;
+  const q=vcQuestions[vcIndex];
+  const ok = choice===q.correct;
+  if(ok) vcScore++;
+  [...document.getElementById('vcChoices').children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.correct) b.classList.add('correct');
+    else if(b===btn) b.classList.add('wrong');
+  });
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const nextBtn=document.getElementById('vcNextBtn');
+  nextBtn.textContent = (vcIndex<vcQuestions.length-1) ? '次の問題へ →' : '結果を見る →';
+  nextBtn.classList.add('show');
+}
+
+document.getElementById('vcNextBtn').addEventListener('click', ()=>{
+  vcIndex++;
+  if(vcIndex>=vcQuestions.length){ finishQuiz(); return; }
+  renderQuestion();
+});
+
+function finishQuiz(){
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.add('show');
+  const total=vcQuestions.length;
+  document.getElementById('vcResultScore').textContent=`${vcScore} / ${total}`;
+  const pct = total? Math.round(vcScore/total*100):0;
+  let msg='復習して、もう一度チャレンジしましょう。';
+  if(pct>=90) msg='素晴らしい！ほぼ完璧です。';
+  else if(pct>=70) msg='よくできました。あと少しで満点です。';
+  else if(pct>=50) msg='半分以上正解。間違えた語句を確認しましょう。';
+  document.getElementById('vcResultMsg').textContent=`正答率 ${pct}%　${msg}`;
+}
+
+document.getElementById('vcStartBtn').addEventListener('click', ()=>{
+  buildQuiz();
+  if(vcQuestions.length<2){ document.getElementById('vcPoolNote').textContent='この範囲には十分な語数がありません。'; return; }
+  document.getElementById('vcSetup').style.display='none';
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcQuiz').classList.add('show');
+  renderQuestion();
+});
+
+document.getElementById('vcRetryBtn').addEventListener('click', ()=>{
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcSetup').style.display='block';
+});
+
+function openVocabModal(){
+  document.getElementById('vcSetup').style.display='block';
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vocabBackdrop').classList.add('open');
+}
+function closeVocabModal(){ document.getElementById('vocabBackdrop').classList.remove('open'); }
+document.getElementById('vocabOpenBtn').addEventListener('click', openVocabModal);
+document.getElementById('vocabClose').addEventListener('click', closeVocabModal);
+document.getElementById('vocabBackdrop').addEventListener('click', e=>{ if(e.target.id==='vocabBackdrop') closeVocabModal(); });
+
+/* 空所の答え描画 */
+function fillGap(wrap){
+  const sid=wrap.dataset.sid; const g=gapStore[sid]; if(!g)return;
+  const gap=wrap.querySelector(".gap"); const ans=wrap.querySelector(".gapans");
+  gap.textContent=g.answer; gap.classList.add("filled");
+  ans.innerHTML=`<b>${esc(g.answer)}</b> ― ${esc(g.why)}`;
+  wrap.classList.add("open");
+}
+
+document.body.addEventListener("click",e=>{
+  // 空所
+  const gw=e.target.closest(".gapwrap");
+  if(gw){e.stopPropagation(); if(gw.classList.contains("open")){gw.classList.remove("open");}else{fillGap(gw);} return;}
+  // タップ語義
+  const tap=e.target.closest(".tok");
+  if(tap&&tap.querySelector(".tip")){e.stopPropagation();const on=tap.classList.contains("active");document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));if(!on)tap.classList.add("active");return;}
+  // 文法索引チップ
+  const chip=e.target.closest("#gidx button");
+  if(chip){const ids=chip.dataset.t.split(",");document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash"));ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add("flash");});const f=document.getElementById(ids[0]);if(f)f.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash")),1600);return;}
+  // 設問対応表チップ：モーダル表示
+  const qchip=e.target.closest("#qidx button");
+  if(qchip){ openQModal(QMAP[+qchip.dataset.qidx]); return; }
+  // 段落パネル（語句・要旨）
+  const pb=e.target.closest(".pfoot button");
+  if(pb){const panel=document.getElementById(pb.dataset.panel);if(panel){const open=panel.classList.toggle("open");pb.classList.toggle("on",open);}return;}
+  // 文タップ（和訳・ポイント）
+  const sent=e.target.closest(".sent");
+  if(sent)sent.classList.toggle("open");
+  else document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));
+});
+
+document.querySelectorAll(".controls button[data-cls]").forEach(b=>{
+  b.addEventListener("click",()=>{document.body.classList.toggle(b.dataset.cls);b.classList.toggle("active");});
+});
+</script>
+</body>
+</html>
