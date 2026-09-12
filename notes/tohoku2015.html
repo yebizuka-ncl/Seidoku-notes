@@ -188,7 +188,18 @@
   .dash-open-btn{background:var(--shu)!important;border-color:var(--shu)!important;color:#fff!important;font-weight:700;}
   .flow-open-btn{background:var(--ai)!important;border-color:var(--ai)!important;color:#fff!important;font-weight:700;}
   .vocab-open-btn{background:var(--midori)!important;border-color:var(--midori)!important;color:#fff!important;font-weight:700;}
-  .flow-open-btn:hover,.dash-open-btn:hover,.vocab-open-btn:hover{opacity:.9;}
+  .vlist-open-btn{background:var(--par)!important;border-color:var(--par)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn:hover,.dash-open-btn:hover,.vocab-open-btn:hover,.vlist-open-btn:hover{opacity:.9;}
+  .lvtag{display:inline-block;white-space:nowrap;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 8px;}
+  .lvtag.基礎{background:#e9f3ec;color:#2e7d5b;}
+  .lvtag.標準{background:#eaf0f8;color:#2c3e66;}
+  .lvtag.難関{background:#f7e7e4;color:#b23b2e;}
+  .vlist-criteria{font-size:11.5px;color:var(--sub);background:#fbfaf6;border:1px solid var(--hair);border-radius:8px;padding:10px 13px;margin-top:12px;}
+  .vlist-criteria .vc-title{font-weight:700;color:#3a3833;margin-bottom:6px;}
+  .vlist-criteria .vc-row{display:flex;align-items:baseline;gap:9px;line-height:1.7;padding:2px 0;}
+  .vlist-criteria .lvtag{flex:0 0 auto;width:38px;text-align:center;}
+  .vlist-table td.vl-word{font-family:Georgia,serif;font-weight:700;}
+  .vlist-table td.vl-pos{color:var(--sub);font-size:11px;white-space:nowrap;}
 
   .vocab-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:115;padding:24px 14px;overflow-y:auto;}
   .vocab-backdrop.open{display:block;}
@@ -336,6 +347,7 @@
   <div class="controls">
     <button id="dashOpenBtn" type="button" class="dash-open-btn">① 設問チェック</button>
     <button id="vocabOpenBtn" type="button" class="vocab-open-btn">② 単語チェック</button>
+    <button id="vlistOpenBtn" type="button" class="vlist-open-btn">📖 語彙リスト</button>
     <button id="flowOpenBtn" type="button" class="flow-open-btn">🗺 論理構造図</button>
     <span class="sep"></span>
     <button data-cls="show-jp">和訳</button>
@@ -455,6 +467,35 @@
       <div class="vc-result-score" id="vcResultScore">0 / 0</div>
       <div class="vc-result-msg" id="vcResultMsg"></div>
       <button type="button" class="vc-retry-btn" id="vcRetryBtn">設定に戻ってもう一度</button>
+    </div>
+  </div>
+</div>
+
+<div class="flow-backdrop" id="vlistBackdrop">
+  <div class="flow-modal">
+    <button class="qmodal-close" id="vlistClose">✕ 閉じる</button>
+    <div class="flow-head">
+      <div class="flow-title">語彙リスト</div>
+      <div class="flow-sub">本文に登場する重要語彙の一覧です。行をクリックすると本文の該当段落へ移動します。</div>
+    </div>
+    <div class="vlist-criteria">
+      <div class="vc-title">難易度の基準</div>
+      <div class="vc-row"><span class="lvtag 標準">標準</span><span>CEFR-J A2〜B1／速読英単語「必修編」相当（高校教科書〜共通テストレベル）</span></div>
+      <div class="vc-row"><span class="lvtag 難関">難関</span><span>CEFR-J B2以上／速読英単語「上級編」相当（国公立二次・難関私大で差がつく語）</span></div>
+    </div>
+    <div class="flow-table-wrap" style="margin-top:10px;padding-top:0;border-top:none;">
+      <table class="flow-table vlist-table">
+        <thead>
+          <tr>
+            <th style="width:46px;">#</th>
+            <th>英語</th>
+            <th style="width:64px;">品詞</th>
+            <th>日本語</th>
+            <th style="width:70px;">難易度</th>
+          </tr>
+        </thead>
+        <tbody id="vlistTableBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -649,7 +690,10 @@ const DATA = [
     {word:"capacity",pos:"名",ja:"能力、受容力",def:"the ability to do or understand something",level:"標準"},
     {word:"component",pos:"形",ja:"構成要素の",def:"being one of the parts that something is made of",level:"標準"},
     {word:"sensuous",pos:"形",ja:"感覚的な",def:"relating to the senses rather than the mind",level:"難関"},
-    {word:"hypothetical",pos:"形",ja:"仮説的な",def:"imagined or suggested but not necessarily real",level:"難関"}
+    {word:"hypothetical",pos:"形",ja:"仮説的な",def:"imagined or suggested but not necessarily real",level:"難関"},
+    {word:"for the sake of",pos:"熟",ja:"~のために",def:"in order to help or benefit someone or something",level:"標準"},
+    {word:"so to speak",pos:"熟",ja:"いわば",def:"used to describe something in a way that is not exactly accurate but helps explain the meaning",level:"標準"},
+    {word:"for lack of better words",pos:"熟",ja:"適切な言葉がないので",def:"because no more suitable words can be found",level:"標準"}
   ]
 },
 {
@@ -691,7 +735,8 @@ const DATA = [
   vocab:[
     {word:"absent-mindedly",pos:"副",ja:"うわの空で",def:"without paying attention to what you are doing",level:"難関"},
     {word:"brainless",pos:"形",ja:"何も考えない",def:"done or acting without careful thought",level:"標準"},
-    {word:"mere",pos:"形",ja:"単なる",def:"nothing more than; simply",level:"標準"}
+    {word:"mere",pos:"形",ja:"単なる",def:"nothing more than; simply",level:"標準"},
+    {word:"bathe in",pos:"熟",ja:"~に浸る",def:"to enjoy or experience something fully and pleasantly",level:"標準"}
   ]
 },
 {
@@ -1240,6 +1285,22 @@ if(flowTableBody){
     </tr>`).join('');
 }
 
+/* 語彙リスト：全段落の語句を通し番号つきで一覧表示 */
+const vlistTableBody=document.getElementById('vlistTableBody');
+if(vlistTableBody){
+  let vlistN=0;
+  vlistTableBody.innerHTML = ALL.map(p=>p.vocab.map(v=>{
+    vlistN++;
+    return `<tr data-jump="${p.id}">
+      <td class="ft-num">${vlistN}</td>
+      <td class="vl-word">${esc(v.word)}</td>
+      <td class="vl-pos">${esc(v.pos)}</td>
+      <td>${esc(v.ja)}</td>
+      <td><span class="lvtag ${esc(v.level)}">${esc(v.level)}</span></td>
+    </tr>`;
+  }).join('')).join('');
+}
+
 /* 設問id→文/段落の逆引き */
 function findSentAndPara(id){
   for(const p of ALL){
@@ -1423,7 +1484,7 @@ function backQModalToDash(){
 document.getElementById('qmodalClose').addEventListener('click', closeQModal);
 document.getElementById('qmodalBack').addEventListener('click', backQModalToDash);
 document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); closeVlistModal(); } });
 
 /* ===== ①設問チェック ダッシュボード ===== */
 function dashHintHtml(q, uid){
@@ -1625,6 +1686,12 @@ document.body.addEventListener('click', e=>{
     jumpToParagraph(flowNode.dataset.jump);
     return;
   }
+  const vlistRow=e.target.closest('.vlist-table tr[data-jump]');
+  if(vlistRow){
+    closeVlistModal();
+    jumpToParagraph(vlistRow.dataset.jump);
+    return;
+  }
   const flowRow=e.target.closest('.flow-table tr[data-jump]');
   if(flowRow){
     closeFlowModal();
@@ -1659,6 +1726,12 @@ function closeFlowModal(){ document.getElementById('flowBackdrop').classList.rem
 document.getElementById('flowOpenBtn').addEventListener('click', openFlowModal);
 document.getElementById('flowClose').addEventListener('click', closeFlowModal);
 document.getElementById('flowBackdrop').addEventListener('click', e=>{ if(e.target.id==='flowBackdrop') closeFlowModal(); });
+
+function openVlistModal(){ document.getElementById('vlistBackdrop').classList.add('open'); }
+function closeVlistModal(){ document.getElementById('vlistBackdrop').classList.remove('open'); }
+document.getElementById('vlistOpenBtn').addEventListener('click', openVlistModal);
+document.getElementById('vlistClose').addEventListener('click', closeVlistModal);
+document.getElementById('vlistBackdrop').addEventListener('click', e=>{ if(e.target.id==='vlistBackdrop') closeVlistModal(); });
 
 /* ===== ②単語チェック（4択クイズ） ===== */
 const VOCAB_POOL=[];
