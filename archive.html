@@ -153,12 +153,13 @@ function render(){
   const q = query.trim().toLowerCase();
   const items = DATA.filter(d=>{
     const isDone = d.status[cls]==="done";
+    // 国公立／私立の絞り込みは、準備中カードにも適用する（実施済みカードと同じ扱い）。
+    if(activeFilter!=="all" && d.kind!==activeFilter) return false;
     if(!isDone){
-      // 準備中カードは大学名・分類も出さないため、絞り込み・検索の対象にはしない。
+      // 準備中カードは大学名・タイトル・タグを出さないため、検索の対象にはしない。
       // 検索中は一覧からも隠す（検索文字列で存在を探り当てられないようにする）。
       return q === "";
     }
-    if(activeFilter!=="all" && d.kind!==activeFilter) return false;
     if(q){
       const hay = (d.univ+" "+d.title+" "+d.tags.join(" ")).toLowerCase();
       if(!hay.includes(q)) return false;
