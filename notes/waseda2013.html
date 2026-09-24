@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精読ノート ― 早稲田大2013商学部 大問III</title>
+<style>
+  :root{
+    --paper:#f7f6f2;--card:#fffdf9;--ink:#1c1b19;--sub:#6f6b63;--hair:#e4e1d8;
+    --shu:#b23b2e;--ai:#2c3e66;--midori:#2e7d5b;
+    --s-bg:#dfe9f6;--s-tx:#234e84;
+    --v-bg:#f6ddd6;--v-tx:#9a3320;
+    --o-bg:#d9efe4;--o-tx:#1f6b4e;
+    --c-bg:#e6e0f4;--c-tx:#4f3f8a;
+    --m-bg:#ebe9e3;--m-tx:#6f6d66;
+    --par:#c9760c;--hl:#ffe94d;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.6;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 90px;}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(247,246,242,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--hair);}
+  .topbar .inner{max-width:880px;margin:0 auto;padding:10px 18px;}
+  .ttl{font-family:Georgia,serif;font-size:15px;color:var(--ai);font-weight:700;}
+  .ttl small{display:block;font-weight:400;font-size:11px;color:var(--sub);}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+  .controls button{font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--hair);background:var(--card);color:var(--sub);border-radius:999px;padding:5px 13px;transition:.15s;}
+  .controls button:hover{border-color:var(--ai);color:var(--ai);}
+  .controls button.active{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .controls .sep{width:1px;height:18px;background:var(--hair);margin:0 2px;}
+
+  .lead{margin:20px 0 4px;font-size:12.5px;color:var(--sub);line-height:1.8;}
+  .lead b{color:var(--shu);}
+
+  .index{margin:14px 0 6px;background:#fbfaf6;border:1px solid var(--hair);border-radius:9px;padding:11px 14px;}
+  .index .ih{font-size:12px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .index .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .index .chips button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 11px;}
+  .index .chips button:hover{border-color:var(--shu);color:var(--shu);}
+
+  .legend{display:none;flex-wrap:wrap;gap:7px;margin:12px 0 4px;align-items:center;}
+  body.struct-on .legend{display:flex;}
+  .legend span{font-size:12px;padding:2px 9px;border-radius:5px;}
+  .legend .ls{background:var(--s-bg);color:var(--s-tx);}.legend .lv{background:var(--v-bg);color:var(--v-tx);}
+  .legend .lo{background:var(--o-bg);color:var(--o-tx);}.legend .lc{background:var(--c-bg);color:var(--c-tx);}
+  .legend .lm{background:var(--m-bg);color:var(--m-tx);}
+  .legend .lp{background:none;color:var(--par);border-bottom:3px solid var(--par);border-radius:0;padding:2px 2px 1px;}
+
+  .phead{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ai);padding-bottom:8px;margin:30px 0 4px;}
+  .phead:first-of-type{margin-top:18px;}
+  .pnum{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--ai);}
+  .prole{font-size:13px;color:var(--ai);font-weight:700;}
+
+  .sents{border-left:2px solid #ece9e0;padding-left:16px;margin-left:6px;}
+  .sent{padding:13px 0;border-bottom:1px solid #f0ede5;cursor:pointer;transition:background .5s;}
+  .sent:last-child{border-bottom:none;}
+  .sent.flash{background:#fff6d8;}
+  .badge{display:none;font-family:Georgia,serif;font-size:11px;font-weight:700;color:#fff;background:var(--ai);border-radius:5px;padding:1px 7px;margin-right:8px;vertical-align:2px;}
+  .sent.imp .badge{display:inline-block;}
+
+  .en{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:2.2;}
+  .tok{position:relative;display:inline;}
+  .w{padding:1px 0;border-radius:3px;}
+  .w.tap{border-bottom:1px dotted #b48a3a;cursor:pointer;}
+  .w.tap:hover{color:#000;}
+  /* 黄ハイライト：構造OFF時のみ。構造ONでは色塗りを優先 */
+  .w.hl{background:var(--hl);}
+  body.struct-on .en .hl{background:transparent;}
+  body.struct-on .en .s{background:var(--s-bg);}
+  body.struct-on .en .v{background:var(--v-bg);}
+  body.struct-on .en .o{background:var(--o-bg);}
+  body.struct-on .en .c{background:var(--c-bg);}
+  body.struct-on .en .m{background:var(--m-bg);}
+  body.struct-on .en .corr{color:var(--par);font-weight:bold;}
+  body.skel-on .en .m{opacity:.32;}
+
+  .rlab,.pnum2{display:none;}
+  .tok.hastip{display:inline-block;}
+  body.struct-on .rlab,body.struct-on .pnum2{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;vertical-align:0.55em;line-height:0;margin-right:3px;white-space:nowrap;}
+  .rlab.s{color:var(--s-tx);}.rlab.v{color:var(--v-tx);}.rlab.o{color:var(--o-tx);}.rlab.c{color:var(--c-tx);}.rlab.m{color:var(--m-tx);}
+  .pnum2{color:var(--par);}
+  body.struct-on .en .pp .w{border-bottom:3px solid var(--par);border-radius:0;padding-bottom:0;}
+
+  /* 空所 */
+  .gap{display:inline-block;min-width:54px;text-align:center;border-bottom:2px solid var(--ai);color:var(--ai);font-weight:700;cursor:pointer;padding:0 6px;font-family:"Yu Gothic",sans-serif;font-size:14px;vertical-align:1px;}
+  .gap.filled{border-bottom-color:var(--midori);color:var(--midori);}
+  .gapwrap{position:relative;display:inline-block;}
+  .gapans{display:none;position:absolute;top:100%;left:0;margin-top:6px;width:max-content;max-width:300px;background:#fff;border:1px solid var(--hair);border-left:3px solid var(--midori);border-radius:0 6px 6px 0;padding:7px 11px;font-family:"Yu Gothic",sans-serif;font-size:12px;color:#34322d;line-height:1.6;z-index:15;box-shadow:0 3px 12px rgba(0,0,0,.1);}
+  .gapwrap.open .gapans{display:block;}
+  .gapans b{color:var(--midori);}
+
+  .tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#2b2b28;color:#fff;font-size:11.5px;line-height:1.5;padding:7px 10px;border-radius:7px;width:max-content;max-width:210px;z-index:20;margin-bottom:7px;text-align:left;font-family:"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);}
+  .tip b{color:#ffe085;}.tip .pos{color:#bdbdb8;font-size:10.5px;}
+  .tok.active .tip{display:block;}
+
+  .jp,.pt{display:none;}
+  body.show-jp .jp,.sent.open .jp{display:block;}
+  body.show-pt .pt,.sent.open .pt{display:block;}
+  .jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:14.5px;color:#2a2a28;background:#f3f8f4;border-left:3px solid var(--midori);padding:7px 11px;margin-top:9px;border-radius:0 4px 4px 0;}
+  .pt{font-size:13px;color:#34322d;background:#f4f6fa;border-left:3px solid var(--ai);padding:7px 11px;margin-top:7px;border-radius:0 4px 4px 0;}
+  .pt::before{content:"ポイント ";font-weight:700;color:var(--ai);}
+
+  /* 段落フッタ：語句・要旨 */
+  .pfoot{margin:12px 0 4px;display:flex;gap:7px;}
+  .pfoot button{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .pfoot button:hover{border-color:var(--ai);color:var(--ai);}
+  .pfoot button.on{background:var(--ai);border-color:var(--ai);color:#fff;}
+  .panel{display:none;margin:6px 0 0;border:1px solid var(--hair);border-radius:8px;padding:11px 14px;background:#fcfbf7;font-size:13px;line-height:1.75;}
+  .panel.open{display:block;}
+  .panel.vocab table{width:100%;border-collapse:collapse;}
+  .panel.vocab td{padding:3px 6px;vertical-align:top;border-bottom:1px solid #f0ede5;}
+  .panel.vocab .lv{white-space:nowrap;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 6px;}
+  .panel.vocab .lv.基礎{background:#e9f3ec;color:#2e7d5b;}
+  .panel.vocab .lv.標準{background:#eaf0f8;color:#2c3e66;}
+  .panel.vocab .lv.難関{background:#f7e7e4;color:#b23b2e;}
+  .panel.vocab .wd{font-family:Georgia,serif;font-weight:700;}
+  .panel.vocab .ps{color:var(--sub);font-size:11px;}
+  .panel.summary{color:#34322d;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:46px;border-top:1px solid var(--hair);padding-top:16px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  @media print{
+    .topbar{position:static;} .controls,.pfoot{display:none;}
+    body.show-jp .jp,.pt{display:block;} .panel{display:block;}
+    .qmodal-backdrop{display:none!important;}
+    .dash-backdrop{display:none!important;}
+  }
+
+  .dm-legend{display:none!important;}
+  body.dm-on .dm-legend{display:flex!important;}
+  .legend .ld{background:none;color:#2c3e66;border-bottom:1.5px dotted #2c3e66;border-radius:0;padding:2px 2px 1px;}
+
+  /* ディスコースマーカー（因果・対比・譲歩・列挙・例示） */
+  .dmlab{display:none;}
+  body.dm-on .dmlab{display:inline;font-family:"Yu Gothic",sans-serif;font-size:9px;font-weight:700;color:#2c3e66;vertical-align:0.55em;line-height:0;margin-right:2px;white-space:nowrap;}
+  body.dm-on .en .dmword{border-bottom:1.5px dotted #2c3e66;padding-bottom:1px;}
+
+  /* ===== 設問モーダル ===== */
+  .qmodal-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:100;padding:28px 14px;overflow-y:auto;}
+  .qmodal-backdrop.open{display:block;}
+  .qmodal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:28px 28px 36px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .qmodal-close{position:absolute;top:16px;right:18px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
+  .qmodal-close:hover{border-color:var(--shu);color:var(--shu);}
+  .qmodal-back{display:none;position:absolute;top:16px;right:130px;border:1px solid var(--hair);background:#fff;border-radius:999px;padding:6px 15px;font-size:12.5px;cursor:pointer;color:var(--ai);font-family:inherit;}
+  .qmodal-back.show{display:inline-block;}
+  .qmodal-back:hover{border-color:var(--ai);background:#f4f6fa;}
+  .qmodal-head{margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:220px;}
+  .qmodal-qnum{font-family:Georgia,serif;font-size:23px;font-weight:700;color:var(--ai);margin-right:12px;}
+  .qmodal-preview{font-size:13px;color:var(--sub);}
+  .qmodal-question{background:#fff8ea;border:1px solid #ecd9a0;border-left:4px solid #c9760c;border-radius:0 8px 8px 0;padding:11px 15px;font-size:13px;line-height:1.75;color:#5c4a1f;margin-bottom:18px;}
+  .qmodal-section{margin:20px 0;}
+  .qmodal-sectitle{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;letter-spacing:.02em;}
+  .qmodal-para{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:2.1;color:#6b685f;}
+  .qmodal-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;box-shadow:0 0 0 1px #f0dfa0;}
+  .qmodal-diagram{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:2.9;background:#fbfaf6;border:1px solid var(--hair);border-radius:10px;padding:20px 22px;}
+  .qmodal-diagram .db-s{color:var(--s-tx);}
+  .qmodal-diagram .db-o{color:var(--o-tx);}
+  .qmodal-diagram .db-c{color:var(--c-tx);}
+  .qmodal-diagram .db-m{color:var(--m-tx);font-style:italic;}
+  .qmodal-diagram .db-v{color:var(--v-tx);font-weight:700;text-decoration:underline;text-underline-offset:4px;}
+  .qmodal-diagram .db-corr{color:var(--par);font-weight:700;}
+  .qmodal-diagram .db-sub{font-size:10.5px;vertical-align:sub;font-family:"Yu Gothic",sans-serif;font-weight:700;color:var(--sub);margin:0 3px 0 1px;}
+  .qmodal-diagram .db-par{border-bottom:3px solid var(--par);padding-bottom:1px;}
+  .qmodal-diagram .qdiagram-line{margin:5px 0;}
+  .qmodal-diagram-legend{font-size:11px;color:var(--sub);margin-top:12px;border-top:1px dashed var(--hair);padding-top:9px;line-height:1.8;}
+  .qmodal-reason{font-size:13.5px;line-height:1.8;background:#f4f6fa;border-left:3px solid var(--ai);padding:11px 15px;border-radius:0 8px 8px 0;}
+
+  /* 選択肢検証カード */
+  .choice-grid{display:flex;flex-direction:column;gap:9px;}
+  .choice-card{border:1px solid var(--hair);border-left:5px solid var(--hair);border-radius:0 10px 10px 0;padding:11px 14px;background:#fff;}
+  .choice-card.ok{border-left-color:var(--midori);background:#f6faf7;}
+  .choice-card.ng{border-left-color:var(--shu);background:#fdf6f5;}
+  .choice-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .choice-label{font-family:Georgia,serif;font-weight:700;color:var(--ink);}
+  .choice-badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;}
+  .choice-card.ok .choice-badge{background:#e3f3e9;color:var(--midori);}
+  .choice-card.ng .choice-badge{background:#fbe6e3;color:var(--shu);}
+  .choice-text{font-family:Georgia,serif;font-size:14px;line-height:1.65;margin:6px 0 0;}
+  .choice-text .cerr{color:var(--shu);font-weight:700;text-decoration:underline;text-decoration-style:wavy;text-decoration-color:var(--shu);text-underline-offset:3px;border-radius:2px;animation:cflash 1.4s ease-in-out 1;}
+  @keyframes cflash{0%{background:#ffcfc7;}55%{background:#ffe4df;}100%{background:transparent;}}
+  .choice-quote{font-size:11.5px;color:#6b6a63;margin-top:6px;padding-left:9px;border-left:2px dashed var(--hair);}
+  .choice-quote .qwavy{text-decoration:underline;text-decoration-style:wavy;text-underline-offset:3px;}
+  .choice-card.ng .choice-quote .qwavy{text-decoration-color:var(--shu);color:#8a2e22;}
+  .choice-card.ok .choice-quote .qwavy{text-decoration-color:var(--midori);color:#1f5f45;}
+  .choice-para-tag{font-size:10px;color:var(--sub);margin-left:3px;}
+  .choice-note{font-size:12px;color:#54524a;margin-top:5px;line-height:1.6;}
+
+  /* ===== ①概要ダッシュボード ===== */
+  .dash-open-btn{background:var(--shu)!important;border-color:var(--shu)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn{background:var(--ai)!important;border-color:var(--ai)!important;color:#fff!important;font-weight:700;}
+  .vocab-open-btn{background:var(--midori)!important;border-color:var(--midori)!important;color:#fff!important;font-weight:700;}
+  .vlist-open-btn{background:var(--par)!important;border-color:var(--par)!important;color:#fff!important;font-weight:700;}
+  .flow-open-btn:hover,.dash-open-btn:hover,.vocab-open-btn:hover,.vlist-open-btn:hover{opacity:.9;}
+
+  .lvtag{display:inline-block;white-space:nowrap;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 8px;}
+  .lvtag.基礎{background:#e9f3ec;color:#2e7d5b;}
+  .lvtag.標準{background:#eaf0f8;color:#2c3e66;}
+  .lvtag.難関{background:#f7e7e4;color:#b23b2e;}
+  .vlist-criteria{font-size:11.5px;color:var(--sub);background:#fbfaf6;border:1px solid var(--hair);border-radius:8px;padding:10px 13px;margin-top:12px;}
+  .vlist-criteria .vc-title{font-weight:700;color:#3a3833;margin-bottom:6px;}
+  .vlist-criteria .vc-row{display:flex;align-items:baseline;gap:9px;line-height:1.7;padding:2px 0;}
+  .vlist-criteria .lvtag{flex:0 0 auto;width:38px;text-align:center;}
+  .vlist-table td.vl-word{font-family:Georgia,serif;font-weight:700;}
+  .vlist-table td.vl-pos{color:var(--sub);font-size:11px;white-space:nowrap;}
+
+  .vocab-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:115;padding:24px 14px;overflow-y:auto;}
+  .vocab-backdrop.open{display:block;}
+  .vocab-modal{max-width:560px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .vocab-head{margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--midori);padding-right:90px;}
+  .vocab-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--midori);}
+  .vocab-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+
+  .vc-setup-row{margin-bottom:16px;}
+  .vc-setup-label{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:7px;}
+  .vc-radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+  .vc-radio-label{flex:1;min-width:140px;display:flex;align-items:center;gap:7px;border:1px solid var(--hair);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;}
+  .vc-radio-label:hover{border-color:var(--midori);}
+  .vc-radio-label input:checked ~ span{color:var(--midori);font-weight:700;}
+  .vc-select{width:100%;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:8px;background:#fff;}
+  .vc-start-btn{width:100%;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:11px 0;margin-top:6px;}
+  .vc-start-btn:hover{opacity:.9;}
+  .vc-pool-note{font-size:11px;color:var(--sub);margin-top:6px;}
+
+  .vc-quiz{display:none;}
+  .vc-quiz.show{display:block;}
+  .vc-progress{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--sub);margin-bottom:14px;}
+  .vc-progress b{color:var(--midori);font-family:Georgia,serif;}
+  .vc-prompt{font-family:Georgia,"Times New Roman",serif;font-size:22px;text-align:center;color:var(--ink);background:#f9f8f4;border:1px solid var(--hair);border-radius:10px;padding:22px 16px;margin-bottom:18px;line-height:1.5;}
+  .vc-prompt.jp{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:16px;}
+  .vc-choices{display:flex;flex-direction:column;gap:9px;}
+  .vc-choice-btn{font-family:inherit;font-size:13.5px;text-align:left;cursor:pointer;background:#fff;border:1.5px solid var(--hair);border-radius:9px;padding:11px 14px;transition:.12s;}
+  .vc-choice-btn:hover:not(:disabled){border-color:var(--midori);background:#f6faf7;}
+  .vc-choice-btn:disabled{cursor:default;}
+  .vc-choice-btn.correct{border-color:var(--midori);background:#e3f3e9;color:#1f5f45;font-weight:700;}
+  .vc-choice-btn.wrong{border-color:var(--shu);background:#fbe6e3;color:#8a2e22;font-weight:700;}
+  .vc-next-btn{width:100%;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 0;margin-top:16px;display:none;}
+  .vc-next-btn.show{display:block;}
+
+  .vc-result{display:none;text-align:center;padding:20px 0;}
+  .vc-result.show{display:block;}
+  .vc-result-score{font-family:Georgia,serif;font-size:34px;font-weight:700;color:var(--midori);margin-bottom:8px;}
+  .vc-result-msg{font-size:13px;color:var(--sub);margin-bottom:20px;}
+  .vc-retry-btn{font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;background:var(--midori);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+
+  .flow-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:120;padding:24px 14px;overflow-y:auto;}
+  .flow-backdrop.open{display:block;}
+  .flow-modal{max-width:860px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 30px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .flow-head{margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .flow-title{font-family:Georgia,serif;font-size:18px;font-weight:700;color:var(--ai);}
+  .flow-sub{font-size:12px;color:var(--sub);margin-top:5px;}
+  .flow-node{cursor:pointer;}
+  .flow-node rect{transition:opacity .15s, transform .15s;transform-box:fill-box;transform-origin:center;}
+  .flow-node:hover rect{opacity:.88;transform:translateY(-1px);}
+  .flow-node:hover text{text-decoration:underline;}
+  .flow-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px dashed var(--hair);font-size:11px;color:var(--sub);}
+  .flow-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .flow-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;}
+  .flow-table-wrap{margin-top:18px;padding-top:14px;border-top:1px dashed var(--hair);}
+  .flow-table-title{font-size:12.5px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .flow-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .flow-table th{text-align:left;font-size:11px;color:var(--sub);font-weight:700;padding:6px 8px;border-bottom:2px solid var(--hair);}
+  .flow-table td{padding:8px;vertical-align:top;border-bottom:1px solid #f0ede5;line-height:1.6;cursor:pointer;}
+  .flow-table tr:hover td{background:#f6f4ee;}
+  .flow-table .ft-num{font-family:Georgia,serif;font-weight:700;color:var(--ai);white-space:nowrap;}
+  .flow-table .ft-role{font-weight:700;color:#3a3833;white-space:nowrap;}
+  .flow-table .ft-summary{color:#54524a;}
+  .dash-open-btn:hover{opacity:.9;}
+  .dash-backdrop{display:none;position:fixed;inset:0;background:rgba(24,22,17,.6);z-index:110;padding:26px 14px;overflow-y:auto;}
+  .dash-backdrop.open{display:block;}
+  .dash-modal{max-width:840px;margin:0 auto;background:var(--card);border-radius:14px;padding:26px 26px 34px;position:relative;box-shadow:0 12px 44px rgba(0,0,0,.28);}
+  .dash-head{margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--ai);padding-right:90px;}
+  .dash-title{font-family:Georgia,serif;font-size:19px;font-weight:700;color:var(--ai);}
+  .dash-sub{font-size:12.5px;color:var(--sub);margin-top:6px;line-height:1.7;}
+
+  .dash-qcard{border:1px solid var(--hair);border-radius:10px;padding:14px 16px;margin-bottom:12px;background:#fff;}
+  .dash-qhead{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap;}
+  .dash-qlabel{font-family:Georgia,serif;font-weight:700;color:var(--shu);font-size:15px;}
+  .dash-qtext{font-size:13px;color:#3a3833;line-height:1.7;margin-bottom:9px;}
+  .dash-badge{display:none;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:auto;}
+  .dash-badge.show{display:inline-block;}
+  .dash-badge.ok{background:#e3f3e9;color:var(--midori);}
+  .dash-badge.ng{background:#fbe6e3;color:var(--shu);}
+  .dash-badge.pending{background:#f0eee6;color:var(--sub);}
+
+  .dash-opts{display:flex;flex-direction:column;gap:6px;}
+  .dash-opt-label{display:flex;gap:8px;align-items:baseline;font-size:13px;line-height:1.6;cursor:pointer;padding:5px 8px;border-radius:6px;}
+  .dash-opt-label:hover{background:#f6f4ee;}
+  .dash-opt-label input{margin-top:3px;flex-shrink:0;}
+  .dash-blank-title{font-size:12px;font-weight:700;color:var(--ai);margin:8px 0 4px;}
+  .dash-text-input{width:160px;font-family:inherit;font-size:13.5px;padding:6px 10px;border:1px solid var(--hair);border-radius:6px;}
+  .dash-textarea{width:100%;min-height:52px;font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--hair);border-radius:6px;resize:vertical;box-sizing:border-box;}
+  .dash-free-note{font-size:11.5px;color:var(--sub);margin-top:4px;}
+
+  .dash-hint-toggle{margin-top:10px;font-family:inherit;font-size:12px;cursor:pointer;color:#8a6d1f;background:#fffaf0;border:1px solid #ecd9a0;border-radius:999px;padding:5px 13px;}
+  .dash-hint-toggle:hover{border-color:#c9760c;}
+  .dash-hint-body{display:none;margin-top:10px;padding:11px 14px;background:#fbfaf6;border:1px solid var(--hair);border-radius:8px;}
+  .dash-hint-body.show{display:block;}
+  .dash-hint-role{font-size:11.5px;font-weight:700;color:var(--ai);margin-bottom:6px;}
+  .dash-hint-para{font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.95;color:#54524a;}
+  .dash-hint-para .qtarget{background:#fff6d8;padding:2px 4px;border-radius:4px;color:var(--ink);font-weight:600;}
+  .dash-hint-jump{display:block;margin-top:9px;font-family:inherit;font-size:11.5px;cursor:pointer;color:var(--ai);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:4px 12px;}
+  .dash-hint-jump:hover{border-color:var(--ai);}
+  .dash-hint-qline{font-size:12.5px;line-height:1.8;padding:3px 0;color:#54524a;}
+  .dash-hint-qline b{color:var(--ai);}
+
+  .dash-reveal{display:none;margin-top:12px;padding:12px 14px;background:#f9f8f4;border:1px solid var(--hair);border-radius:8px;}
+  .dash-reveal.show{display:block;}
+  .dash-reveal-ans{font-size:13px;line-height:1.8;margin-bottom:10px;}
+  .dash-reveal-ans b{color:var(--ai);}
+  .dash-elem-label{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;cursor:pointer;}
+  .dash-elem-label input{margin-top:2px;flex-shrink:0;}
+  .dash-achieve{font-size:12.5px;font-weight:700;color:var(--ai);margin-top:8px;}
+  .dash-coherent{margin-top:8px;padding-top:8px;border-top:1px dashed var(--hair);}
+
+  .dash-mc-item{display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:1.6;padding:4px 0;}
+
+  .dash-gradebar{display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:16px;border-top:2px solid var(--ai);flex-wrap:wrap;}
+  .dash-grade-btn{font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--ai);color:#fff;border:none;border-radius:999px;padding:10px 26px;}
+  .dash-grade-btn:hover{opacity:.9;}
+  .dash-score-summary{font-size:13px;color:#3a3833;line-height:1.8;}
+  .dash-score-summary b{color:var(--shu);font-family:Georgia,serif;}
+
+  .dash-review{margin-top:20px;}
+  .dash-review-title{font-size:13px;font-weight:700;color:var(--ai);margin-bottom:9px;}
+  .dash-review-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--hair);border-radius:8px;margin-bottom:7px;background:#fff;flex-wrap:wrap;}
+  .dash-review-row .dash-badge{margin-left:0;}
+  .dash-review-qtext{flex:1;min-width:180px;font-size:12.5px;color:#54524a;}
+  .dash-review-btn{font-family:inherit;font-size:12px;cursor:pointer;color:var(--sub);background:var(--card);border:1px solid var(--hair);border-radius:999px;padding:4px 13px;}
+  .dash-review-btn:hover{border-color:var(--ai);color:var(--ai);}
+
+  @media (max-width:640px){
+    .dash-modal{padding:20px 14px 26px;}
+  }
+
+  @media (max-width:640px){
+    .qmodal{padding:20px 14px 26px;}
+    .qmodal-head{padding-right:170px;}
+    .qmodal-back{right:100px;font-size:11px;padding:5px 10px;}
+    .qmodal-close{font-size:11px;padding:5px 10px;}
+    .qmodal-diagram{font-size:16px;line-height:2.5;padding:14px 12px;}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <div class="ttl"><span id="docTitle">精読ノート ― 待つことの心理学</span> <small id="docSub">早稲田大学 2013年 商学部 大問III（The New York Times, 2012）</small></div>
+  <div class="controls">
+    <button id="dashOpenBtn" type="button" class="dash-open-btn">① 設問チェック</button>
+    <button id="vocabOpenBtn" type="button" class="vocab-open-btn">② 単語チェック</button>
+    <button id="vlistOpenBtn" type="button" class="vlist-open-btn">📖 語彙リスト</button>
+    <button id="flowOpenBtn" type="button" class="flow-open-btn">🗺 論理構造図</button>
+    <span class="sep"></span>
+    <button data-cls="show-jp">和訳</button>
+    <button data-cls="show-pt">ポイント</button>
+    <span class="sep"></span>
+    <button data-cls="struct-on">構造</button>
+    <button data-cls="skel-on">骨格</button>
+    <button data-cls="dm-on">ディスコースマーカー</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="lead">
+    英文をまず素読 → <b>文をタップ</b>で和訳・ポイント。<b>点線の語</b>はタップで語義（受験レベルのみ）。<b>構造</b>で重要文の語が S/V/O/C/M に色分けされ、対句・並列は橙の太下線＋番号。<b>骨格</b>でMを薄く落として核を浮かせます。<b>ディスコースマーカー</b>で因果・対比・譲歩・列挙などの論理関係を表示します。各段落末に語句・要旨。上部の<b>①設問チェック・②単語チェック・🗺論理構造図</b>で理解度を確認できます。
+  </div>
+
+  <div class="index">
+    <div class="ih">本文で復習する文法（タップで該当文へジャンプ）</div>
+    <div class="chips" id="gidx"></div>
+  </div>
+
+  <div class="index" id="qmapWrap">
+    <div class="ih">設問との対応（タップで設問ビューを表示）</div>
+    <div class="chips" id="qidx"></div>
+  </div>
+
+  <div class="legend">
+    <span class="ls">S 主語</span><span class="lv">V 動詞</span><span class="lo">O 目的語</span><span class="lc">C 補語</span><span class="lm">M 修飾語</span>
+    <span class="lp">対句・並列（番号で対応）</span>
+  </div>
+  <div class="legend dm-legend" id="dmLegend">
+    <span class="ld">因果＝因/果　対比＝対A/対B　譲歩＝譲/主　列挙＝列①②③</span>
+  </div>
+
+  <div id="paras"></div>
+  <footer>精読ノート ― 構造表示・設問チェック対応版（早稲田大2013 商学部 大問III）</footer>
+</div>
+
+<div class="qmodal-backdrop" id="qmodalBackdrop">
+  <div class="qmodal">
+    <button class="qmodal-back" id="qmodalBack">← 採点結果に戻る</button>
+    <button class="qmodal-close" id="qmodalClose">✕ 閉じる</button>
+    <div class="qmodal-head">
+      <span class="qmodal-qnum" id="qmodalQnum"></span>
+      <span class="qmodal-preview" id="qmodalParaRole"></span>
+    </div>
+    <div class="qmodal-question" id="qmodalQuestion"></div>
+
+    <div class="qmodal-section" id="qmodalParaSection">
+      <div class="qmodal-sectitle">段落全文（該当文をハイライト）</div>
+      <div class="qmodal-para" id="qmodalPara"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalDiagramSection">
+      <div class="qmodal-sectitle">構文解釈図</div>
+      <div class="qmodal-diagram" id="qmodalDiagram"></div>
+      <div class="qmodal-diagram-legend">[ ]<b>=名詞句（S・O共通）</b>　下線<b>=V動詞</b>　⟨ ⟩<b>=C補語</b>　( )<b>=M修飾語</b>　橙の下線・番号<b>=対句・並列の対応</b></div>
+    </div>
+    <div class="qmodal-section" id="qmodalChoiceSection">
+      <div class="qmodal-sectitle">選択肢の検証</div>
+      <div id="qmodalChoices"></div>
+    </div>
+    <div class="qmodal-section" id="qmodalReasonSection">
+      <div class="qmodal-sectitle">解答の根拠</div>
+      <div class="qmodal-reason" id="qmodalReason"></div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-backdrop" id="dashBackdrop">
+  <div class="dash-modal">
+    <button class="qmodal-close" id="dashClose">✕ 閉じる</button>
+    <div class="dash-head">
+      <div class="dash-title">① 設問チェック</div>
+      <div class="dash-sub">各設問に答えてから「採点する」を押してください。わからないときは「ヒントを見る」で該当段落を確認できます。</div>
+    </div>
+    <div id="dashQCards"></div>
+    <div class="dash-gradebar">
+      <button id="dashGradeBtn" type="button" class="dash-grade-btn">採点する</button>
+      <div class="dash-score-summary" id="dashScoreSummary"></div>
+    </div>
+    <div id="dashReview"></div>
+  </div>
+</div>
+
+<div class="vocab-backdrop" id="vocabBackdrop">
+  <div class="vocab-modal">
+    <button class="qmodal-close" id="vocabClose">✕ 閉じる</button>
+    <div class="vocab-head">
+      <div class="vocab-title">② 単語チェック</div>
+      <div class="vocab-sub">英単語を見て、日本語の意味または英語の定義を4択から選びます。<br><span style="color:var(--sub);font-size:11px;">※「英語の定義」モードの選択肢は英英辞典（学習者向け辞書）の説明内容を参考に、教材用に簡潔へ書き改めたものです。</span></div>
+    </div>
+
+    <div class="vc-setup" id="vcSetup">
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題形式</div>
+        <div class="vc-radio-group">
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="e2j" checked><span>英語 → 日本語の意味</span></label>
+          <label class="vc-radio-label"><input type="radio" name="vcMode" value="def"><span>英語の定義（英英）</span></label>
+        </div>
+      </div>
+      <div class="vc-setup-row">
+        <div class="vc-setup-label">出題範囲</div>
+        <select class="vc-select" id="vcScope"></select>
+        <div class="vc-pool-note" id="vcPoolNote"></div>
+      </div>
+      <button type="button" class="vc-start-btn" id="vcStartBtn">クイズを始める</button>
+    </div>
+
+    <div class="vc-quiz" id="vcQuiz">
+      <div class="vc-progress"><span>問題 <b id="vcQNum">1</b> / <span id="vcQTotal">10</span></span><span>正解 <b id="vcScoreNow">0</b></span></div>
+      <div class="vc-prompt" id="vcPrompt"></div>
+      <div class="vc-choices" id="vcChoices"></div>
+      <button type="button" class="vc-next-btn" id="vcNextBtn">次の問題へ →</button>
+    </div>
+
+    <div class="vc-result" id="vcResult">
+      <div class="vc-result-score" id="vcResultScore">0 / 0</div>
+      <div class="vc-result-msg" id="vcResultMsg"></div>
+      <button type="button" class="vc-retry-btn" id="vcRetryBtn">設定に戻ってもう一度</button>
+    </div>
+  </div>
+</div>
+
+<div class="flow-backdrop" id="vlistBackdrop">
+  <div class="flow-modal">
+    <button class="qmodal-close" id="vlistClose">✕ 閉じる</button>
+    <div class="flow-head">
+      <div class="flow-title">語彙リスト</div>
+      <div class="flow-sub">本文に登場する重要語彙の一覧です。行をクリックすると本文の該当段落へ移動します。</div>
+    </div>
+    <div class="vlist-criteria">
+      <div class="vc-title">難易度の基準</div>
+      <div class="vc-row"><span class="lvtag 標準">標準</span><span>CEFR-J A2〜B1／速読英単語「必修編」相当（高校教科書〜共通テストレベル）</span></div>
+      <div class="vc-row"><span class="lvtag 難関">難関</span><span>CEFR-J B2以上／速読英単語「上級編」相当（国公立二次・難関私大で差がつく語）</span></div>
+    </div>
+    <div class="flow-table-wrap" style="margin-top:10px;padding-top:0;border-top:none;">
+      <table class="flow-table vlist-table">
+        <thead>
+          <tr>
+            <th style="width:46px;">#</th>
+            <th>英語</th>
+            <th style="width:64px;">品詞</th>
+            <th>日本語</th>
+            <th style="width:70px;">難易度</th>
+          </tr>
+        </thead>
+        <tbody id="vlistTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="flow-backdrop" id="flowBackdrop">
+  <div class="flow-modal">
+    <button class="qmodal-close" id="flowClose">✕ 閉じる</button>
+    <div class="flow-head">
+      <div class="flow-title">論理構造図</div>
+      <div class="flow-sub">段落どうしの関係を図解しています。ボックスをクリックすると本文の該当段落へ移動します。</div>
+    </div>
+<svg viewBox="0 0 780 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9a95ab"/>
+    </marker>
+    <linearGradient id="gradNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#33456f"/>
+      <stop offset="100%" stop-color="#233657"/>
+    </linearGradient>
+    <linearGradient id="gradLight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f2f6fb"/>
+      <stop offset="100%" stop-color="#e3ecf7"/>
+    </linearGradient>
+    <linearGradient id="gradAmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff4de"/>
+      <stop offset="100%" stop-color="#fbe6bf"/>
+    </linearGradient>
+    <filter id="nodeShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#2c3e66" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- p1 -> p2 -->
+  <path d="M300,48 L470,48" fill="none" stroke="#c9760c" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="385" y="40" text-anchor="middle" font-size="10.5" fill="#c9760c" font-family="Yu Gothic,sans-serif" font-weight="700">Yet → 逆転の発想</text>
+  <!-- p1,p2 -> p3 -->
+  <path d="M180,78 C180,112 300,118 330,132" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M600,78 C600,112 480,118 450,132" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="390" y="118" text-anchor="middle" font-size="10.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif" font-weight="700">一般化（This story hints at…）</text>
+  <!-- p3 -> p4,p5,p6 -->
+  <path d="M320,200 C220,215 140,225 135,250" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M390,200 L390,250" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M460,200 C560,215 640,225 645,250" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <text x="200" y="222" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif" font-weight="700">要因①</text>
+  <text x="412" y="232" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif" font-weight="700">要因②</text>
+  <text x="580" y="222" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif" font-weight="700">要因③（最大）</text>
+  <!-- p4,p5,p6 -> p7 -->
+  <path d="M135,330 C135,365 250,375 280,385" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M390,330 L390,380" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+  <path d="M645,330 C645,365 530,375 500,385" fill="none" stroke="#9a95ab" stroke-width="1.7" marker-end="url(#arrow)"/>
+
+  <g class="flow-node" data-jump="p1">
+    <rect x="60" y="18" width="240" height="60" rx="14" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="180" y="40" text-anchor="middle" font-size="11.5" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">① 問題提起：空港の苦情</text>
+    <text x="180" y="60" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">係員増員で8分に短縮→苦情は続く</text>
+  </g>
+
+  <g class="flow-node" data-jump="p2">
+    <rect x="480" y="18" width="240" height="60" rx="14" fill="url(#gradAmber)" stroke="#c9760c" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="600" y="40" text-anchor="middle" font-size="11.5" fill="#8a5a10" font-weight="700" font-family="Yu Gothic,sans-serif">② 分析と解決</text>
+    <text x="600" y="60" text-anchor="middle" font-size="10" fill="#8a5a10" font-family="Yu Gothic,sans-serif">8割は棒立ち→ゲートを遠ざけ苦情ゼロ</text>
+  </g>
+
+  <g class="flow-node" data-jump="p3">
+    <rect x="200" y="134" width="380" height="66" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
+    <text x="390" y="158" text-anchor="middle" font-size="12" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">③ 一般原則（主題）</text>
+    <text x="390" y="178" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">待つ体験は「時間の長さ」だけでは決まらない</text>
+    <text x="390" y="193" text-anchor="middle" font-size="9.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">occupied time ＜ unoccupied time</text>
+  </g>
+
+  <g class="flow-node" data-jump="p4">
+    <rect x="20" y="252" width="230" height="78" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="135" y="276" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">④ 時間をふさぐ</text>
+    <text x="135" y="296" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">エレベーター横の鏡</text>
+    <text x="135" y="314" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">空港と同じ rationale</text>
+  </g>
+
+  <g class="flow-node" data-jump="p5">
+    <rect x="275" y="252" width="230" height="78" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="390" y="276" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑤ 期待</text>
+    <text x="390" y="296" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">不確実さ↑ストレス／情報↑満足</text>
+    <text x="390" y="314" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">ディズニーは待ち時間を多めに表示</text>
+  </g>
+
+  <g class="flow-node" data-jump="p6">
+    <rect x="530" y="252" width="230" height="78" rx="13" fill="url(#gradLight)" stroke="#2c3e66" stroke-width="1" filter="url(#nodeShadow)"/>
+    <text x="645" y="276" text-anchor="middle" font-size="11" fill="#2c3e66" font-weight="700" font-family="Yu Gothic,sans-serif">⑥ 公平さ</text>
+    <text x="645" y="296" text-anchor="middle" font-size="10" fill="#2c3e66" font-family="Yu Gothic,sans-serif">先着順＋価値に見合う長さ</text>
+    <text x="645" y="314" text-anchor="middle" font-size="9.5" fill="#2c3e66" font-family="Yu Gothic,sans-serif">スーパーの特急レジ</text>
+  </g>
+
+  <g class="flow-node" data-jump="p7">
+    <rect x="200" y="386" width="380" height="68" rx="14" fill="url(#gradNavy)" filter="url(#nodeShadow)"/>
+    <text x="390" y="410" text-anchor="middle" font-size="12" fill="#fff" font-weight="700" font-family="Yu Gothic,sans-serif">⑦ 結論</text>
+    <text x="390" y="430" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">行列はなくせない（譲歩）が、待つことの心理を</text>
+    <text x="390" y="446" text-anchor="middle" font-size="10.5" fill="#dfe4ee" font-family="Yu Gothic,sans-serif">理解すれば遅れを耐えやすくできる（主張）</text>
+  </g>
+</svg>
+    <div class="flow-legend">
+      <span><i style="background:linear-gradient(#33456f,#233657)"></i>導入・結論（主張）</span>
+      <span><i style="background:linear-gradient(#f2f6fb,#e3ecf7);border:1px solid #2c3e66"></i>定義・具体例</span>
+      <span><i style="background:linear-gradient(#fff4de,#fbe6bf);border:1px solid #c9760c"></i>転換・批判</span>
+    </div>
+    <div class="flow-table-wrap">
+      <div class="flow-table-title">段落ごとの要旨一覧（クリックで本文へ移動）</div>
+      <table class="flow-table"><tbody id="flowTableBody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+{
+  id:"p1",
+  role:"問題提起：待ち時間を短縮しても苦情が消えない",
+  summary:"ヒューストンの空港で手荷物受取の待ち時間への苦情が殺到した。係員を増やして待ち時間を業界基準内の8分に短縮したが、それでも苦情は続いた（「時間を減らせば解決」という常識が通用しない謎の提示）。",
+  sents:[
+    { id:"p1s1", imp:false, pattern:"",
+      parts:[
+        {t:"Some years ago,", role:null},
+        {t:"executives", role:null, tap:{w:"executive", pos:"名詞", ja:"経営幹部、重役"}},
+        {t:"at a Houston airport faced a", role:null},
+        {t:"troubling", role:null, tap:{w:"troubling", pos:"形容詞", ja:"厄介な、悩ましい"}},
+        {t:"customer-relations issue.", role:null}
+      ],
+      jp:"数年前、ヒューストンのある空港の幹部たちは、顧客対応上の厄介な問題に直面した。" },
+    { id:"p1s2", imp:true, pattern:"SVO", tags:[], tags2:["make a complaint"],
+      parts:[
+        {t:"Passengers", role:"s", lab:"S"},
+        {t:"were making", role:"v", lab:"V"},
+        {t:"an", role:"o", lab:"O"},
+        {t:"==inordinate==", role:"o", tap:{w:"inordinate", pos:"形容詞", ja:"過度の、並外れた"}},
+        {t:"number of complaints", role:"o"},
+        {t:"about the long waiting times at", role:"m", lab:"M"},
+        {t:"baggage claim.", role:"m", tap:{w:"baggage claim", pos:"名詞", ja:"（空港の）手荷物受取所"}}
+      ],
+      jp:"乗客たちは、手荷物受取所での長い待ち時間について、異常なほど多くの苦情を寄せていた。",
+      pt:"設問2(1)の根拠。inordinate＝「度を越した、並外れた」→ (a) exceptional（例外的な、並外れた）。in-（否定）＋ordinate（秩序ある）で「普通の範囲を外れた」。make a complaint＝complain。about 以下は complaints を修飾。" },
+    { id:"p1s3", imp:false, pattern:"",
+      parts:[
+        {t:"In response, the officials increased the number of", role:null},
+        {t:"baggage handlers.", role:null, tap:{w:"baggage handler", pos:"名詞", ja:"手荷物係"}}
+      ],
+      jp:"それを受けて、当局者たちは手荷物係の人数を増やした。" },
+    { id:"p1s4", imp:true, pattern:"SV", tags:["colon"], tags2:["コロンによる具体化","well within 〜"],
+      parts:[
+        {t:"The plan", role:"s", lab:"S"},
+        {t:"worked:", role:"v", lab:"V"},
+        {t:"the average wait time fell to eight minutes,", role:null},
+        {t:"==well within== the industry standard.", role:null, tap:{w:"well within 〜", pos:"熟語", ja:"〜の範囲に十分収まって"}}
+      ],
+      jp:"その策はうまくいった。平均待ち時間は8分にまで短縮され、業界基準を十分に満たすものとなった。",
+      pt:"コロンの後ろが「うまくいった」の中身（具体化）。well within〜 の well は強意の副詞「十分に」。数字の上では問題は解決している、という点を押さえる。" },
+    { id:"p1s5", imp:true, pattern:"SV", tags:["yet"], tags2:["逆接 Yet"],
+      parts:[
+        {t:"Yet", role:"corr", dm:"対比"},
+        {t:"the complaints", role:"s", lab:"S"},
+        {t:"persisted.", role:"v", lab:"V", tap:{w:"persist", pos:"動詞", ja:"持続する、なくならない"}}
+      ],
+      jp:"それでもなお、苦情は続いた。",
+      pt:"Yet＝「それなのに」。前文の「解決したはず」を裏切る転換点で、ここから第2段落の分析（謎解き）が始まる。設問1-1はこの「なぜ解決しなかったのか」を問う。" }
+  ],
+  vocab:[
+    {word:"executive", pos:"名", ja:"経営幹部、重役", def:"a person with a senior position in a company or organization", level:"標準"},
+    {word:"troubling", pos:"形", ja:"厄介な、悩ましい", def:"causing worry or difficulty", level:"標準"},
+    {word:"inordinate", pos:"形", ja:"過度の、並外れた", def:"much greater than is usual or reasonable", level:"難関"},
+    {word:"baggage claim", pos:"名", ja:"手荷物受取所", def:"the area in an airport where passengers collect their bags", level:"標準"},
+    {word:"persist", pos:"動", ja:"持続する、なくならない", def:"to continue to exist or happen", level:"標準"}
+  ]
+},
+{
+  id:"p2",
+  role:"分析と逆転の発想：歩く距離を延ばして苦情ゼロ",
+  summary:"詳しく調べると、乗客の時間の約8割はただ立って待つ時間だった。そこで空港は待ち時間を減らすのではなく到着ゲートを遠くへ移し、歩く時間を6倍にした。その結果、苦情はほぼゼロになった。",
+  sents:[
+    { id:"p2s1", imp:false, pattern:"",
+      parts:[
+        {t:"Puzzled,", role:null, tap:{w:"puzzled", pos:"形容詞", ja:"困惑した"}},
+        {t:"the airport executives", role:null},
+        {t:"undertook", role:null, tap:{w:"undertake", pos:"動詞", ja:"（仕事などに）着手する、引き受ける"}},
+        {t:"a more careful analysis.", role:null}
+      ],
+      jp:"困惑した空港の幹部たちは、より綿密な分析に取りかかった。" },
+    { id:"p2s2", imp:true, pattern:"SVO", tags:["form-it","it-takes"], tags2:["it takes 人 時間 to do","to不定詞の並列"],
+      parts:[
+        {t:"They", role:"s", lab:"S"},
+        {t:"found", role:"v", lab:"V"},
+        {t:"that", role:"o", lab:"O"},
+        {t:"it took passengers", role:"o"},
+        {t:"one minute to walk from the arrival gates to the baggage claim area", role:"o", pp:1, ptail:"①"},
+        {t:"and", role:"corr"},
+        {t:"at least seven more minutes to pick up their bags.", role:"o", pp:2, ptail:"②"}
+      ],
+      jp:"彼らは、乗客が到着ゲートから手荷物受取所まで歩くのに1分、そこから荷物を受け取るまでにさらに少なくとも7分かかっていることを突き止めた。",
+      pt:"that節内は it takes＋人＋時間＋to do「人が〜するのに…かかる」。and が「1分 to walk」と「7分 to pick up」の2組を並べている（took passengers は共通）。1分:7分＝歩く時間:ただ待つ時間。設問1-1の根拠。" },
+    { id:"p2s3", imp:true, pattern:"SVpass", tags:["passive"], tags2:["In other words（言い換え）"],
+      parts:[
+        {t:"In other words,", role:"m", lab:"M"},
+        {t:"about 80 percent of their time", role:"s", lab:"S"},
+        {t:"was spent", role:"v", lab:"V"},
+        {t:"just standing around.", role:"m", lab:"M"}
+      ],
+      jp:"言い換えれば、彼らの時間の約80パーセントは、ただ突っ立っているだけで費やされていたのだ。",
+      pt:"設問1-1の根拠。7÷8＝約80%。spend 時間 (in) doing の受動態。just standing around＝「何もせずただ立っている」→ 正解(d) some time spent doing nothing の言い換え。(b)「係員増員の効果はわずか」は第1段落の「8分に短縮・業界基準内」と矛盾。" },
+    { id:"p2s4", imp:true, pattern:"SVM", tags:["colon","instead-of"], tags2:["decide on 〜","instead of doing"],
+      parts:[
+        {t:"So", role:"corr", dm:"因果"},
+        {t:"the airport", role:"s", lab:"S"},
+        {t:"decided", role:"v", lab:"V"},
+        {t:"on a", role:"m", lab:"M"},
+        {t:"{{gap1}} approach:", role:"m"},
+        {t:"instead of trying to reduce wait times,", role:"m", lab:"M", dmSpan:"対A"},
+        {t:"it", role:"s", lab:"S", dmSpan:"対B"},
+        {t:"moved", role:"v", lab:"V"},
+        {t:"the arrival gates", role:"o", lab:"O"},
+        {t:"further away from the main terminal.", role:"m", lab:"M"}
+      ],
+      gap:{id:1, answer:"novel（新奇な）", why:"コロン以下で「待ち時間を減らす（常識的な策）代わりに、ゲートを遠ざけた」という前例のない発想が説明されている。conventional（従来の）とは逆。設問3(イ)(c)。"},
+      jp:"そこで空港は斬新な方法をとることにした。待ち時間を減らそうとするのではなく、到着ゲートをメインターミナルからさらに遠くへ移したのである。",
+      pt:"設問3(イ)の根拠。decide on〜＝「〜に決める」。コロン以下が approach の中身で、instead of A, B「Aではなく B」。A＝常識的な策、B＝逆転の発想なので、空所には novel（斬新な）が入る。" },
+    { id:"p2s5", imp:false, pattern:"",
+      parts:[
+        {t:"Passengers now had to walk six times longer to", role:null},
+        {t:"retrieve", role:null, tap:{w:"retrieve", pos:"動詞", ja:"取り戻す、回収する"}},
+        {t:"their luggage.", role:null}
+      ],
+      jp:"乗客は今や、荷物を受け取るのに6倍の距離を歩かなければならなくなった。" },
+    { id:"p2s6", imp:false, pattern:"",
+      parts:[{t:"Complaints dropped nearly to zero.", role:null, dmSpan:"果"}],
+      jp:"苦情はほぼゼロにまで減った。" }
+  ],
+  vocab:[
+    {word:"puzzled", pos:"形", ja:"困惑した", def:"confused because you cannot understand something", level:"標準"},
+    {word:"undertake", pos:"動", ja:"着手する、引き受ける", def:"to start doing a task or piece of work", level:"標準"},
+    {word:"approach", pos:"名", ja:"取り組み方、方法", def:"a way of dealing with a problem", level:"標準"},
+    {word:"novel", pos:"形", ja:"斬新な、目新しい", def:"new and different from anything done before", level:"難関"},
+    {word:"retrieve", pos:"動", ja:"取り戻す、回収する", def:"to get something back from the place where it was left", level:"難関"}
+  ]
+},
+{
+  id:"p3",
+  role:"一般原則（主題）：待つ体験は時間の長さだけで決まらない",
+  summary:"この話から、「待つ体験は待ち時間の長さだけで決まるわけではない」という一般原則が導かれる。何かをしている時間は何もしない時間より短く感じられ、人は実際よりずっと長く行列に並んでいると思い込む。",
+  sents:[
+    { id:"p3s1", imp:true, pattern:"SVM", tags:["theme","colon","passive"], tags2:["hint at 〜","only partly"],
+      parts:[
+        {t:"This story", role:"s", lab:"S"},
+        {t:"hints", role:"v", lab:"V", tap:{w:"hint at 〜", pos:"熟語", ja:"〜をほのめかす、示唆する"}},
+        {t:"at a general principle:", role:"m", lab:"M"},
+        {t:"the experience of waiting", role:"s", lab:"同格"},
+        {t:"is defined", role:"v", lab:"V"},
+        {t:"==only partly==", role:"m", lab:"M"},
+        {t:"by the length of the time we wait.", role:"m"}
+      ],
+      jp:"この話はある一般原則を示している。すなわち、待つという体験は、待つ時間の長さによって部分的にしか決まらない、ということだ。",
+      pt:"文章全体の主題文。コロン以下が a general principle の中身（同格的な説明）。only partly＝「部分的にしか〜ない」＝時間の長さ以外の要因（第4〜6段落の占有時間・期待・公平さ）もある。設問6のタイトル選択の核。" },
+    { id:"p3s2", imp:true, pattern:"SVC", tags:["compare"], tags2:["比較級 than","括弧による具体例"],
+      parts:[
+        {t:"In the airport case above,", role:"m", lab:"M"},
+        {t:"‘occupied time’", role:"s", lab:"S", pp:1, ptail:"①", dmSpan:"対A"},
+        {t:"(walking to baggage claim)", role:"s", pp:1},
+        {t:"feels", role:"v", lab:"V"},
+        {t:"shorter", role:"c", lab:"C"},
+        {t:"than ‘unoccupied time’", role:"m", lab:"M", pp:2, ptail:"②", dmSpan:"対B"},
+        {t:"(waiting for the baggage to come out).", role:"m", pp:2}
+      ],
+      jp:"上の空港の例で言えば、「何かをしている時間」（手荷物受取所まで歩くこと）は、「何もしていない時間」（荷物が出てくるのを待つこと）よりも短く感じられるのだ。",
+      pt:"feel＋C「〜に感じられる」。occupied（ふさがった＝何かをしている）⇔ unoccupied（空いた＝何もしていない）の対比。括弧内がそれぞれの具体例。設問1-2(d)「エレベーター待ちは occupied time」はこの定義と逆。" },
+    { id:"p3s3", imp:true, pattern:"SVO", tags:["sub-do"], tags2:["代動詞 do","tend to do"],
+      parts:[
+        {t:"Research", role:"s", lab:"S"},
+        {t:"shows", role:"v", lab:"V"},
+        {t:"that people tend to believe they spend", role:"o", lab:"O"},
+        {t:"much more time in lines", role:"o"},
+        {t:"than they ==do== in reality.", role:"o"}
+      ],
+      jp:"研究によれば、人は行列に並んで過ごす時間を、実際よりもはるかに長く見積もりがちだという。",
+      pt:"設問4の根拠。than they do の do は代動詞で、前の spend を受ける（they spend time in lines in reality）。答え：spend。設問1-2(c)「人は待たされる時間を誇張しがち」はこの文の内容で本文と一致するが、鏡が置かれる『理由』ではない点に注意。" }
+  ],
+  vocab:[
+    {word:"hint at", pos:"熟", ja:"〜をほのめかす、示唆する", def:"to suggest something in an indirect way", level:"標準"},
+    {word:"principle", pos:"名", ja:"原理、原則", def:"a basic idea or rule that explains how something works", level:"標準"},
+    {word:"define", pos:"動", ja:"〜を決定づける、定義する", def:"to show or describe the nature of something clearly", level:"標準"},
+    {word:"occupied", pos:"形", ja:"（何かで）ふさがった、忙しい", def:"busy doing something", level:"標準"},
+    {word:"in reality", pos:"熟", ja:"実際には", def:"used to say what is actually true", level:"標準"}
+  ]
+},
+{
+  id:"p4",
+  role:"具体例①：エレベーター横の鏡（占有時間の応用）",
+  summary:"エレベーターの横に鏡があるのも同じ理由による。高層ビルの普及で待ち時間への不満が高まった戦後、「時間をつぶす何かを与えれば待ち時間は短く感じる」という空港と同じ考え方で鏡が置かれ、苦情はほぼ一夜にして消えた。",
+  sents:[
+    { id:"p4s1", imp:true, pattern:"SVC", tags:["this-is-why"], tags2:["This is why S V","find O M"],
+      parts:[
+        {t:"This", role:"s", lab:"S", dmSpan:"因"},
+        {t:"is", role:"v", lab:"V"},
+        {t:"also", role:"m", lab:"M"},
+        {t:"why", role:"c", lab:"C", dm:"因果"},
+        {t:"we often find mirrors next to elevators.", role:"c", dmSpan:"果"}
+      ],
+      jp:"エレベーターの横によく鏡が置かれているのも、これが理由である。",
+      pt:"This is why〜＝「こういうわけで〜」（This＝原因、why節＝結果）。This は第3段落の原則（occupied time は短く感じる）を指す。設問1-2の根拠の出発点。" },
+    { id:"p4s2", imp:false, pattern:"",
+      parts:[
+        {t:"The idea was born after World War II, when the spread of", role:null},
+        {t:"high-rise", role:null, tap:{w:"high-rise", pos:"形容詞", ja:"高層の"}},
+        {t:"buildings led to", role:null},
+        {t:"frustration", role:null, tap:{w:"frustration", pos:"名詞", ja:"不満、いら立ち"}},
+        {t:"over frequent elevator delays.", role:null}
+      ],
+      jp:"この考えは第二次世界大戦後、高層ビルの普及によってエレベーターの頻繁な遅れに不満が高まったときに生まれた。" },
+    { id:"p4s3", imp:true, pattern:"SVC", tags:["colon","imper-and"], tags2:["命令文, and…","the one＝代名詞"],
+      parts:[
+        {t:"The", role:"s", lab:"S"},
+        {t:"{{gap2}}", role:"s"},
+        {t:"behind the mirrors", role:"m", lab:"M"},
+        {t:"is", role:"v", lab:"V"},
+        {t:"similar", role:"c", lab:"C"},
+        {t:"to the one used at the Houston airport:", role:"m", lab:"M"},
+        {t:"give people something to occupy their time,", role:null},
+        {t:"and", role:"corr"},
+        {t:"the wait will feel shorter.", role:null}
+      ],
+      gap:{id:2, answer:"rationale（根拠、理論的根拠）", why:"「鏡の背後にある〇〇」が「空港で使われたもの（the one）」と同じで、その中身がコロン以下の『考え方』。drama・history・tradition では意味が通らない。設問3(ロ)(c)。"},
+      jp:"鏡の背後にある考え方は、ヒューストンの空港で用いられたものと同じだ。つまり、人々に時間をつぶせる何かを与えれば、待ち時間は短く感じられる、ということである。",
+      pt:"設問3(ロ)・設問1-2の根拠。the one＝the rationale。コロン以下は「命令文, and S V」＝「〜しなさい、そうすれば…」の構文で原理を述べる。鏡の役割は『待つ体験を良くする』こと→設問1-2(b)。(a)「身だしなみを整える機会」は次文の表面的な具体例にすぎない。" },
+    { id:"p4s4", imp:false, pattern:"",
+      parts:[{t:"With the mirrors, people can check their hair, etc.", role:null}],
+      jp:"鏡があれば、人々は髪型などを確かめることができる。" },
+    { id:"p4s5", imp:true, pattern:"SV", tags:["colon"], tags2:["コロンによる具体化"],
+      parts:[
+        {t:"This strategy", role:"s", lab:"S"},
+        {t:"succeeded:", role:"v", lab:"V"},
+        {t:"the complaints", role:null, dmSpan:"果"},
+        {t:"==ceased==", role:null, tap:{w:"cease", pos:"動詞", ja:"やむ、終わる"}},
+        {t:"almost overnight.", role:null, tap:{w:"overnight", pos:"副詞", ja:"一夜にして、たちまち"}}
+      ],
+      jp:"この戦略は成功し、苦情はほぼ一夜にしてなくなった。",
+      pt:"設問2(2)の根拠。cease＝「やむ、終わる」→ (d) stopped。(b) decreased（減った）は程度が弱い。第2段落の dropped nearly to zero とも呼応する。" }
+  ],
+  vocab:[
+    {word:"high-rise", pos:"形", ja:"高層の", def:"having many floors", level:"標準"},
+    {word:"frustration", pos:"名", ja:"不満、いら立ち", def:"the feeling of being annoyed because you cannot do what you want", level:"標準"},
+    {word:"rationale", pos:"名", ja:"根拠、理論的根拠", def:"the reasons or principles behind a decision or plan", level:"難関"},
+    {word:"occupy", pos:"動", ja:"（時間を）ふさぐ、占める", def:"to fill time by doing something", level:"標準"},
+    {word:"cease", pos:"動", ja:"やむ、終わる", def:"to stop happening or existing", level:"難関"},
+    {word:"overnight", pos:"副", ja:"一夜にして、たちまち", def:"very quickly or suddenly", level:"標準"}
+  ]
+},
+{
+  id:"p5",
+  role:"具体例②：期待が待つ気持ちを左右する",
+  summary:"待つ気持ちは期待に左右される。不確実さはストレスを強め、予想待ち時間や遅れの説明があると体験は改善する。期待を上回るとさらに気分がよくなるため、ディズニーは待ち時間を多めに見積もって示し、客を予定より早く乗れたと喜ばせている。",
+  sents:[
+    { id:"p5s1", imp:true, pattern:"SVO", tags:["theme","how-clause"], tags2:["how 節（名詞節）"],
+      parts:[
+        {t:"Our expectations", role:"s", lab:"S"},
+        {t:"often", role:"m", lab:"M"},
+        {t:"affect", role:"v", lab:"V"},
+        {t:"how we feel about waiting in a line.", role:"o", lab:"O"}
+      ],
+      jp:"私たちの期待は、行列に並んで待つことをどう感じるかにしばしば影響を与える。",
+      pt:"段落の主題文。第2の要因＝「期待」。how 節は affect の目的語となる名詞節（「どのように感じるか」）。" },
+    { id:"p5s2", imp:true, pattern:"SVO", tags:["while-contrast"], tags2:["While による対比","in the form of 〜"],
+      parts:[
+        {t:"Uncertainty", role:"s", lab:"S", dmSpan:"対A"},
+        {t:"magnifies", role:"v", lab:"V", tap:{w:"magnify", pos:"動詞", ja:"増大させる、拡大する"}},
+        {t:"the stress of waiting,", role:"o", lab:"O"},
+        {t:"while", role:"corr", dm:"対比"},
+        {t:"feedback", role:"s", lab:"S", dmSpan:"対B"},
+        {t:"in the form of", role:"m", lab:"M"},
+        {t:"expected wait times", role:"m", pp:1, ptail:"①"},
+        {t:"and", role:"corr"},
+        {t:"explanations for delays", role:"m", pp:2, ptail:"②"},
+        {t:"tends to improve", role:"v", lab:"V"},
+        {t:"the experience.", role:"o", lab:"O"}
+      ],
+      jp:"不確実さは待つことのストレスを増大させる一方、予想待ち時間や遅れの理由の説明といった形の情報提供は、待つ体験を改善する傾向がある。",
+      pt:"設問1-3の根拠。while は対比「〜する一方で」。後半のS＝feedback（単数）→ V＝tends（主述の一致に注意：times/delays に引きずられない）。expected wait times ≒ 設問1-3(a)「待つ長さを明確に理解すること」、explanations for delays ≒ (b)「責任者からのアナウンス」。" },
+    { id:"p5s3", imp:false, pattern:"",
+      parts:[{t:"And beating expectations improves our mood.", role:null}],
+      jp:"そして、期待を上回ると私たちの気分はよくなる。" },
+    { id:"p5s4", imp:true, pattern:"SVC", tags:["this-is-why","apposition","so-that"], tags2:["That is why","同格","so that（結果）"],
+      parts:[
+        {t:"That", role:"s", lab:"S", dmSpan:"因"},
+        {t:"is", role:"v", lab:"V"},
+        {t:"why", role:"c", lab:"C", dm:"因果"},
+        {t:"Disney,", role:"c", dmSpan:"果"},
+        {t:"the", role:"c", lab:"同格"},
+        {t:"acknowledged", role:"c", tap:{w:"acknowledged", pos:"形容詞", ja:"定評のある、広く認められた"}},
+        {t:"master of human psychology,", role:"c"},
+        {t:"{{gap3}} wait times for rides,", role:"c"},
+        {t:"so that guests are pleasantly surprised when they get on a popular attraction", role:"c"},
+        {t:"ahead of schedule.", role:"c", tap:{w:"ahead of schedule", pos:"熟語", ja:"予定より早く"}}
+      ],
+      gap:{id:3, answer:"overestimates（多めに見積もる）", why:"前文「期待を上回ると気分がよくなる」＋ so that以下「予定より早く乗れて嬉しい驚き」。表示を実際より長くしておけば早く乗れたと感じる。設問3(ハ)(b)。"},
+      jp:"だからこそ、人間心理を知り尽くした存在として広く認められているディズニーは、アトラクションの待ち時間を多めに見積もって示し、客が人気のアトラクションに予定より早く乗れたときに嬉しい驚きを感じるようにしているのである。",
+      pt:"設問3(ハ)の根拠。That（前文：期待を上回ると気分がよくなる）is why…。Disney の後ろの the acknowledged master… は同格の挿入。why節内のVが空所。so that は「その結果〜」。多めに見積もる＝overestimates。downplays/underreports（少なく見せる）だと逆効果。" }
+  ],
+  vocab:[
+    {word:"expectation", pos:"名", ja:"期待、予想", def:"a belief about what will happen in the future", level:"標準"},
+    {word:"magnify", pos:"動", ja:"増大させる、拡大する", def:"to make something seem bigger or more serious", level:"難関"},
+    {word:"feedback", pos:"名", ja:"（反応として返される）情報", def:"information given to people about something so they can understand it", level:"標準"},
+    {word:"acknowledged", pos:"形", ja:"定評のある、広く認められた", def:"generally accepted as being something", level:"難関"},
+    {word:"overestimate", pos:"動", ja:"多めに見積もる、過大評価する", def:"to think something is larger or longer than it really is", level:"標準"},
+    {word:"ahead of schedule", pos:"熟", ja:"予定より早く", def:"earlier than was planned", level:"標準"}
+  ]
+},
+{
+  id:"p6",
+  role:"具体例③：最大の要因は公平さの感覚",
+  summary:"行列への感じ方に最も大きく影響するのは公平さの感覚だろう。先着順が基本だが、行列の長さは求める商品・サービスの価値に見合うべきだとも考えられている。だからスーパーには、少量購入の客のための特急レジがある。",
+  sents:[
+    { id:"p6s1", imp:true, pattern:"SVM", tags:["theme"], tags2:["have to do with 〜"],
+      parts:[
+        {t:"Perhaps", role:"m", lab:"M"},
+        {t:"the biggest influence", role:"s", lab:"S"},
+        {t:"on our feelings about lines", role:"m", lab:"M"},
+        {t:"has to do with", role:"v", lab:"V", tap:{w:"have to do with 〜", pos:"熟語", ja:"〜と関係がある"}},
+        {t:"our perception of fairness.", role:"m", lab:"M", tap:{w:"perception", pos:"名詞", ja:"認識、感じ方"}}
+      ],
+      jp:"行列に対する私たちの感じ方に最も大きな影響を与えているのは、おそらく公平さの感覚に関わるものだろう。",
+      pt:"段落の主題文。第3の要因＝「公平さ」。S＝the biggest influence（on…lines は修飾語）、V＝has to do with「〜と関係がある」。" },
+    { id:"p6s2", imp:false, pattern:"",
+      parts:[{t:"Usually, the first in line should get to go first.", role:null, dmSpan:"列①"}],
+      jp:"通常は、列の先頭にいる人が最初に進むべきである。" },
+    { id:"p6s3", imp:true, pattern:"SVO", tags:["pp-post"], tags2:["dictate that S should","名詞＋過去分詞（後置修飾）"],
+      parts:[
+        {t:"At the same time,", role:"m", lab:"M", dmSpan:"列②"},
+        {t:"fairness", role:"s", lab:"S"},
+        {t:"also", role:"m", lab:"M"},
+        {t:"dictates", role:"v", lab:"V", tap:{w:"dictate", pos:"動詞", ja:"命じる、（〜であることを）求める"}},
+        {t:"that the length of a line should", role:"o", lab:"O"},
+        {t:"==be commensurate with==", role:"o", tap:{w:"be commensurate with 〜", pos:"熟語", ja:"〜に釣り合った、見合った"}},
+        {t:"the value of", role:"o"},
+        {t:"the product or service", role:"o"},
+        {t:"sought.", role:"o", tap:{w:"sought", pos:"過去分詞", ja:"seek（求める）の過去分詞＝求められている"}}
+      ],
+      jp:"同時に、公平さの観点からは、行列の長さは求められている商品やサービスの価値に見合ったものであるべきだ、ということにもなる。",
+      pt:"設問2(3)・設問5の根拠。be commensurate with〜＝「〜に釣り合う」→ (c) correspond to。(d) measure up to は「（基準・期待）に達する」で意味がずれる。sought は seek の過去分詞で、the product or service を後ろから修飾（＝求められている商品・サービス）。" },
+    { id:"p6s4", imp:true, pattern:"SVC", tags:["themore"], tags2:["the 比較級, the 比較級","総称の one"],
+      parts:[
+        {t:"The more valuable", role:"c", lab:"C", pp:1, ptail:"①"},
+        {t:"==it==", role:"s", lab:"S", pp:1},
+        {t:"is,", role:"v", lab:"V", pp:1},
+        {t:"the longer", role:"m", lab:"M", pp:2, ptail:"②"},
+        {t:"one", role:"s", lab:"S", pp:2},
+        {t:"is", role:"v", lab:"V", pp:2},
+        {t:"presumably", role:"m", lab:"M", tap:{w:"presumably", pos:"副詞", ja:"おそらく、たぶん"}},
+        {t:"willing to wait.", role:"c", lab:"C"}
+      ],
+      jp:"それ（求める商品やサービス）の価値が高ければ高いほど、人はおそらくより長く待つ気になるだろう。",
+      pt:"設問5の根拠。the 比較級 S V, the 比較級 S V「〜すればするほど…」。前半は it is valuable の C（valuable）が the more とともに前に出た形。it＝前文の the product or service sought（答え）。後半の one は総称の「人」、the longer は wait を修飾する副詞（be willing to wait long）。" },
+    { id:"p6s5", imp:true, pattern:"SVM", tags:["assumption-that"], tags2:["同格の that","agree (that)","名詞＋現在分詞"],
+      parts:[
+        {t:"Hence,", role:"m", lab:"M", dm:"因果", tap:{w:"hence", pos:"副詞", ja:"それゆえ、したがって"}},
+        {t:"the express line in a supermarket", role:"s", lab:"S", dmSpan:"果"},
+        {t:"exists", role:"v", lab:"V"},
+        {t:"on the assumption", role:"m", lab:"M"},
+        {t:"that no", role:"m", lab:"同格"},
+        {t:"{{gap4}} person would agree", role:"m"},
+        {t:"a child buying a single candy should wait behind a couple buying groceries for the next two weeks.", role:"m"}
+      ],
+      gap:{id:4, answer:"reasonable（分別のある、まともな）", why:"「キャンディ1個の子どもが2週間分の買い物をする夫婦の後ろで待つべきだ」とは、良識ある人なら誰も思わない。no reasonable person＝「分別ある人は誰も〜ない」。設問3(ニ)(b)。"},
+      jp:"それゆえ、スーパーの特急レジは、キャンディを1つだけ買う子どもが、2週間分の食料品を買う夫婦の後ろで待つべきだと考える良識ある人などいない、という前提のもとに存在しているのである。",
+      pt:"設問3(ニ)の根拠。on the assumption that〜「〜という前提で」（that は同格）。agree の後ろに that が省略され、その中のS＝a child buying a single candy（現在分詞の後置修飾）、V＝should wait。no reasonable person would〜＝「分別ある人なら誰も〜ないだろう」。" }
+  ],
+  vocab:[
+    {word:"have to do with", pos:"熟", ja:"〜と関係がある", def:"to be connected with something", level:"標準"},
+    {word:"perception", pos:"名", ja:"認識、感じ方", def:"the way you notice or understand something", level:"標準"},
+    {word:"dictate", pos:"動", ja:"命じる、決定づける", def:"to control or decide how something must be", level:"難関"},
+    {word:"commensurate", pos:"形", ja:"（〜に）釣り合った、見合った", def:"matching something in size, value or importance", level:"難関"},
+    {word:"presumably", pos:"副", ja:"おそらく、たぶん", def:"used to say what you think is probably true", level:"難関"},
+    {word:"hence", pos:"副", ja:"それゆえ、したがって", def:"for this reason", level:"難関"},
+    {word:"assumption", pos:"名", ja:"前提、想定", def:"something that you accept as true without proof", level:"標準"}
+  ]
+},
+{
+  id:"p7",
+  role:"結論：行列はなくせないが、心理の理解で耐えやすくできる",
+  summary:"アメリカ人は年に約370億時間を行列で過ごし、その最大の代償はストレス・退屈・人生が過ぎ去る感覚という感情面のものだ。行列を完全になくすことはできないが、待つことの心理を理解すれば、避けられない遅れも少しは耐えやすくなる。",
+  sents:[
+    { id:"p7s1", imp:false, pattern:"",
+      parts:[{t:"Americans spend roughly 37 billion hours each year waiting in line.", role:null}],
+      jp:"アメリカ人は毎年、およそ370億時間を行列に並んで過ごしている。" },
+    { id:"p7s2", imp:true, pattern:"SVC", tags:["colon","parallel"], tags2:["one＝cost","3項の並列","同格の that"],
+      parts:[
+        {t:"The", role:"s", lab:"S"},
+        {t:"dominant", role:"s", tap:{w:"dominant", pos:"形容詞", ja:"最も大きな、支配的な"}},
+        {t:"cost of this experience", role:"s"},
+        {t:"is", role:"v", lab:"V"},
+        {t:"an emotional one:", role:"c", lab:"C"},
+        {t:"stress,", role:null, pp:1, ptail:"①", dmSpan:"列①"},
+        {t:"boredom,", role:null, pp:2, ptail:"②", dmSpan:"列②"},
+        {t:"and", role:"corr"},
+        {t:"the sensation that one’s life is slipping away.", role:null, pp:3, ptail:"③", dmSpan:"列③"}
+      ],
+      jp:"この経験がもたらす最大の代償は感情面のものである。つまり、ストレス、退屈、そして自分の人生が過ぎ去っていくという感覚である。",
+      pt:"one＝cost（an emotional cost）。コロン以下はその中身を3項で列挙（①stress ②boredom ③the sensation that…）。③の that は同格（sensation の内容）。slip away＝「（時間などが）いつの間にか過ぎ去る」。" },
+    { id:"p7s3", imp:true, pattern:"SVC", tags:["last-thing","gerund-time"], tags2:["the last thing S want to do","spend 時間 doing"],
+      parts:[
+        {t:"As our lives get busier,", role:"m", lab:"M"},
+        {t:"==the last thing== we want to do", role:"s", lab:"S"},
+        {t:"is", role:"v", lab:"V"},
+        {t:"to spend our limited leisure time doing nothing.", role:"c", lab:"C"}
+      ],
+      jp:"生活が忙しくなるにつれ、限られた余暇の時間を何もせずに過ごすことほど、私たちがしたくないことはない。",
+      pt:"the last thing S want to do is〜＝「最もしたくないことは〜だ」→「〜ほどしたくないことはない」。As は比例「〜するにつれて」。spend 時間 doing「〜して時間を過ごす」は第2段落の was spent just standing around と呼応。" },
+    { id:"p7s4", imp:true, pattern:"SVO", tags:["theme","concession","help-do"], tags2:["譲歩→主張（Obviously…, but）","help (to) do","make O C"],
+      parts:[
+        {t:"Obviously,", role:"m", lab:"M", dm:"譲歩"},
+        {t:"we will never be able to eliminate lines altogether,", role:null, dmSpan:"譲"},
+        {t:"but", role:"corr"},
+        {t:"a better understanding of the psychology of waiting", role:"s", lab:"S", dmSpan:"主"},
+        {t:"can help", role:"v", lab:"V"},
+        {t:"make these", role:"o", lab:"O"},
+        {t:"inevitable", role:"o", tap:{w:"inevitable", pos:"形容詞", ja:"避けられない"}},
+        {t:"delays a little more", role:"o"},
+        {t:"bearable.", role:"o", tap:{w:"bearable", pos:"形容詞", ja:"我慢できる、耐えられる"}}
+      ],
+      jp:"もちろん、行列を完全になくすことは決してできないだろう。しかし、待つことの心理をよりよく理解すれば、こうした避けられない遅れを少しは耐えやすいものにできるのだ。",
+      pt:"筆者の結論（設問1-4・設問6の根拠）。Obviously…, but〜 は譲歩→主張。help (to) make O C「OをCにするのに役立つ」（Oは these inevitable delays、Cは a little more bearable）。＝設問1-4(a)「本来いら立たしい待つ体験を良くする」。(b)「待ち時間の短縮」は前半 never be able to eliminate lines と逆方向。" }
+  ],
+  vocab:[
+    {word:"dominant", pos:"形", ja:"最も大きな、支配的な", def:"more important or noticeable than anything else", level:"標準"},
+    {word:"boredom", pos:"名", ja:"退屈", def:"the state of feeling bored", level:"標準"},
+    {word:"sensation", pos:"名", ja:"感覚、感じ", def:"a general feeling that something is happening", level:"標準"},
+    {word:"slip away", pos:"句動", ja:"（時間が）いつの間にか過ぎ去る", def:"to pass quickly without being noticed", level:"難関"},
+    {word:"eliminate", pos:"動", ja:"なくす、除去する", def:"to remove something completely", level:"標準"},
+    {word:"inevitable", pos:"形", ja:"避けられない", def:"certain to happen and impossible to avoid", level:"標準"},
+    {word:"bearable", pos:"形", ja:"我慢できる、耐えられる", def:"able to be accepted or dealt with", level:"難関"}
+  ]
+}
+];
+
+/* ===== 文法索引ラベル ===== */
+const TAGLABEL={
+  "double-rel":"関係詞の二重限定","colon-reveal":"コロンによる種明かし",
+  "turn-into":"turn A into B","parallel-v":"動詞の並列","qualify-for":"自動詞+前置詞",
+  "theme":"主題文","passive":"受動態","apposition":"同格",
+  "rel-that":"関係詞 that","from-to":"from A to B","parallel":"並列","metaphor":"比喩",
+  "account-for":"account for","may-have-pp":"may have p.p.","ev-A":"設問A根拠","ev-E":"設問E根拠",
+  "even-as":"even as","last-time":"the last time + 節","insert-pp":"挿入句(分詞)","agreement":"主述の一致","but-turn":"逆接 But",
+  "gerund-subj":"動名詞主語","ditrans":"第4文型 give O1O2","to-parallel":"to不定詞の並列","chain-rel":"連鎖関係詞",
+  "form-it":"形式主語 it","rel-what":"関係代名詞 what","colon":"コロンによる具体化","bunshi":"分詞構文","heiretsu":"並列 A and B","yet":"逆接 Yet","notbut":"not A but B","bid":"a bid to do",
+  "ev-B":"設問B根拠","ev-C":"設問C根拠","ev-D":"設問D根拠","prep-rel":"前置詞+関係代名詞","rel-extra-it":"関係詞+形式主語(it is foolish to do)","rel-who":"関係代名詞 who","insert-to":"挿入句(to不定詞)","themore":"the 比較級, the 比較級",
+  "so-that":"so that 結果節","insert-adv":"挿入(副詞句)","while-contrast":"While による対比","of-culture":"性質を表す of","unreal-past":"仮定法過去完了","tendency-for":"tendency for A to do","that-clause-subj":"That節が主語","if-not":"if not (〜と言わないまでも)",
+  "ev-q1":"設問1根拠","ev-q2":"設問2根拠","ev-q3":"設問3根拠","ev-q4":"設問4根拠","ev-q5":"設問5根拠","ev-q6":"設問6根拠",
+  "it-takes":"it takes 人 時間 to do","instead-of":"instead of doing","compare":"比較級 than","sub-do":"代動詞 do","this-is-why":"This/That is why",
+  "imper-and":"命令文, and…","how-clause":"how節(名詞節)","pp-post":"過去分詞の後置修飾","assumption-that":"同格の that","last-thing":"the last thing S want",
+  "gerund-time":"spend 時間 doing","concession":"譲歩→主張","help-do":"help (to) do / make O C",
+};
+const RLAB={s:"S",v:"V",o:"O",c:"C",m:"M"};
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function leadSpace(s){return /^[,.;:'!?\u2019\u201d.]/.test(s);}
+
+function renderText(t){
+  let out=""; let i=0;
+  const re=/==([^=]+)==/g; let last=0,m;
+  while((m=re.exec(t))){
+    if(m.index>last) out+=esc(t.slice(last,m.index));
+    out+=`<span class="hlmark">${esc(m[1])}</span>`;
+    last=re.lastIndex;
+  }
+  out+=esc(t.slice(last));
+  return out;
+}
+
+function renderParts(parts,sid){
+  let html=""; let first=true; let prevRole="\u0000";
+  parts.forEach((p,idx)=>{
+    const gapM=/\{\{gap(\d+)\}\}/.exec(p.t);
+    if(gapM){
+      const before=p.t.slice(0,gapM.index);
+      const after=p.t.slice(gapM.index+gapM[0].length);
+      let seg="";
+      if(before.trim()){seg+=(!first&&!leadSpace(before)?" ":"")+`<span class="tok"><span class="w ${p.role||''}">${esc(before.trim())}</span></span>`;first=false;}
+      seg+=` <span class="gapwrap" data-sid="${sid}"><span class="gap" data-gap="1">(&nbsp;&nbsp;)</span><span class="gapans"></span></span>`;
+      if(after.trim()){seg+=" "+`<span class="tok"><span class="w ${p.role||''}">${esc(after.trim())}</span></span>`;}
+      html+=seg; first=false;
+      if(p.role&&RLAB[p.role])prevRole=p.role;
+      return;
+    }
+    const head=(p.role&&RLAB[p.role]&&p.role!==prevRole);
+    const cls=["tok"]; if(p.pp)cls.push("pp"); if(p.tap)cls.push("hastip");
+    const hasHL=/==/.test(p.t);
+    const wcls=["w"]; if(p.role)wcls.push(p.role); if(p.tap)wcls.push("tap"); if(hasHL)wcls.push("hl");
+    if(p.dm||p.dmSpan) wcls.push("dmword");
+    let pre="";
+    if(p.ptail){
+      const rl=(p.role&&RLAB[p.role])?RLAB[p.role]:"";
+      pre=`<span class="pnum2">${rl}${p.ptail}</span>`;
+    } else if((head||p.lab)&&p.role&&RLAB[p.role]){
+      pre=`<span class="rlab ${p.role}">${p.lab?p.lab:RLAB[p.role]}</span>`;
+    }
+    let preDm="";
+    if(p.dm) preDm=`<span class="dmlab dmcat">${esc(p.dm)}</span>`;
+    else if(p.dmSpan) preDm=`<span class="dmlab dmspan">${esc(p.dmSpan)}</span>`;
+    pre=preDm+pre;
+    const txt=hasHL?p.t.replace(/==/g,""):p.t;
+    let inner=`${pre}<span class="${wcls.join(' ')}">${esc(txt)}</span>`;
+    if(p.tap) inner+=`<span class="tip"><b>${esc(p.tap.w)}</b> <span class="pos">${esc(p.tap.pos)}</span><br>${esc(p.tap.ja)}</span>`;
+    const node=`<span class="${cls.join(' ')}">${inner}</span>`;
+    html+=(!first&&!leadSpace(p.t)?" ":"")+node;
+    first=false;
+    if(p.role&&RLAB[p.role])prevRole=p.role;
+  });
+  return html;
+}
+
+const ALL=DATA;
+const parasEl=document.getElementById("paras");
+const gapStore={};
+
+ALL.forEach(p=>{
+  const head=document.createElement("div");
+  head.className="phead";
+  head.innerHTML=`<span class="pnum">${p.id.replace('p','')}</span><span class="prole">${p.role}</span>`;
+  parasEl.appendChild(head);
+
+  const sents=document.createElement("div");
+  sents.className="sents";
+  p.sents.forEach(st=>{
+    const d=document.createElement("div");
+    d.className="sent"+(st.imp?" imp":""); d.id=st.id;
+    const badge=st.pattern?`<span class="badge">${st.pattern}</span>`:"";
+    d.innerHTML=`<div class="en">${badge}${renderParts(st.parts,st.id)}</div><div class="jp">${st.jp}</div>`+(st.pt?`<div class="pt">${st.pt}</div>`:"");
+    sents.appendChild(d);
+    if(st.gap) gapStore[st.id]=st.gap;
+  });
+  parasEl.appendChild(sents);
+
+  const foot=document.createElement("div");
+  foot.className="pfoot";
+  foot.innerHTML=`<button data-panel="vocab-${p.id}">語句</button><button data-panel="summary-${p.id}">要旨</button>`;
+  parasEl.appendChild(foot);
+
+  const vrows=p.vocab.map(v=>`<tr><td><span class="wd">${esc(v.word)}</span> <span class="ps">${esc(v.pos)}</span></td><td>${esc(v.ja)}</td><td><span class="lv ${v.level}">${v.level}</span></td></tr>`).join("");
+  const vp=document.createElement("div");
+  vp.className="panel vocab"; vp.id=`vocab-${p.id}`;
+  vp.innerHTML=`<table>${vrows}</table>`;
+  parasEl.appendChild(vp);
+
+  const sp=document.createElement("div");
+  sp.className="panel summary"; sp.id=`summary-${p.id}`;
+  sp.innerHTML=esc(p.summary);
+  parasEl.appendChild(sp);
+});
+
+const tagMap={};
+ALL.forEach(p=>p.sents.forEach(s=>{(s.tags||[]).forEach(tg=>{(tagMap[tg]=tagMap[tg]||[]).push(s.id);});}));
+const gidx=document.getElementById("gidx");
+Object.keys(tagMap).forEach(tg=>{
+  const b=document.createElement("button");
+  b.textContent=TAGLABEL[tg]||tg;
+  b.dataset.t=tagMap[tg].join(",");
+  gidx.appendChild(b);
+});
+
+const flowTableBody=document.getElementById('flowTableBody');
+if(flowTableBody){
+  flowTableBody.innerHTML = ALL.map(p=>`
+    <tr data-jump="${p.id}">
+      <td class="ft-num">${p.id.replace('p','')}</td>
+      <td class="ft-role">${esc(p.role)}</td>
+      <td class="ft-summary">${esc(p.summary)}</td>
+    </tr>`).join('');
+}
+
+const vlistTableBody=document.getElementById('vlistTableBody');
+if(vlistTableBody){
+  let vlistN=0;
+  vlistTableBody.innerHTML = ALL.map(p=>p.vocab.map(v=>{
+    vlistN++;
+    return `<tr data-jump="${p.id}">
+      <td class="ft-num">${vlistN}</td>
+      <td class="vl-word">${esc(v.word)}</td>
+      <td class="vl-pos">${esc(v.pos)}</td>
+      <td>${esc(v.ja)}</td>
+      <td><span class="lvtag ${esc(v.level)}">${esc(v.level)}</span></td>
+    </tr>`;
+  }).join('')).join('');
+}
+
+function findSentAndPara(id){
+  for(const p of ALL){
+    const s=p.sents.find(x=>x.id===id);
+    if(s) return {para:p, sent:s};
+  }
+  return null;
+}
+
+function bracketDiagram(parts){
+  const BR={s:['[',']'],o:['[',']'],c:['⟨','⟩'],m:['(',')']};
+  let html='', i=0;
+  while(i<parts.length){
+    const p=parts[i];
+    const clean=t=>t.replace(/==/g,'').replace(/\{\{gap\d+\}\}/g,'( )');
+    if(!p.role){ html+=' '+esc(clean(p.t))+' '; i++; continue; }
+    if(p.role==='corr'){ html+=` <span class="db-corr">${esc(clean(p.t))}</span> `; i++; continue; }
+    if(p.role==='v'){
+      let j=i, buf='';
+      while(j<parts.length && parts[j].role==='v'){ buf+=(buf?' ':'')+clean(parts[j].t); j++; }
+      html+=` <span class="db-v">${esc(buf)}</span><span class="db-sub">V</span> `;
+      i=j; continue;
+    }
+    let j=i, buf='', hasPar=false;
+    const runPP=p.pp||null;
+    while(j<parts.length && parts[j].role===p.role && (parts[j].pp||null)===runPP && (j===i || !parts[j].lab)){
+      buf+=(buf?' ':'')+clean(parts[j].t);
+      if(parts[j].pp) hasPar=true;
+      j++;
+    }
+    const [open,close]=BR[p.role]||['[',']'];
+    const lab=(p.lab||RLAB[p.role]||p.role.toUpperCase())+(p.ptail?p.ptail:'');
+    html+=` <span class="db-${p.role}${hasPar?' db-par':''}">${open}${esc(buf)}${close}</span><span class="db-sub">${esc(lab)}</span> `;
+    i=j;
+  }
+  return html;
+}
+
+function markErr(text,err){
+  if(!err) return esc(text);
+  const idx=text.indexOf(err);
+  if(idx<0) return esc(text);
+  return esc(text.slice(0,idx))+'<span class="cerr">'+esc(text.slice(idx,idx+err.length))+'</span>'+esc(text.slice(idx+err.length));
+}
+
+function choiceGridHtml(choices){
+  return '<div class="choice-grid">'+choices.map(c=>{
+    const cls=c.correct?'ok':'ng';
+    const mark=c.correct?'○':'✕';
+    const textHtml=markErr(c.text,c.err);
+    const quoteHtml=c.quote?`<div class="choice-quote">本文：<span class="qwavy">${esc(c.quote)}</span>${c.pid?`<span class="choice-para-tag">（第${c.pid.replace('p','')}段落）</span>`:''}</div>`:'';
+    return `<div class="choice-card ${cls}">
+      <div class="choice-row"><span class="choice-label">(${c.label})</span><span class="choice-badge">${mark} ${esc(c.tag)}</span></div>
+      <div class="choice-text">${textHtml}</div>
+      ${quoteHtml}
+      <div class="choice-note">${esc(c.note)}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+const QMAP = [
+  {label:"設問1-1", type:"choice", ids:["p2s2","p2s3"],
+    question:"Why didn't increasing the number of baggage handlers completely solve the problem at a Houston airport?",
+    choices:[
+      {label:"a", text:"Passengers still had to walk a long way to the baggage claim area from the arrival gates.", err:"had to walk a long way", correct:false, tag:"本文と逆", note:"増員の時点では歩く時間はわずか1分。長く歩かせたのはむしろ後の『解決策』のほうである。", quote:"it took passengers one minute to walk from the arrival gates to the baggage claim area", pid:"p2"},
+      {label:"b", text:"The staff increase had an insignificant effect on the time passengers had to wait for their baggage.", err:"had an insignificant effect", correct:false, tag:"本文と逆", note:"増員で平均待ち時間は8分に短縮され、業界基準内に収まった。効果は十分にあった。", quote:"The plan worked: the average wait time fell to eight minutes, well within the industry standard.", pid:"p1"},
+      {label:"c", text:"The standards adopted by the airline industry failed to meet the passengers' expectations.", err:"failed to meet the passengers' expectations", correct:false, tag:"本文に記述なし", note:"業界基準は登場するが（well within the industry standard）、その基準が乗客の期待に届かないという記述はない。"},
+      {label:"d", text:"Waiting for one's baggage still required some time spent doing nothing.", correct:true, tag:"完全一致", note:"時間の約80%が『ただ立っているだけ』に費やされていた＝何もしない時間が残っていた。just standing around ≒ doing nothing。", quote:"about 80 percent of their time was spent just standing around", pid:"p2"}
+    ]},
+  {label:"設問1-2", type:"choice", ids:["p4s1","p4s3"],
+    question:"Why are mirrors often hung near elevators in tall buildings?",
+    choices:[
+      {label:"a", text:"Mirrors give people an opportunity to ensure they look appropriate.", err:"ensure they look appropriate", correct:false, tag:"理由のすり替え", note:"髪型を確かめられるのは事実（p4s4）だが、それは手段にすぎない。鏡の目的は『時間をふさいで待ち時間を短く感じさせる』こと。", quote:"With the mirrors, people can check their hair, etc.", pid:"p4"},
+      {label:"b", text:"Mirrors make the overall experience of waiting more positive.", correct:true, tag:"完全一致", note:"時間をつぶすものを与えれば待ち時間は短く感じる＝待つ体験を良くする、が鏡の根本的な狙い（rationale）。", quote:"give people something to occupy their time, and the wait will feel shorter", pid:"p4"},
+      {label:"c", text:"People tend to exaggerate the amount of time they are kept waiting.", err:"tend to exaggerate", correct:false, tag:"本文と一致だが理由でない", note:"第3段落の研究結果として述べられている内容で、それ自体は本文に合う。しかし鏡を置く『理由』ではない。", quote:"people tend to believe they spend much more time in lines than they do in reality", pid:"p3"},
+      {label:"d", text:"Simply waiting for an elevator represents 'occupied time'.", err:"represents 'occupied time'", correct:false, tag:"本文と逆", note:"ただ待つだけの時間は unoccupied time。鏡はそれを occupied time に変えるために置かれる。", quote:"'occupied time' (walking to baggage claim) feels shorter than 'unoccupied time' (waiting for the baggage to come out)", pid:"p3"}
+    ]},
+  {label:"設問1-3", type:"choice", ids:["p5s2","p6s3"],
+    question:"Which of the following is NOT mentioned in the article as an influence on our attitude towards waiting in line?",
+    choices:[
+      {label:"a", text:"having a clear understanding of how long we have to wait", correct:false, tag:"本文に記述あり", note:"expected wait times（予想待ち時間の提示）が体験を改善すると述べられている。", quote:"feedback in the form of expected wait times and explanations for delays tends to improve the experience", pid:"p5"},
+      {label:"b", text:"receiving announcements from the people in charge", correct:false, tag:"本文に記述あり", note:"explanations for delays（遅れの理由の説明）＝責任者からのアナウンス。", quote:"explanations for delays", pid:"p5"},
+      {label:"c", text:"recognizing that fair treatment depends on line conditions", correct:false, tag:"本文に記述あり", note:"公平さの感覚（先着順・価値に見合う行列の長さ・特急レジ）は第6段落で最大の要因として述べられている。", quote:"the biggest influence on our feelings about lines has to do with our perception of fairness", pid:"p6"},
+      {label:"d", text:"selecting the shortest line and thus waiting less than other people", err:"selecting the shortest line", correct:true, tag:"本文に記述なし", note:"一番短い列を選んで他人より早く済ませる、という話は本文のどこにもない。これが正解（NOT mentioned）。"}
+    ]},
+  {label:"設問1-4", type:"choice", ids:["p7s4"],
+    question:"According to the author, what is the benefit of studying about the way people behave when standing in line?",
+    choices:[
+      {label:"a", text:"Such study can help enhance the otherwise frustrating experience of waiting.", correct:true, tag:"完全一致", note:"待つことの心理を理解すれば、避けられない遅れを少しは耐えやすくできる。otherwise frustrating＝『そうでなければ（理解がなければ）いら立たしい』。", quote:"a better understanding of the psychology of waiting can help make these inevitable delays a little more bearable", pid:"p7"},
+      {label:"b", text:"Such study can lead to the reduction of wait times.", err:"the reduction of wait times", correct:false, tag:"本文と逆", note:"筆者の主張は『時間を減らす』ではなく『感じ方を変える』。行列はなくせないとも明言している。", quote:"we will never be able to eliminate lines altogether", pid:"p7"},
+      {label:"c", text:"Such study enables us to have more leisure time.", err:"to have more leisure time", correct:false, tag:"本文に記述なし", note:"余暇は『限られている』と述べているだけで、研究で余暇が増えるとは言っていない。"},
+      {label:"d", text:"Such study provides unique insights into the interior design industry.", err:"the interior design industry", correct:false, tag:"本文に記述なし", note:"鏡の例から連想させる引っかけ。インテリア業界への示唆という記述はない。"}
+    ]},
+  {label:"設問2(1)", type:"choice", ids:["p1s2"],
+    question:"下線部(1) inordinate の意味にもっとも近いものを選べ。",
+    choices:[
+      {label:"a", text:"exceptional", correct:true, tag:"完全一致", note:"inordinate＝「度を越した、並外れた」。exceptional（例外的な、並外れた）が最も近い。"},
+      {label:"b", text:"indefinite", correct:false, tag:"不一致", note:"「不明確な、無期限の」。数の多さを表さない。"},
+      {label:"c", text:"understated", correct:false, tag:"不一致", note:"「控えめな」。むしろ逆方向。"},
+      {label:"d", text:"unwelcome", correct:false, tag:"文脈に引きずられた誤り", note:"「歓迎されない」。苦情は確かに歓迎されないが、inordinate は数量の『多さ』を表す語。"}
+    ]},
+  {label:"設問2(2)", type:"choice", ids:["p4s5"],
+    question:"下線部(2) ceased の意味にもっとも近いものを選べ。",
+    choices:[
+      {label:"a", text:"accelerated", correct:false, tag:"不一致", note:"「加速した」。逆方向。"},
+      {label:"b", text:"decreased", correct:false, tag:"程度のずれ", note:"「減った」。cease は『完全に止まる』で、減少よりも強い。"},
+      {label:"c", text:"multiplied", correct:false, tag:"不一致", note:"「増えた」。逆方向。"},
+      {label:"d", text:"stopped", correct:true, tag:"完全一致", note:"cease＝stop「やむ、終わる」。"}
+    ]},
+  {label:"設問2(3)", type:"choice", ids:["p6s3"],
+    question:"下線部(3) be commensurate with の意味にもっとも近いものを選べ。",
+    choices:[
+      {label:"a", text:"be treated as", correct:false, tag:"不一致", note:"「〜として扱われる」。釣り合いの意味がない。"},
+      {label:"b", text:"be viewed through", correct:false, tag:"不一致", note:"「〜を通して見られる」。"},
+      {label:"c", text:"correspond to", correct:true, tag:"完全一致", note:"be commensurate with〜＝「〜に釣り合う、見合う」＝correspond to〜「〜に対応する、相当する」。行列の長さが価値に見合う。"},
+      {label:"d", text:"measure up to", correct:false, tag:"意味のずれ", note:"「（基準・期待）に達する、かなう」。『見合う』と似て見えるが、基準を満たすかどうかの意味で、量の釣り合いではない。"}
+    ]},
+  {label:"設問3(イ)", type:"choice", ids:["p2s4"],
+    question:"空所(イ)を埋めるのにもっとも適当な語を選べ。",
+    choices:[
+      {label:"a", text:"conventional", correct:false, tag:"本文と逆", note:"「従来の」。待ち時間を減らす（従来の策）の『代わりに』とった方法なので逆。"},
+      {label:"b", text:"logical", correct:false, tag:"意味が弱い", note:"「論理的な」。コロン以下の『常識の逆を行く』発想の特徴を表さない。"},
+      {label:"c", text:"novel", correct:true, tag:"完全一致", note:"「斬新な」。instead of trying to reduce wait times（常識的な策）ではなく、ゲートを遠ざけるという前例のない策。"},
+      {label:"d", text:"realistic", correct:false, tag:"意味が弱い", note:"「現実的な」。対比の構造に合わない。"}
+    ]},
+  {label:"設問3(ロ)", type:"choice", ids:["p4s3"],
+    question:"空所(ロ)を埋めるのにもっとも適当な語を選べ。",
+    choices:[
+      {label:"a", text:"drama", correct:false, tag:"意味が不成立", note:"「劇、劇的な出来事」。"},
+      {label:"b", text:"history", correct:false, tag:"意味が不成立", note:"前文に起源（戦後）の話はあるが、コロン以下は『考え方』であり歴史ではない。"},
+      {label:"c", text:"rationale", correct:true, tag:"完全一致", note:"「根拠、理論的根拠」。The rationale behind the mirrors＝鏡の背後にある考え方。中身はコロン以下の原理。"},
+      {label:"d", text:"tradition", correct:false, tag:"意味が不成立", note:"「伝統」。空港と同じ『伝統』では意味が通らない。"}
+    ]},
+  {label:"設問3(ハ)", type:"choice", ids:["p5s3","p5s4"],
+    question:"空所(ハ)を埋めるのにもっとも適当な語を選べ。",
+    choices:[
+      {label:"a", text:"downplays", correct:false, tag:"本文と逆", note:"「控えめに言う」＝待ち時間を短く見せると、予定より遅く乗ることになり期待を裏切る。"},
+      {label:"b", text:"overestimates", correct:true, tag:"完全一致", note:"「多めに見積もる」。期待を上回ると気分がよくなる（p5s3）→表示を長めにしておけば予定より早く乗れて嬉しい驚きになる。"},
+      {label:"c", text:"recalculates", correct:false, tag:"意味が弱い", note:"「計算し直す」。so that以下の『嬉しい驚き』につながらない。"},
+      {label:"d", text:"underreports", correct:false, tag:"本文と逆", note:"「少なめに報告する」。downplays と同じく逆効果。"}
+    ]},
+  {label:"設問3(ニ)", type:"choice", ids:["p6s5"],
+    question:"空所(ニ)を埋めるのにもっとも適当な語を選べ。",
+    choices:[
+      {label:"a", text:"impatient", correct:false, tag:"意味が不成立", note:"「せっかちな」。せっかちな人でなくても誰もそう思わない、という流れにならない。"},
+      {label:"b", text:"reasonable", correct:true, tag:"完全一致", note:"no reasonable person would〜＝「分別ある人なら誰も〜とは思わない」。公平さの常識を表す定型的な言い方。"},
+      {label:"c", text:"reliable", correct:false, tag:"意味が不成立", note:"「信頼できる」。判断の妥当性を表す語ではない。"},
+      {label:"d", text:"sophisticated", correct:false, tag:"意味が不成立", note:"「洗練された」。"}
+    ]},
+  {label:"設問4", type:"text", ids:["p3s3"],
+    question:"下線部(あ) do が言い換えている1語を本文から抜き出せ。",
+    answer:"spend",
+    short:"正解は <b>spend</b>。than they do in reality の do は代動詞で、同じ文の they spend much more time in lines の spend を受けている（＝than they spend in reality）。"},
+  {label:"設問5", type:"text", ids:["p6s3","p6s4"],
+    question:"下線部(い) it が指すものを本文から抜き出せ。",
+    answer:"the product or service sought",
+    short:"正解は <b>the product or service sought</b>。The more valuable it is の it は『価値がある』もの＝前文の the value of the product or service sought の価値の持ち主。sought（求められている）まで含めて抜き出す。"},
+  {label:"設問6", type:"choice", ids:["p3s1","p7s4"],
+    question:"本文のタイトルとしてもっとも適当なものを選べ。",
+    choices:[
+      {label:"a", text:"Airports and Elevators: Similar Strategies, Different Results", err:"Different Results", correct:false, tag:"本文と逆", note:"空港も鏡も『苦情がほぼなくなった』という同じ結果。しかも2例だけで期待・公平さの話が抜ける。"},
+      {label:"b", text:"Losing 37 Billion Hours Annually: Can the Country Cope with It?", err:"Can the Country Cope with It?", correct:false, tag:"部分的すぎる", note:"37 billion hours は最終段落の一データにすぎず、国家としての対策は論じていない。"},
+      {label:"c", text:"Reducing Waiting Times: Lessons to Be Learned", err:"Reducing Waiting Times", correct:false, tag:"主旨と逆", note:"本文の主旨は待ち時間を『減らす』ことではなく、待つことの『感じ方』を変えること。"},
+      {label:"d", text:"Why Waiting May Be Torture: A Different Look at Lines", correct:true, tag:"完全一致", note:"待つことがなぜ苦痛か（何もしない時間・不確実さ・不公平感）を、時間の長さとは別の観点（心理）から見直す、という全体の内容に合う。", quote:"the experience of waiting is defined only partly by the length of the time we wait", pid:"p3"}
+    ]}
+];
+const qidx=document.getElementById("qidx");
+QMAP.forEach((q,idx)=>{
+  const b=document.createElement("button");
+  b.textContent=q.label;
+  b.dataset.qidx=idx;
+  qidx.appendChild(b);
+});
+
+let qmodalReturnTo=null;
+function openQModal(q, returnTo){
+  qmodalReturnTo = returnTo || null;
+  document.getElementById('qmodalBack').classList.toggle('show', qmodalReturnTo==='dash');
+  document.getElementById('qmodalQnum').textContent=q.label;
+  document.getElementById('qmodalQuestion').textContent=q.question||'';
+
+  let first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  document.getElementById('qmodalParaRole').textContent=first?`第${first.para.id.replace('p','')}段落：${first.para.role}`:'';
+
+  const paraSection=document.getElementById('qmodalParaSection');
+  const diagSection=document.getElementById('qmodalDiagramSection');
+  const choiceSection=document.getElementById('qmodalChoiceSection');
+  const reasonSection=document.getElementById('qmodalReasonSection');
+
+  const showParaDiagram = q.type!=='multi' && first;
+  paraSection.style.display = showParaDiagram ? 'block':'none';
+  diagSection.style.display = showParaDiagram ? 'block':'none';
+  if(showParaDiagram){
+    const paraHtml=first.para.sents.map(s=>{
+      const isTarget=q.ids.includes(s.id);
+      const inner=renderParts(s.parts,s.id);
+      return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+    }).join(' ');
+    document.getElementById('qmodalPara').innerHTML=paraHtml;
+    document.getElementById('qmodalDiagram').innerHTML=q.ids.map(id=>{
+      const f=findSentAndPara(id);
+      return f?`<div class="qdiagram-line">${bracketDiagram(f.sent.parts)}</div>`:'';
+    }).join('');
+  }
+
+  const isChoice = q.type==='choice' || q.type==='multi' || q.type==='blank2';
+  choiceSection.style.display = isChoice ? 'block':'none';
+  reasonSection.style.display = isChoice ? 'none':'block';
+  if(isChoice){
+    document.getElementById('qmodalChoices').innerHTML=choiceGridHtml(q.choices);
+  } else if(q.type==='free'){
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
+    document.getElementById('qmodalReason').innerHTML=
+      `<b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}<br><br>${q.short||''}`;
+  } else {
+    document.getElementById('qmodalReason').innerHTML=q.short||'';
+  }
+
+  document.getElementById('qmodalBackdrop').classList.add('open');
+  document.getElementById('qmodalBackdrop').scrollTop=0;
+}
+function closeQModal(){ document.getElementById('qmodalBackdrop').classList.remove('open'); qmodalReturnTo=null; }
+function backQModalToDash(){
+  const rt=qmodalReturnTo;
+  document.getElementById('qmodalBackdrop').classList.remove('open');
+  qmodalReturnTo=null;
+  if(rt==='dash') openDashModal();
+}
+document.getElementById('qmodalClose').addEventListener('click', closeQModal);
+document.getElementById('qmodalBack').addEventListener('click', backQModalToDash);
+document.getElementById('qmodalBackdrop').addEventListener('click', e=>{ if(e.target.id==='qmodalBackdrop') closeQModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeQModal(); closeDashModal(); closeFlowModal(); closeVocabModal(); closeVlistModal(); } });
+
+function dashHintHtml(q, uid){
+  if(q.type==='multi'){
+    const lines=q.choices.map(c=>
+      `<div class="dash-hint-qline"><b>(${c.label})</b> 第${c.pid.replace('p','')}段落：「${esc(c.quote)}」 <button type="button" class="dash-hint-jump" data-jump="${c.pid}">読む →</button></div>`
+    ).join('');
+    return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（各選択肢の該当箇所）</button>
+      <div class="dash-hint-body" id="${uid}_hint">${lines}</div>`;
+  }
+  const first=(q.ids&&q.ids.length)?findSentAndPara(q.ids[0]):null;
+  if(!first) return '';
+  const paraHtml=first.para.sents.map(s=>{
+    const isTarget=q.ids.includes(s.id);
+    const inner=renderParts(s.parts,s.id);
+    return `<span class="${isTarget?'qtarget':''}">${inner}</span>`;
+  }).join(' ');
+  return `<button type="button" class="dash-hint-toggle" data-uid="${uid}">💡 ヒントを見る（該当段落）</button>
+    <div class="dash-hint-body" id="${uid}_hint">
+      <div class="dash-hint-role">第${first.para.id.replace('p','')}段落：${esc(first.para.role)}</div>
+      <div class="dash-hint-para">${paraHtml}</div>
+      <button type="button" class="dash-hint-jump" data-jump="${first.para.id}">この段落を本文で読む →</button>
+    </div>`;
+}
+
+function dashQuestionHtml(q, qidx){
+  const uid=`dq_${qidx}`;
+  let inner='';
+  if(q.type==='choice'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-opt-label"><input type="radio" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  } else if(q.type==='blank2'){
+    inner=q.blanks.map(bk=>
+      `<div class="dash-blank-title">空欄（${bk}）</div><div class="dash-opts">${q.choices.map(c=>
+        `<label class="dash-opt-label"><input type="radio" name="${uid}_${bk}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+      ).join('')}</div>`
+    ).join('');
+  } else if(q.type==='text'){
+    inner=`<input type="text" class="dash-text-input" id="${uid}_input" placeholder="単語を入力">`;
+  } else if(q.type==='free'){
+    inner='';
+  } else if(q.type==='multi'){
+    inner=`<div class="dash-opts">${q.choices.map(c=>
+      `<label class="dash-mc-item"><input type="checkbox" name="${uid}" value="${c.label}">(${c.label}) ${esc(c.text)}</label>`
+    ).join('')}</div>`;
+  }
+  let reveal='';
+  if(q.type==='free'){
+    const altsHtml=(q.altAnswers||[]).map((a,i)=>`<b>別解${q.altAnswers.length>1?(i+1):''}：</b>${esc(a)}`).join('<br>');
+    reveal=`<div class="dash-reveal show" id="${uid}_reveal">
+      <div class="dash-reveal-ans"><b>模範解答：</b>${esc(q.modelAnswer)}<br>${altsHtml}</div>
+      ${q.elements.map(el=>`<label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb">${esc(el.desc)}</label>`).join('')}
+      <div class="dash-coherent"><label class="dash-elem-label"><input type="checkbox" data-uid="${uid}" class="dash-elem-cb dash-coherent-cb">日本語の文として自然に成立している</label></div>
+      <div class="dash-achieve" id="${uid}_achieve">達成率：0/${q.elements.length}（0%）</div>
+    </div>`;
+  }
+  return `<div class="dash-qcard" data-qidx="${qidx}" data-uid="${uid}" data-qtype="${q.type}">
+    <div class="dash-qhead"><span class="dash-qlabel">${q.label}</span><span class="dash-badge" id="${uid}_badge"></span></div>
+    <div class="dash-qtext">${esc(q.question)}</div>
+    ${inner}
+    ${dashHintHtml(q, uid)}
+    ${reveal}
+  </div>`;
+}
+
+function renderDashboard(){
+  document.getElementById('dashQCards').innerHTML=QMAP.map((q,qidx)=>dashQuestionHtml(q,qidx)).join('');
+  document.getElementById('dashScoreSummary').innerHTML='';
+  document.getElementById('dashReview').innerHTML='';
+}
+
+document.body.addEventListener('change', e=>{
+  const cb=e.target.closest('.dash-elem-cb');
+  if(!cb) return;
+  const uid=cb.dataset.uid;
+  const all=document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`);
+  const elemCbs=[...all].filter(x=>!x.classList.contains('dash-coherent-cb'));
+  const checked=elemCbs.filter(x=>x.checked).length;
+  const pct=elemCbs.length? Math.round(checked/elemCbs.length*100):0;
+  const achEl=document.getElementById(uid+'_achieve');
+  if(achEl) achEl.textContent=`達成率：${checked}/${elemCbs.length}（${pct}%）`;
+});
+
+function gradeQuestion(q, qidx){
+  const uid=`dq_${qidx}`;
+  if(q.type==='choice'){
+    const sel=document.querySelector(`input[name="${uid}"]:checked`);
+    const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+    return {ok: chosen ? chosen.correct : false, answered: !!sel};
+  }
+  if(q.type==='blank2'){
+    let allOk=true, anyAnswered=false;
+    q.blanks.forEach(bk=>{
+      const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+      if(sel) anyAnswered=true;
+      const chosen=sel ? q.choices.find(c=>c.label===sel.value) : null;
+      if(!chosen || chosen.correctFor!==bk) allOk=false;
+    });
+    return {ok:allOk, answered:anyAnswered};
+  }
+  if(q.type==='text'){
+    const inp=document.getElementById(uid+'_input');
+    const val=inp ? inp.value.trim().toLowerCase():'';
+    return {ok: val===q.answer.toLowerCase(), answered: val.length>0};
+  }
+  if(q.type==='multi'){
+    const sels=[...document.querySelectorAll(`input[name="${uid}"]:checked`)].map(x=>x.value).sort();
+    const correctSet=q.choices.filter(c=>!c.correct).map(c=>c.label).sort();
+    const ok = sels.length===correctSet.length && sels.every((v,i)=>v===correctSet[i]);
+    return {ok, answered: sels.length>0};
+  }
+  if(q.type==='free'){
+    const uidReveal=document.getElementById(uid+'_reveal');
+    if(uidReveal) uidReveal.classList.add('show');
+    const elemCbs=[...document.querySelectorAll(`.dash-elem-cb[data-uid="${uid}"]`)].filter(x=>!x.classList.contains('dash-coherent-cb'));
+    const checked=elemCbs.filter(x=>x.checked).length;
+    return {free:true, checked, total:elemCbs.length};
+  }
+  return {ok:false, answered:false};
+}
+
+document.getElementById('dashGradeBtn').addEventListener('click', ()=>{
+  let choiceCorrect=0, choiceTotal=0;
+  const freeStats=[];
+  const results=[];
+  QMAP.forEach((q,qidx)=>{
+    const uid=`dq_${qidx}`;
+    const r=gradeQuestion(q,qidx);
+    const badge=document.getElementById(uid+'_badge');
+    if(q.type==='free'){
+      freeStats.push({q, checked:r.checked, total:r.total});
+      if(badge){ badge.className='dash-badge show pending'; badge.textContent=`要素:${r.checked}/${r.total}`; }
+      results.push({q, qidx, kind:'free', checked:r.checked, total:r.total});
+    } else if(q.type==='blank2'){
+      choiceTotal+=2;
+      let sub=0;
+      q.blanks.forEach(bk=>{
+        const sel=document.querySelector(`input[name="${uid}_${bk}"]:checked`);
+        const chosen=sel? q.choices.find(c=>c.label===sel.value):null;
+        if(chosen && chosen.correctFor===bk) sub++;
+      });
+      choiceCorrect+=sub;
+      if(badge){ badge.className='dash-badge show '+(sub===2?'ok':'ng'); badge.textContent=sub===2?'○ 正解':`△ ${sub}/2`; }
+      results.push({q, qidx, kind:'choice', ok: sub===2});
+    } else {
+      choiceTotal+=1;
+      if(r.ok) choiceCorrect+=1;
+      if(badge){ badge.className='dash-badge show '+(r.ok?'ok':'ng'); badge.textContent=r.ok?'○ 正解':'✕ 不正解'; }
+      results.push({q, qidx, kind:'choice', ok:r.ok});
+    }
+  });
+
+  const freeAvg = freeStats.length ? Math.round(freeStats.reduce((s,f)=>s+(f.total?f.checked/f.total:0),0)/freeStats.length*100) : null;
+  document.getElementById('dashScoreSummary').innerHTML=
+    `選択・記述(単語)式：<b>${choiceCorrect}/${choiceTotal}</b>　　自由記述の平均達成率：<b>${freeAvg===null?'―':freeAvg+'%'}</b>`;
+
+  renderReview(results);
+});
+
+function renderReview(results){
+  const rows=results.map(r=>{
+    const uid=`dq_${r.qidx}`;
+    let badgeHtml;
+    if(r.kind==='free'){
+      const full=r.total>0 && r.checked===r.total;
+      badgeHtml=`<span class="dash-badge show ${full?'ok':'pending'}">要素:${r.checked}/${r.total}</span>`;
+    } else {
+      badgeHtml=`<span class="dash-badge show ${r.ok?'ok':'ng'}">${r.ok?'○ 正解':'✕ 不正解'}</span>`;
+    }
+    return `<div class="dash-review-row">
+      <span class="dash-qlabel">${r.q.label}</span>
+      ${badgeHtml}
+      <span class="dash-review-qtext">${esc(r.q.question.slice(0,34))}${r.q.question.length>34?'…':''}</span>
+      <button type="button" class="dash-review-btn" data-qidx="${r.qidx}">解説を見る</button>
+    </div>`;
+  }).join('');
+  document.getElementById('dashReview').innerHTML=`<div class="dash-review"><div class="dash-review-title">③ 各設問の解説（正解・不正解に関わらず確認できます）</div>${rows}</div>`;
+}
+
+document.body.addEventListener('click', e=>{
+  const hintToggle=e.target.closest('.dash-hint-toggle');
+  if(hintToggle){
+    const body=document.getElementById(hintToggle.dataset.uid+'_hint');
+    if(body) body.classList.toggle('show');
+    return;
+  }
+  const jumpBtn=e.target.closest('.dash-hint-jump');
+  if(jumpBtn){
+    closeDashModal();
+    jumpToParagraph(jumpBtn.dataset.jump);
+    return;
+  }
+  const flowNode=e.target.closest('.flow-node');
+  if(flowNode){
+    closeFlowModal();
+    jumpToParagraph(flowNode.dataset.jump);
+    return;
+  }
+  const vlistRow=e.target.closest('.vlist-table tr[data-jump]');
+  if(vlistRow){
+    closeVlistModal();
+    jumpToParagraph(vlistRow.dataset.jump);
+    return;
+  }
+  const flowRow=e.target.closest('.flow-table tr[data-jump]');
+  if(flowRow){
+    closeFlowModal();
+    jumpToParagraph(flowRow.dataset.jump);
+    return;
+  }
+  const reviewBtn=e.target.closest('.dash-review-btn');
+  if(reviewBtn){
+    closeDashModal();
+    openQModal(QMAP[+reviewBtn.dataset.qidx], 'dash');
+    return;
+  }
+});
+
+function jumpToParagraph(pid){
+  const p=ALL.find(pp=>pp.id===pid);
+  if(p && p.sents[0]){
+    const el=document.getElementById(p.sents[0].id);
+    if(el){ setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80); }
+  }
+}
+
+let dashRendered=false;
+function openDashModal(){ if(!dashRendered){ renderDashboard(); dashRendered=true; } document.getElementById('dashBackdrop').classList.add('open'); document.getElementById('dashBackdrop').scrollTop=0; }
+function closeDashModal(){ document.getElementById('dashBackdrop').classList.remove('open'); }
+document.getElementById('dashOpenBtn').addEventListener('click', openDashModal);
+document.getElementById('dashClose').addEventListener('click', closeDashModal);
+document.getElementById('dashBackdrop').addEventListener('click', e=>{ if(e.target.id==='dashBackdrop') closeDashModal(); });
+
+function openFlowModal(){ document.getElementById('flowBackdrop').classList.add('open'); }
+function closeFlowModal(){ document.getElementById('flowBackdrop').classList.remove('open'); }
+document.getElementById('flowOpenBtn').addEventListener('click', openFlowModal);
+document.getElementById('flowClose').addEventListener('click', closeFlowModal);
+document.getElementById('flowBackdrop').addEventListener('click', e=>{ if(e.target.id==='flowBackdrop') closeFlowModal(); });
+
+function openVlistModal(){ document.getElementById('vlistBackdrop').classList.add('open'); }
+function closeVlistModal(){ document.getElementById('vlistBackdrop').classList.remove('open'); }
+document.getElementById('vlistOpenBtn').addEventListener('click', openVlistModal);
+document.getElementById('vlistClose').addEventListener('click', closeVlistModal);
+document.getElementById('vlistBackdrop').addEventListener('click', e=>{ if(e.target.id==='vlistBackdrop') closeVlistModal(); });
+
+const VOCAB_POOL=[];
+ALL.forEach(p=>p.vocab.forEach(v=>VOCAB_POOL.push({word:v.word,pos:v.pos,ja:v.ja,def:v.def,pid:p.id,prole:p.role})));
+
+let vcQuestions=[], vcIndex=0, vcScore=0, vcLocked=false;
+const VC_MAX_Q=15;
+const DEF_MAX_Q=5;
+
+const vcScopeSel=document.getElementById('vcScope');
+(function buildScopeOptions(){
+  const optRandom=document.createElement('option');
+  optRandom.id='vcOptRandom';
+  optRandom.value='random';
+  vcScopeSel.appendChild(optRandom);
+  const optAll=document.createElement('option');
+  optAll.value='all'; optAll.textContent=`全段落（全${VOCAB_POOL.length}語を出題）`;
+  vcScopeSel.appendChild(optAll);
+  ALL.forEach(p=>{
+    const n=p.vocab.length;
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=`第${p.id.replace('p','')}段落：${p.role}（${n}語）`;
+    vcScopeSel.appendChild(opt);
+  });
+})();
+function updateRandomOptionLabel(){
+  const mode=document.querySelector('input[name="vcMode"]:checked').value;
+  const n = mode==='def' ? DEF_MAX_Q : VC_MAX_Q;
+  const opt=document.getElementById('vcOptRandom');
+  if(opt) opt.textContent=`ランダム（全段落から${Math.min(n,VOCAB_POOL.length)}問）`;
+}
+updateRandomOptionLabel();
+document.querySelectorAll('input[name="vcMode"]').forEach(r=>r.addEventListener('change', updateRandomOptionLabel));
+
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function buildQuiz(){
+  const mode=document.querySelector('input[name="vcMode"]:checked').value;
+  const isDef = mode==='def';
+  const scope=vcScopeSel.value;
+  const pool = (scope==='random'||scope==='all') ? VOCAB_POOL : VOCAB_POOL.filter(v=>v.pid===scope);
+  const shuffledPool = shuffle(pool);
+  const maxQ = isDef ? DEF_MAX_Q : VC_MAX_Q;
+  const picked = (scope==='all') ? shuffledPool : shuffledPool.slice(0, maxQ);
+  vcQuestions = picked.map(item=>{
+    const correctText = isDef ? item.def : item.ja;
+    const notSame = v=> v.word!==item.word && (isDef ? v.def!==item.def : v.ja!==item.ja);
+    const samePos = VOCAB_POOL.filter(v=> notSame(v) && v.pos===item.pos);
+    const otherPos = VOCAB_POOL.filter(v=> notSame(v) && v.pos!==item.pos);
+    const distractors = shuffle(samePos).concat(shuffle(otherPos)).slice(0,3).map(v=> isDef ? v.def : v.ja);
+    const choices = shuffle([correctText, ...distractors]);
+    return { prompt: item.word, promptPos: item.pos, correct: correctText, choices };
+  });
+  vcIndex=0; vcScore=0;
+}
+
+function renderQuestion(){
+  vcLocked=false;
+  const q=vcQuestions[vcIndex];
+  document.getElementById('vcQNum').textContent=vcIndex+1;
+  document.getElementById('vcQTotal').textContent=vcQuestions.length;
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const promptEl=document.getElementById('vcPrompt');
+  promptEl.textContent=q.prompt;
+  promptEl.className='vc-prompt';
+  const choicesEl=document.getElementById('vcChoices');
+  choicesEl.innerHTML='';
+  q.choices.forEach(choice=>{
+    const b=document.createElement('button');
+    b.type='button'; b.className='vc-choice-btn';
+    b.textContent=choice;
+    b.addEventListener('click', ()=>onChoose(b, choice));
+    choicesEl.appendChild(b);
+  });
+  document.getElementById('vcNextBtn').classList.remove('show');
+}
+
+function onChoose(btn, choice){
+  if(vcLocked) return;
+  vcLocked=true;
+  const q=vcQuestions[vcIndex];
+  const ok = choice===q.correct;
+  if(ok) vcScore++;
+  [...document.getElementById('vcChoices').children].forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===q.correct) b.classList.add('correct');
+    else if(b===btn) b.classList.add('wrong');
+  });
+  document.getElementById('vcScoreNow').textContent=vcScore;
+  const nextBtn=document.getElementById('vcNextBtn');
+  nextBtn.textContent = (vcIndex<vcQuestions.length-1) ? '次の問題へ →' : '結果を見る →';
+  nextBtn.classList.add('show');
+}
+
+document.getElementById('vcNextBtn').addEventListener('click', ()=>{
+  vcIndex++;
+  if(vcIndex>=vcQuestions.length){ finishQuiz(); return; }
+  renderQuestion();
+});
+
+function finishQuiz(){
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.add('show');
+  const total=vcQuestions.length;
+  document.getElementById('vcResultScore').textContent=`${vcScore} / ${total}`;
+  const pct = total? Math.round(vcScore/total*100):0;
+  let msg='復習して、もう一度チャレンジしましょう。';
+  if(pct>=90) msg='素晴らしい！ほぼ完璧です。';
+  else if(pct>=70) msg='よくできました。あと少しで満点です。';
+  else if(pct>=50) msg='半分以上正解。間違えた語句を確認しましょう。';
+  document.getElementById('vcResultMsg').textContent=`正答率 ${pct}%　${msg}`;
+}
+
+document.getElementById('vcStartBtn').addEventListener('click', ()=>{
+  buildQuiz();
+  if(vcQuestions.length<2){ document.getElementById('vcPoolNote').textContent='この範囲には十分な語数がありません。'; return; }
+  document.getElementById('vcSetup').style.display='none';
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcQuiz').classList.add('show');
+  renderQuestion();
+});
+
+document.getElementById('vcRetryBtn').addEventListener('click', ()=>{
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vcSetup').style.display='block';
+});
+
+function openVocabModal(){
+  document.getElementById('vcSetup').style.display='block';
+  document.getElementById('vcQuiz').classList.remove('show');
+  document.getElementById('vcResult').classList.remove('show');
+  document.getElementById('vocabBackdrop').classList.add('open');
+}
+function closeVocabModal(){ document.getElementById('vocabBackdrop').classList.remove('open'); }
+document.getElementById('vocabOpenBtn').addEventListener('click', openVocabModal);
+document.getElementById('vocabClose').addEventListener('click', closeVocabModal);
+document.getElementById('vocabBackdrop').addEventListener('click', e=>{ if(e.target.id==='vocabBackdrop') closeVocabModal(); });
+
+function fillGap(wrap){
+  const sid=wrap.dataset.sid; const g=gapStore[sid]; if(!g)return;
+  const gap=wrap.querySelector(".gap"); const ans=wrap.querySelector(".gapans");
+  gap.textContent=g.answer; gap.classList.add("filled");
+  ans.innerHTML=`<b>${esc(g.answer)}</b> ― ${esc(g.why)}`;
+  wrap.classList.add("open");
+}
+
+document.body.addEventListener("click",e=>{
+  const gw=e.target.closest(".gapwrap");
+  if(gw){e.stopPropagation(); if(gw.classList.contains("open")){gw.classList.remove("open");}else{fillGap(gw);} return;}
+  const tap=e.target.closest(".tok");
+  if(tap&&tap.querySelector(".tip")){e.stopPropagation();const on=tap.classList.contains("active");document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));if(!on)tap.classList.add("active");return;}
+  const chip=e.target.closest("#gidx button");
+  if(chip){const ids=chip.dataset.t.split(",");document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash"));ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add("flash");});const f=document.getElementById(ids[0]);if(f)f.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>document.querySelectorAll(".sent.flash").forEach(s=>s.classList.remove("flash")),1600);return;}
+  const qchip=e.target.closest("#qidx button");
+  if(qchip){ openQModal(QMAP[+qchip.dataset.qidx]); return; }
+  const pb=e.target.closest(".pfoot button");
+  if(pb){const panel=document.getElementById(pb.dataset.panel);if(panel){const open=panel.classList.toggle("open");pb.classList.toggle("on",open);}return;}
+  const sent=e.target.closest(".sent");
+  if(sent)sent.classList.toggle("open");
+  else document.querySelectorAll(".tok.active").forEach(t=>t.classList.remove("active"));
+});
+
+document.querySelectorAll(".controls button[data-cls]").forEach(b=>{
+  b.addEventListener("click",()=>{document.body.classList.toggle(b.dataset.cls);b.classList.toggle("active");});
+});
+</script>
+</body>
+</html>
