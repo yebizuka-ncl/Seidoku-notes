@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>読解問題 解答システム一覧</title>
+<style>
+  :root{
+    --blue:#1F4E9C; --blue-bg:#E6EDF8; --bg:#F5F3EE; --line:#DDD8CE;
+    --ink:#1F2328; --sub:#5B616B; --card:#FFFFFF;
+    --kokuritsu:#1F4E9C; --kokuritsu-bg:#E6EDF8;
+    --shiritsu:#9A4508; --shiritsu-bg:#FDF1E4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Zen Kaku Gothic New","Yu Gothic",sans-serif;line-height:1.6;}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 18px 80px;}
+  .ttl{font-size:20px;font-weight:700;}
+  .ttl .sub{display:block;font-weight:400;font-size:13px;color:var(--sub);margin-top:4px;}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 18px;align-items:center;}
+  .controls button{font-family:inherit;font-size:12.5px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--sub);border-radius:999px;padding:6px 15px;}
+  .controls button.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .controls input{flex:1;min-width:160px;font-family:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 15px;color:var(--ink);}
+  .controls input:focus{outline:none;border-color:var(--blue);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .cardlink{text-decoration:none;color:inherit;display:block;}
+  .cardbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;height:100%;transition:.15s;}
+  .cardlink:hover .cardbox{border-color:var(--blue);box-shadow:0 3px 10px rgba(0,0,0,.07);}
+  .chead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
+  .cuniv{font-weight:700;font-size:16px;}
+  .ckind{font-size:11.5px;padding:2px 10px;border-radius:999px;white-space:nowrap;}
+  .ckind.kokuritsu{background:var(--kokuritsu-bg);color:var(--kokuritsu);}
+  .ckind.shiritsu{background:var(--shiritsu-bg);color:var(--shiritsu);}
+  .ctitle{font-size:13px;color:var(--sub);margin:0;}
+  .cgo{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--blue);}
+  .empty{text-align:center;color:var(--sub);font-size:13px;padding:50px 0;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:44px;border-top:1px solid var(--line);padding-top:16px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ttl">読解問題 解答システム<span class="sub">大学・年度を選んで解答を始めてください</span></div>
+  <div class="controls">
+    <button data-filter="all" class="active">すべて</button>
+    <button data-filter="国公立">国公立</button>
+    <button data-filter="私立">私立</button>
+    <input type="text" id="q" placeholder="大学名で検索">
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none;">該当する問題が見つかりません。</div>
+  <footer>問題が追加され次第、この一覧も更新されます</footer>
+</div>
+
+<script>
+/* ===== ここに解答システムを追記していく =====
+   1件 = {
+     univ:  "大学名（学部）年度",
+     kind:  "国公立" | "私立",
+     title: "文章タイトルなど補足（空でもよい）",
+     url:   "その大学の解答システム（GASウェブアプリ）のURL"
+   }
+   新しい大学の解答システムができたら配列の末尾に1件追加するだけでよい。
+=================================================== */
+const EXAMS = [
+  { univ: "早稲田大学（商学部）2013", kind: "私立", title: "", url: "https://script.google.com/a/macros/kamagaku.ed.jp/s/AKfycbz99CxPc6rrYsYeUK-k_eioozJHaKPpZBpWmECFKgiavahJ-tSajEaoK9CaNzwxKiiD2g/exec" }
+];
+
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+let activeFilter = "all";
+let query = "";
+const grid = document.getElementById("grid");
+const emptyEl = document.getElementById("empty");
+
+function render(){
+  const q = query.trim().toLowerCase();
+  const items = EXAMS.filter(d=>{
+    if(activeFilter!=="all" && d.kind!==activeFilter) return false;
+    if(q){
+      const hay = (d.univ+" "+(d.title||"")).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  grid.innerHTML = "";
+  emptyEl.style.display = items.length ? "none" : "block";
+  items.forEach(d=>{
+    const kindClass = d.kind === "私立" ? "shiritsu" : "kokuritsu";
+    const a = document.createElement("a");
+    a.className = "cardlink";
+    a.href = d.url;
+    a.innerHTML = `<div class="cardbox">
+        <div class="chead"><span class="cuniv">${esc(d.univ)}</span><span class="ckind ${kindClass}">${esc(d.kind)}</span></div>
+        ${d.title ? `<p class="ctitle">${esc(d.title)}</p>` : ""}
+        <div class="cgo">▶ 解答を入力する</div>
+      </div>`;
+    grid.appendChild(a);
+  });
+}
+
+document.querySelectorAll(".controls button[data-filter]").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".controls button[data-filter]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    activeFilter = b.dataset.filter;
+    render();
+  });
+});
+document.getElementById("q").addEventListener("input", e=>{ query = e.target.value; render(); });
+
+render();
+</script>
+</body>
+</html>
